@@ -1,75 +1,123 @@
-JUMP = 0
-LAND = 1
-PUNCH = 2
-KICK = 3
-OVERHEAD = 4
-TRACER = 5
-SWING = 6
-WHIFF = 7
-GOH = 8
-GOHT = 9
-UPPERCUT = 10
-SYMBIOTE = 11
-
-
-
-JUMP_COOLDOWN = 0 * 60 # to be determined
-
-TRACER_MAX_CHARGES = 5
-TRACER_CHARGE_TIME = 2.5 * 60
-TRACER_COOLDOWN_TIME = 0.5 * 60
-TRACER_ACTIVE_TIME = 4 * 60
-TRACER_PROC_DAMAGE = 45
-
-SWING_MAX_CHARGES = 3
-SWING_CHARGE_TIME = 6 * 60
-WHIFF_REWARD_TIME = 0 * 60 # to be determined
-
-GOH_MAX_CHARGES = 1
-GOH_CHARGE_TIME = 8 * 60
-
-UPPERCUT_MAX_CHARGES = 2
-UPPERCUT_CHARGE_TIME = 6 * 60
-UPPERCUT_COOLDOWN_TIME = 2 * 60
-
-SYMBIOTE_MAX_CHARGES = 1
-SYMBIOTE_CHARGE_TIME = 40 * 60
-
-
+from ActionData import *
 
 class Action:
     damage = 0
     procsTracer = False
 
-    damageTime = 0
-    fullTime = 0
+    cancelTime = 0 # number of frames until the damage is dealt / until the non-damaging move is cancellable
+    fullTime = 0 # number of frames until another action which doesn't cancel this one can begin
     deltaTime = 0
 
     cancelledBy = []
-    moveStacks = {}
+    moveStacks = {} # dict maps action which stacks over this move with the time taken to initiate the move stack
 
-    def __init__(self, damage=0, procsTracer=False, fullTime=0, cancelledBy=[], damageTime=0, moveStacks={}):
+    def __init__(self, damage = 0, procsTracer=False, cancelTime=0, fullTime=0, cancelledBy = [], moveStacks={}):
         self.damage = damage
         self.procsTracer = procsTracer
-        self.damageTime = damageTime
+        self.cancelTime = cancelTime
         self.fullTime = fullTime
-        self.deltaTime = fullTime - damageTime
+        self.deltaTime = fullTime - cancelTime
         self.cancelledBy = cancelledBy
         self.moveStacks = moveStacks
 
 
 
 ACTIONS = {
+
     JUMP : Action(),
+
     LAND : Action(),
-    PUNCH : Action(damage=25, procsTracer=True),
-    KICK : Action(damage=40, procsTracer=True),
-    OVERHEAD : Action(damage=50, procsTracer=True),
-    TRACER : Action(damage=30),
-    SWING : Action(),
-    WHIFF : Action(),
-    GOH : Action(damage=25),
-    GOHT : Action(damage=50),
-    UPPERCUT : Action(damage=55, procsTracer=True),
-    SYMBIOTE : Action(damage=50)
+
+    PUNCH : Action(
+        damage = 25, 
+        procsTracer = True, 
+        cancelTime = 0, # to be determined
+        fullTime = 0, # to be determined
+        cancelledBy = [OVERHEAD, TRACER, SWING, WHIFF, GOH, GOHT, UPPERCUT, SYMBIOTE],
+        moveStacks = { 
+            OVERHEAD : 0, # unique 3-hit stack - to be determined
+            TRACER : 0, # backflash - to be determined
+            GOHT : 0 # saporen tech - to be determined
+        }
+    ),
+
+    KICK : Action(
+        damage = 40, 
+        procsTracer = True,
+        cancelTime = 0, # to be determined
+        fullTime = 0, # to be determined 
+        cancelledBy = [OVERHEAD, TRACER, SWING, WHIFF, GOH, GOHT, UPPERCUT, SYMBIOTE],
+        moveStacks = { 
+            OVERHEAD : 0, # unique 3-hit stack - to be determined
+            TRACER : 0, # backflash - to be determined
+            GOHT : 0, # saporen tech - to be determined
+            UPPERCUT : 0 # early cancel - to be determined
+        }
+    ),
+
+    OVERHEAD : Action(
+        damage = 50, 
+        procsTracer = True, 
+        cancelTime = 0, # to be determined
+        fullTime = 0, # to be determined
+        cancelledBy = [TRACER, SWING, WHIFF, GOH, GOHT, UPPERCUT, SYMBIOTE],
+        moveStacks = {
+            GOHT : 0, # saporen tech - to be determined
+            UPPERCUT : 0 # early cancel - to be determined
+        }
+    ),
+
+    TRACER : Action(
+        damage = 30, 
+        cancelTime = 0, # to be determined
+        fullTime = 0, # to be determined
+        cancelledBy = [SWING, WHIFF, GOH, GOHT, UPPERCUT, SYMBIOTE]
+    ),
+
+    SWING : Action(
+        cancelTime = 0, # to be determined
+        fullTime = 0, # to be determined
+        cancelledBy = [TRACER, GOH, GOHT, UPPERCUT, SYMBIOTE],
+        moveStacks = {
+            GOHT : 0 # goht overhead preserve - to be determined
+        }
+    ),
+
+    WHIFF : Action(
+        cancelTime = 0, # to be determined
+        fullTime = 0, # to be determined
+        cancelledBy = [TRACER, GOH, GOHT, UPPERCUT, SYMBIOTE]
+    ),
+
+    GOH : Action(
+        damage = 25,
+        cancelTime = 0, # to be determined
+        fullTime = 0, # to be determined
+        cancelledBy = [SWING, WHIFF, SYMBIOTE]
+    ),
+
+    GOHT : Action(
+        damage = 50,
+        cancelTime = 0, # to be determined
+        fullTime = 0, # to be determined
+        cancelledBy = [SWING, WHIFF, SYMBIOTE],
+        moveStacks = {
+            GOHT : 0 # ffame stack - to be determined
+        }
+    ),
+
+    UPPERCUT : Action(
+        damage = 55, 
+        procsTracer = True,
+        cancelTime = 0, # to be determined
+        fullTime = 0, # to be determined
+        cancelledBy = [SWING, WHIFF, SYMBIOTE]
+    ),
+
+    SYMBIOTE : Action(
+        damage = 50,
+        cancelTime = 0, # to be determined
+        fullTime = 0, # to be determined
+        cancelledBy = [SWING, WHIFF]
+    )
 }
