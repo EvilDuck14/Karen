@@ -1,42 +1,33 @@
 from Actions import *
+from State import *
 
-class State:
 
-    # Cooldowns - to avoid floating point innacuracy, using an ability takes charge equal to the number of frames it will take to recharge
-    tracerCharge = TRACER_MAX_CHARGES * TRACER_CHARGE_TIME
-    tracerCooldown = 0 # tracer firerate cannot be increased by weaving animation cancels
-    tracerActiveTimer = 0 # frames remaining until tracer on opponent expires
-    swingCharge = SWING_MAX_CHARGES * SWING_CHARGE_TIME
-    uppercutCharge = UPPERCUT_MAX_CHARGES * UPPERCUT_CHARGE_TIME
-    uppercutCooldown = 0 # frames remaining until uppercut is off cooldown
-    gohCharge = GOH_MAX_CHARGES * GOH_CHARGE_TIME
-    symbioteCharge = SYMBIOTE_MAX_CHARGES * SYMBIOTE_CHARGE_TIME
 
-    # Airborne
-    isAirborn = False
-    opponentAirborn = False # grounded opponent forces landing after GOHT
-    jumpCooldown = 0 # double jump is on a delay from initial jump
+def getComboSequence(sequence):
 
-    # Overheads
-    hasDoubleJump = False
-    hasJumpOverhead = False
-    hasSwingOverhead = False
-    whiffTimer = 0 # frames until whiff ends, awarding jump overhead
+    # removes whitespace
+    sequence = "".join(sequence.split())
 
-    # Punch Combo
-    punchSequence = 0 # 0 & 1 correspond to punches, 2 corresponds to kick
-    punchSequenceTimer = 0 # frames remaining until punch sequence resets
+    # removes initial conditions from input string
+    if "(" in sequence and ")" in sequence[sequence.find("("):]:
+        sequence = sequence[:sequence.find("(")] + sequence[sequence[sequence.find("("):].find(")") + 1:]
 
-    # Seasonal Boost
-    damageMultiplier = 1.1
-
-    # Tracking Stats
-    damageDealt = 0
-    timeTaken = 0
+    # handles long-form by converting to list
+    if ">" in sequence:
+        sequence = sequence.replace("+", ">+>").split(">") # make sure '+' characters are split out as their own entries
+        sequence = [x for x in sequence if x != ""] # removes empty entries caused by double '>' characters
     
+    # unrecognised conditions
+    for unknownAction in [x for x in sequence if not x.lower() in ACTION_NAMES]:
+        print("Warning: " + unknownAction + " is not a recognised action")
+    
+    # converts to a list of correctly formatted keys in ACTION_NAMES
+    sequence = [(x if x in ACTION_NAMES else x.lower()) for x in sequence if (x.lower() in ACTION_NAMES)] 
+
+    return sequence
 
 
-def calc(actionList):
-    while len(actionList) > 0:
-        nextAction = actionList[0]
-        actionList = actionList[1:]
+
+def evaluate(input):
+    state = getInitialState(input)
+    comboSequence = getComboSequence(input)

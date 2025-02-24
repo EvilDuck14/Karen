@@ -53,7 +53,7 @@ Some combos involve a setup that you don't want to list as a part of the combo -
     !eval (tA)Gjo
 ```
 
-The above combo has the initial conditions of the opponent being tagged with a tracer, and the opponent being airborne. This means that goht is able to be used right away, and that the user is airborn after doing so, meaning the jump is a double jump, granting a jump overhead. Initial conditions can also be written in long-form:
+The above combo has the initial conditions of the opponent being tagged with a tracer, and the opponent being airborne. This means that goht is able to be used right away, and that the user is airborn after doing so, meaning the jump is a double jump, granting a jump overhead. Initial conditions can also be written in long-form, separated by commas:
 
 ```
     !eval (tagged, targetAirborne) goht > dj > oh
@@ -68,8 +68,8 @@ The full list of initial conditions is given below:
 | Player is airborne with swing overhead | s | hasSwingOverhead |
 | Player is airborne with jump overhead | j | hasJumpOverhead |
 | Opponent is airborne | A | opponentAirborne |
-| Punch sequence is up to punch B | p | openPunchB |
-| Punch sequence is up to kick | k | openKick |
+| Punch sequence is up to punch B | p | hasPunchB <br> openPunchB |
+| Punch sequence is up to kick | k | hasKick <br> openKick |
 
 ### Move Stacks
 
@@ -108,7 +108,7 @@ All movestacks are listed below:
 
 ## Roadmap
 
-- [ ] Add parsing of commands in all formats
+- [x] Add parsing of commands in all formats
 - [ ] Measure & record all action timings
 - [ ] Add evaluation function
 - [ ] Add error detection & warnings
