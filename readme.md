@@ -1,8 +1,17 @@
-# Zola 2.0
+# Karen
 
-> Zola's algorithm evaluates people's past to predict their future
+> *"Congratulations on completing the rigorous Training Wheels Protocol and gaining access to your suit’s full capabilities... Would you like me to engage Enhanced Combat Mode?"* - Karen
 
-Likewise, Zola 2.0 is an algorithm that evaluate's a combo's damage and execution time to predict your ranked opponents' future pain. This python script is designed to quickly, easily, and accurately analyse Spider-Man's combos in Marvel Rivals.
+`Karen` is named after Spider-Man's virtual assistant in *Spider-Man: Homecoming*, who advised Peter in strategy and combat. This python script is designed to quickly, easily, and accurately analyse Spider-Man's combos in Marvel Rivals.
+
+## Table of Contents
+
+- [Installation](#installation)
+- [Usage](#usage)
+    - [Initial State](#initial-state)
+    - [Move Stacks](#move-stacks)
+- [Roadmap](#roadmap)
+- [License](#license)
 
 ## Installation
 
@@ -10,7 +19,7 @@ Installation instructions will be provided once basic functionality has been ach
 
 ## Usage
 
-Zola evaluates combos given to it by the **!eval** command:
+`Karen` evaluates combos given to it by the **!eval** command:
 
 ```
     !eval tGusto
@@ -89,7 +98,7 @@ In long-form commands, the "**>**" separator can be entirely replaced by a "**+*
     !eval tracer > goht + upper
 ```
 
-But the following will not work, as Zola will not recognise the command as being long-form, since no "**>**" characters are present:
+But the following will not work, as the command will not be recognised as being long-form, since no "**>**" characters are present:
 
 ```
     !eval (tag) goht + upper
@@ -115,3 +124,7 @@ All movestacks are listed below:
 - [ ] Add discord bot functionality
 - [ ] Add combo generator
 - [ ] Optimise combo generator by removing unneeded actions
+
+## License
+
+`Karen` is distributed under the terms of the [MIT](https://spdx.org/licenses/MIT.html) license.
