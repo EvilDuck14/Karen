@@ -1,8 +1,10 @@
 import discord
 from discord.ext import commands
 
-import TOKEN
-BOT_TOKEN = TOKEN.BOT_TOKEN # your token here
+from karen.evaluate import evaluate
+
+from karen import hiddenData # delete - used for environment variables
+BOT_TOKEN = hiddenData.BOT_TOKEN # your token here
 
 intents = discord.Intents.none()
 intents.guild_messages = True
@@ -17,7 +19,7 @@ async def on_ready():
 @bot.command()
 async def eval(ctx, *arr):
     inputString = "".join(str(x) for x in arr)
-    output = karen.evaluate.evaluate(inputString)
+    output = evaluate(inputString)
     await ctx.send(output)
 
 bot.run(BOT_TOKEN)

@@ -1,5 +1,5 @@
-from actions import *
-from state import State
+from karen.actions import *
+from karen.state import State
 
 def getComboSequence(inputString="", warnings=[]):
 
@@ -9,7 +9,7 @@ def getComboSequence(inputString="", warnings=[]):
     # removes initial conditions from inputString string
     sequence = inputString
     if "(" in inputString and ")" in inputString[inputString.find("("):]:
-        sequence = inputString[:inputString.find("(")] + inputString[inputString[inputString.find("("):].find(")") + 1:]
+        sequence = inputString[:inputString.find("(")] + inputString[inputString[inputString.find("("):].find(")") + inputString.find("(") + 1:]
 
     # handles long-form by converting to list
     if ">" in sequence:
@@ -25,7 +25,7 @@ def getComboSequence(inputString="", warnings=[]):
     sequence = [(x if x in ACTION_NAMES else x.lower()) for x in sequence if (x.lower() in ACTION_NAMES)] 
 
     # folds movestack indicators into actions
-    for i in len(sequence):
+    for i in range(len(sequence)):
         if i > 0 and sequence[i-1] == "+":
             sequence[i] = "+" + sequence[i]
     sequence = [x for x in sequence if x != "+"]
@@ -59,9 +59,12 @@ def addAction(state=State(), actionName="", warnings=[]):
     actionEquivalent = ACTION_EQUIVALENCE[action]
     if state.cooldowns[actionEquivalent] > max(0, waitTime) and not moveStack: # movestack cooldown detetion is done on the previous action
         waitTime = state.cooldowns[actionEquivalent]
-    if state.charges[action] < ACTIONS[action].chargeTime:
-        waitTime = max(waitTime, ACTIONS[action].chargeTime - state.charges[action])
+    if state.charges[actionEquivalent] < ACTIONS[action].chargeTime:
+        waitTime = max(waitTime, ACTIONS[action].chargeTime - state.charges[actionEquivalent])
         if (moveStack):
             warnings += [f"attempted to movestack {state.currentAnimation}+{action} while {action} is on cooldown"]
 
     # TO DO: if next move is a movestack which will still be on cooldown, throw a warning
+
+
+    state.sequence += f" {"" if len(state.sequence) == 0 or state.sequence[-1] == ")" else ("+ " if moveStack else "> ")}{ACTIONS[action].name}"

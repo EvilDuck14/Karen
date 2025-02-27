@@ -57,7 +57,7 @@ class Action:
         self.moveStacks = moveStacks
         self.maxCharges = maxCharges
         self.chargeTime = chargeTime
-        maxChargeCost = maxCharges * chargeTime
+        self.maxChargeCost = maxCharges * chargeTime
         self.inducesCooldowns = inducesCooldowns
 
 ACTIONS = {

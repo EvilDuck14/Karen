@@ -1,4 +1,4 @@
-from actions import *
+from karen.actions import *
 
 class State:
 
@@ -8,14 +8,16 @@ class State:
         "s" : ACTIONS["s"].maxChargeCost,
         "g" : ACTIONS["g"].maxChargeCost,
         "u" : ACTIONS["u"].maxChargeCost,
-        "S" : ACTIONS["S"].maxChargeCost
+        "S" : ACTIONS["S"].maxChargeCost,
+        "" : 0
     }
     cooldowns = {
         "j" : 0, # double jump is on a delay from initial jump
         "t" : 0,
         "s" : 0,
         "g" : 0,
-        "u" : 0
+        "u" : 0,
+        "" : 0
     }
     tracerActiveTimer = 0 # frames remaining until tracer on opponent expires
 
@@ -41,7 +43,7 @@ class State:
     timeTaken = 0
 
     # calculating cancel/stack times
-    currentAnimation = "none"
+    currentAnimation = "l"
 
     # sequence output
     sequence = ""
@@ -54,7 +56,8 @@ class State:
 
         # if inputString contains a '(' and a subsequent ')', then extract initial state info
         if "(" in inputString and ")" in inputString[inputString.find("("):]:
-            conditions = inputString[inputString.find("(") + 1:inputString[inputString.find("(") + 1:].find(")")]
+            conditions = inputString[inputString.find("(") + 1:]
+            conditions = conditions[:conditions.find(")")]
 
             # handles long-form by converting to list
             if "," in conditions:
@@ -65,10 +68,12 @@ class State:
                 warnings += [f"{unknownCondition} is not a recognised initial condition"]
 
             # converting conditions to single-letter names
-            conditions = [x for x in conditions]
+            conditions = [(INITIAL_CONDITION_NAMES[x] if x in INITIAL_CONDITION_NAMES else INITIAL_CONDITION_NAMES[x.lower()]) for x in conditions if x.lower() in INITIAL_CONDITION_NAMES]
             
+            print(conditions)
+
             # apply initial conditions to starting state
-            if len(conditions) > 1:
+            if len(conditions) > 0:
                 self.sequence += "("
 
             if "t" in conditions:
@@ -93,7 +98,7 @@ class State:
                 self.punchSequenceTimer = PUNCH_SEQUENCE_MAX_DELAY
                 self.sequence += f"has {"kick" if "k" in conditions else "punch b"} ready, "
 
-            if len(conditions) > 1:
+            if len(conditions) > 0:
                 self.sequence = self.sequence[:-2] + ") " # removes trailing comma & space
 
     def incrementCooldowns(self, frames):

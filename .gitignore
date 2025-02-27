@@ -1,5 +1,6 @@
 __pycache__
 *.pyc
-.conda
 .vscode
-TOKEN.py
+dist
+venv
+hiddenData.py

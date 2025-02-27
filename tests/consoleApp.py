@@ -1,4 +1,4 @@
-import karen
+from karen.evaluate import evaluate
 
 while True:
 
@@ -11,7 +11,7 @@ while True:
         print("!exit : closes the terminal")
 
     elif len(inputString) > 4 and inputString[:5] == "eval ":
-        karen.evaluate.evaluate(inputString[5:])
+        evaluate(inputString[5:])
 
     elif len(inputString) > 4 and inputString[:5] == "exit ":
         break
