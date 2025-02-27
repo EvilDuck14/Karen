@@ -8,6 +8,7 @@ class State:
     tracerCooldown = 0 # tracer firerate cannot be increased by weaving animation cancels
     tracerActiveTimer = 0 # frames remaining until tracer on opponent expires
     swingCharge = data.SWING_MAX_CHARGES * data.SWING_CHARGE_TIME
+    swingCooldown = 0 # swing can't be used instantly after a tracer
     uppercutCharge = data.UPPERCUT_MAX_CHARGES * data.UPPERCUT_CHARGE_TIME
     uppercutCooldown = 0 # frames remaining until uppercut is off cooldown
     gohCharge = data.GOH_MAX_CHARGES * data.GOH_CHARGE_TIME
@@ -38,15 +39,15 @@ class State:
     # sequence output
     sequence = ""
 
-    # initialise using input from evaluate function
-    def __init__(self, input):
+    # initialise using inputString from evaluate function
+    def __init__(self, inputString="", warnings=[]):
         
-        # removes input whitespace
-        input = "".join(input.split())
+        # removes inputString whitespace
+        inputString = "".join(inputString.split())
 
-        # if input contains a '(' and a subsequent ')', then extract initial state info
-        if "(" in input and ")" in input[input.find("("):]:
-            conditions = input[input.find("(") + 1:input[input.find("(") + 1:].find(")")]
+        # if inputString contains a '(' and a subsequent ')', then extract initial state info
+        if "(" in inputString and ")" in inputString[inputString.find("("):]:
+            conditions = inputString[inputString.find("(") + 1:inputString[inputString.find("(") + 1:].find(")")]
 
             # handles long-form by converting to list
             if "," in conditions:
@@ -54,7 +55,7 @@ class State:
 
             # unrecognised conditions
             for unknownCondition in [x for x in conditions if not x.lower() in INITIAL_CONDITION_NAMES]:
-                print("Warning: " + unknownCondition + " is not a recognised initial condition")
+                warnings += [unknownCondition + " is not a recognised initial condition"]
 
             # converting conditions to single-letter names
             conditions = [x for x in conditions]

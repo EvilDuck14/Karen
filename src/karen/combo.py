@@ -1,14 +1,14 @@
 from actions import ACTION_NAMES
 
-def getComboSequence(input):
+def getComboSequence(inputString="", warnings=[]):
 
     # removes whitespace
-    input = "".join(input.split())
+    inputString = "".join(inputString.split())
 
-    # removes initial conditions from input string
-    sequence = input
-    if "(" in input and ")" in input[input.find("("):]:
-        sequence = input[:input.find("(")] + input[input[input.find("("):].find(")") + 1:]
+    # removes initial conditions from inputString string
+    sequence = inputString
+    if "(" in inputString and ")" in inputString[inputString.find("("):]:
+        sequence = inputString[:inputString.find("(")] + inputString[inputString[inputString.find("("):].find(")") + 1:]
 
     # handles long-form by converting to list
     if ">" in sequence:
@@ -16,8 +16,7 @@ def getComboSequence(input):
         sequence = [x for x in sequence if x != ""] # removes empty entries caused by double '>' characters
     
     # unrecognised conditions
-    for unknownAction in [x for x in sequence if not x.lower() in ACTION_NAMES]:
-        print("Warning: " + unknownAction + " is not a recognised action")
+    warnings += [unknownAction + " is not a recognised action" for unknownAction in sequence if not unknownAction.lower() in ACTION_NAMES]
     
     # converts to a list of correctly formatted keys in ACTION_NAMES
     sequence = [(x if x in ACTION_NAMES else x.lower()) for x in sequence if (x.lower() in ACTION_NAMES)] 

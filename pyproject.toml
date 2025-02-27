@@ -32,7 +32,7 @@ Issues = "https://github.com/EvilDuck14/karen/issues"
 Source = "https://github.com/EvilDuck14/karen"
 
 [tool.hatch.version]
-path = "karen/__init__.py"
+path = "src/karen/__init__.py"
 
 [tool.hatch.envs.types]
 extra-dependencies = [
