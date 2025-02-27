@@ -62,7 +62,7 @@ class State:
 
             # unrecognised conditions
             for unknownCondition in [x for x in conditions if not x.lower() in INITIAL_CONDITION_NAMES]:
-                warnings += [unknownCondition + " is not a recognised initial condition"]
+                warnings += [f"{unknownCondition} is not a recognised initial condition"]
 
             # converting conditions to single-letter names
             conditions = [x for x in conditions]
@@ -108,3 +108,9 @@ class State:
         
         for key in self.cooldowns.keys:
             self.cooldowns[key] = max(self.charges[key] - frames, 0)
+
+        self.tracerActiveTimer = max(self.tracerActiveTimer, 0)
+
+        self.punchSequenceTimer = max(self.punchSequenceTimer, 0)
+        if self.punchSequenceTimer == 0:
+            self.punchSequence = 0
