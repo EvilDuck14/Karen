@@ -1,4 +1,6 @@
-import data
+PUNCH_SEQUENCE_MAX_DELAY = 0 * 60 # to be determined
+TRACER_ACTIVE_TIME = 4 * 60
+TRACER_PROC_DAMAGE = 45
 
 INITIAL_CONDITION_NAMES = {
     "t" : "t", "tagged" : "t", "tag" : "t",
@@ -39,7 +41,12 @@ class Action:
     cancelledBy = []
     moveStacks = {} # dict maps action which stacks over this move with the time taken to initiate the move stack
 
-    def __init__(self, name, damage = 0, procsTracer=False, cancelTime=0, fullTime=0, cancelledBy = [], moveStacks={}):
+    maxCharges = 0
+    chargeTime = 0
+    maxChargeCost = 0 #
+    inducesCooldowns = {} # some abilities induce cooldowns on themselves and/or other abilities
+
+    def __init__(self, name, damage = 0, procsTracer=False, cancelTime=0, fullTime=0, cancelledBy=[], moveStacks={}, maxCharges=0, chargeTime=0, inducesCooldowns={}):
         self.name = name
         self.damage = damage
         self.procsTracer = procsTracer
@@ -48,11 +55,18 @@ class Action:
         self.deltaTime = fullTime - cancelTime
         self.cancelledBy = cancelledBy
         self.moveStacks = moveStacks
+        self.maxCharges = maxCharges
+        self.chargeTime = chargeTime
+        maxChargeCost = maxCharges * chargeTime
+        self.inducesCooldowns = inducesCooldowns
 
 ACTIONS = {
 
     "j" : Action (
-        name = "Jump"
+        name = "Jump",
+        inducesCooldowns = {
+            "j" : 0 # to be determined
+        }
     ),
 
     "l" : Action (
@@ -61,7 +75,7 @@ ACTIONS = {
 
     "p" : Action (
         name = "Punch",
-        damage = data.PUNCH_DAMAGE, 
+        damage = 25, 
         procsTracer = True, 
         cancelTime = 0, # to be determined
         fullTime = 0, # to be determined
@@ -75,7 +89,7 @@ ACTIONS = {
 
     "k" : Action (
         name = "Kick",
-        damage = data.KICK_DAMAGE, 
+        damage = 40, 
         procsTracer = True,
         cancelTime = 0, # to be determined
         fullTime = 0, # to be determined 
@@ -90,7 +104,7 @@ ACTIONS = {
 
     "o" : Action (
         name = "Overhead",
-        damage = data.OVERHEAD_DAMAGE, 
+        damage = 50, 
         procsTracer = True, 
         cancelTime = 0, # to be determined
         fullTime = 0, # to be determined
@@ -103,10 +117,16 @@ ACTIONS = {
 
     "t" : Action (
         name = "Tracer",
-        damage = data.TRACER_DAMAGE, 
+        damage = 30, 
         cancelTime = 0, # to be determined
         fullTime = 0, # to be determined
-        cancelledBy = ["s", "w", "g", "G", "u", "S"]
+        cancelledBy = ["s", "w", "g", "G", "u", "S"],
+        maxCharges = 5,
+        chargeTime = 2.5 * 60,
+        inducesCooldowns = {
+            "t" : 0, # do be determined
+            "s" : 0 # do be determined
+        }
     ),
 
     "s" : Action (
@@ -116,6 +136,11 @@ ACTIONS = {
         cancelledBy = ["t", "g", "G", "u", "S"],
         moveStacks = {
             "G" : 0 # goht overhead preserve - to be determined
+        },
+        maxCharges = 3,
+        chargeTime = 6 * 60,
+        inducesCooldowns = {
+            # do be determined
         }
     ),
 
@@ -123,42 +148,80 @@ ACTIONS = {
         name = "Whiff",
         cancelTime = 0, # to be determined
         fullTime = 0, # to be determined
-        cancelledBy = ["t", "g", "G", "u", "S"]
+        cancelledBy = ["t", "g", "G", "u", "S"],
+        inducesCooldowns = {
+            # do be determined
+        }
     ),
 
     "g" : Action (
         name = "Get Over Here",
-        damage = data.GOH_DAMAGE,
+        damage = 25,
         cancelTime = 0, # to be determined
         fullTime = 0, # to be determined
-        cancelledBy = ["s", "w", "S"]
+        cancelledBy = ["s", "w", "S"],
+        maxCharges = 1,
+        chargeTime = 8 * 60,
+        inducesCooldowns = {
+            # do be determined
+        }
     ),
 
     "G" : Action (
         name = "Get Over Here Targetting",
-        damage = data.GOHT_DAMAGE,
+        damage = 50,
         cancelTime = 0, # to be determined
         fullTime = 0, # to be determined
         cancelledBy = ["s", "w", "S"],
         moveStacks = {
             "G" : 0 # ffame stack - to be determined
+        },
+        inducesCooldowns = {
+            # do be determined
         }
     ),
 
     "u" : Action (
         name = "Uppercut",
-        damage = data.UPPERCUT_DAMAGE, 
+        damage = 55, 
         procsTracer = True,
         cancelTime = 0, # to be determined
         fullTime = 0, # to be determined
-        cancelledBy = ["s", "w", "S"]
+        cancelledBy = ["s", "w", "S"],    
+        maxCharges = 2,
+        chargeTime = 6 * 60,
+        inducesCooldowns = {
+            # do be determined
+            "u" : 2 * 60
+        }
     ),
 
     "S" : Action (
         name = "Symbiote",
-        damage = data.SYMBIOTE_DAMAGE,
+        damage = 50,
         cancelTime = 0, # to be determined
         fullTime = 0, # to be determined
-        cancelledBy = ["s", "w"]
+        cancelledBy = ["s", "w"],
+        maxCharges = 1,
+        chargeTime = 40 * 60,
+        inducesCooldowns = {
+            # do be determined
+        }
     )
+}
+
+# for actions which share cooldowns
+ACTION_EQUIVALENCE = {
+    "j" : "j",
+    "l" : "",
+    "p" : "",
+    "k" : "",
+    "o" : "",
+    "t" : "t",
+    "s" : "s",
+    "w" : "s",
+    "g" : "g",
+    "G" : "g",
+    "u" : "u",
+    "S" : "S"
 }

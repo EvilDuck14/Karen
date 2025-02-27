@@ -1,29 +1,33 @@
-import data
-from actions import INITIAL_CONDITION_NAMES
+from actions import *
 
 class State:
 
-    # cooldowns - to avoid floating point innacuracy, using an ability takes charge equal to the number of frames it will take to recharge
-    tracerCharge = data.TRACER_MAX_CHARGES * data.TRACER_CHARGE_TIME
-    tracerCooldown = 0 # tracer firerate cannot be increased by weaving animation cancels
+    # charges/cooldowns - to avoid floating point innacuracy, using an ability takes charge equal to the number of frames it will take to recharge
+    charges = {
+        "t" : ACTIONS["t"].maxChargeCost,
+        "s" : ACTIONS["s"].maxChargeCost,
+        "g" : ACTIONS["g"].maxChargeCost,
+        "u" : ACTIONS["u"].maxChargeCost,
+        "S" : ACTIONS["S"].maxChargeCost
+    }
+    cooldowns = {
+        "j" : 0, # double jump is on a delay from initial jump
+        "t" : 0,
+        "s" : 0,
+        "g" : 0,
+        "u" : 0
+    }
     tracerActiveTimer = 0 # frames remaining until tracer on opponent expires
-    swingCharge = data.SWING_MAX_CHARGES * data.SWING_CHARGE_TIME
-    swingCooldown = 0 # swing can't be used instantly after a tracer
-    uppercutCharge = data.UPPERCUT_MAX_CHARGES * data.UPPERCUT_CHARGE_TIME
-    uppercutCooldown = 0 # frames remaining until uppercut is off cooldown
-    gohCharge = data.GOH_MAX_CHARGES * data.GOH_CHARGE_TIME
-    symbioteCharge = data.SYMBIOTE_MAX_CHARGES * data.SYMBIOTE_CHARGE_TIME
 
     # airborne
     isAirborn = False
     opponentAirborn = False # grounded opponent forces landing after GOHT
-    jumpCooldown = 0 # double jump is on a delay from initial jump
 
     # overheads
     hasDoubleJump = False
     hasJumpOverhead = False
     hasSwingOverhead = False
-    whiffTimer = 0 # frames until whiff ends, awarding jump overhead
+    overheadOnSwingEnd = False # swing cooldown caused by tracer/uppercut doesn't award swing overhead
 
     # punch sequence
     punchSequence = 0 # 0 & 1 correspond to punches, 2 corresponds to kick
@@ -35,6 +39,9 @@ class State:
     # tracking metrics
     damageDealt = 0
     timeTaken = 0
+
+    # calculating cancel/stack times
+    currentAnimation = "none"
 
     # sequence output
     sequence = ""
@@ -65,7 +72,7 @@ class State:
                 self.sequence += "("
 
             if "t" in conditions:
-                self.tracerActiveTimer = data.TRACER_ACTIVE_TIME
+                self.tracerActiveTimer = TRACER_ACTIVE_TIME
                 self.sequence += "tagged, "
 
             if "a" in conditions or "j" in conditions or "s" in conditions:
@@ -83,8 +90,21 @@ class State:
 
             if "p" in conditions or "k" in conditions:
                 self.punchSequence = 2 if "k" in conditions else 1
-                self.punchSequenceTimer = data.PUNCH_SEQUENCE_MAX_DELAY
-                self.sequence += "has " + ("kick" if "k" in conditions else "punch b") + " ready, "
+                self.punchSequenceTimer = PUNCH_SEQUENCE_MAX_DELAY
+                self.sequence += f"has {"kick" if "k" in conditions else "punch b"} ready, "
 
             if len(conditions) > 1:
                 self.sequence = self.sequence[:-2] + ") " # removes trailing comma & space
+
+    def incrementCooldowns(self, frames):
+        
+        # awards swing overhead on swing end
+        if self.overheadOnSwingEnd and self.cooldowns["s"] <= frames:
+            self.overheadOnSwingEnd = False
+            self.hasSwingOverhead = self.isAirborn
+
+        for key in self.charges.keys:
+            self.charges[key] = min(self.charges[key] + frames, ACTIONS[key].maxChargeCost)
+        
+        for key in self.cooldowns.keys:
+            self.cooldowns[key] = max(self.charges[key] - frames, 0)
