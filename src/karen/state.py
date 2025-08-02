@@ -2,18 +2,17 @@ from karen.actions import *
 
 class Charge:
     maxCharges = 0
-    currentCharges = 0
+    currentCharge = 0
     rechargeTime = 0
     cooldownTime = 0
     currentCooldownLevel = 0
     activeTimer = 0 # cooldown refresh= doesn't start until icon is no longer yellow
 
-    def __init__(self, maxCharges, rechargeTime, cooldownTime = 0, activeTime = 0):
+    def __init__(self, maxCharges, rechargeTime, cooldownTime = 0):
         self.maxCharges = maxCharges
-        self.currentCharges = maxCharges
+        self.currentCharge = maxCharges * rechargeTime
         self.rechargeTime = rechargeTime
         self.cooldownTime = cooldownTime
-        self.activeTime = activeTime
 
 
 class State:
@@ -45,6 +44,8 @@ class State:
     }
     tracerActiveTimer = 0 # frames remaining until tracer on opponent expires
     burnTracerActiveTimer = 0
+    burnActiveTimer = 0 # timer for while burn tracer deals damage after procced
+    gohtWaitTime = 0 # countdown from when tracer fired at unmarked target to when goht can be used
 
     # airborne
     isAirborn = False
@@ -53,6 +54,7 @@ class State:
     hasDoubleJump = True
     hasJumpOverhead = False
     hasSwingOverhead = False
+    removeSwingOnEnd = False
 
     # punch sequence
     punchSequence = 0 # 0 & 1 correspond to punches, 2 corresponds to kick
@@ -120,26 +122,47 @@ class State:
 
             if len(conditions) > 0:
                 self.sequence = self.sequence[:-2] + ") " # removes trailing comma & space
+        
+        # infer initial state being airborne/having overhead
+        else:
+            pass # TO DO
 
-    def incrementTime(self, frames):
+    def incrementTime(self, frames, warnings):
 
-        if frames == 0:
+        if frames <= 0:
             return
         
         self.timeTaken += frames
 
-        # awards overhead on swing end
-        if self.cooldowns["s"] > 0 and self.cooldowns["s"] <= frames:
-            self.overheadOnSwingEnd = False
-            self.hasSwingOverhead |= self.isAirborn and self.hasDoubleJump
-            self.hasJumpOverhead |= self.isAirborn and not self.hasDoubleJump
+        if self.charges["s"].activeTimer > 0 and self.charges["s"].activeTimer <= frames:
+            self.endSwing()
 
-        for chargeType in self.charges.keys:
-            self.charges[chargeType] = min(self.charges[chargeType] + frames, ACTIONS[chargeType].maxChargeCost)
+        for chargeType in self.charges:
+            self.charges[chargeType].currentCharge = min(self.charges[chargeType] + frames, self.charges[chargeType].maxCharges * self.charges[chargeType].rechargeTime)
+            self.charges[chargeType].cooldownTime = max(self.charges[chargeType] - frames, 0)
+
+            if self.charges[chargeType].activeTimer > 0 and self.charges[chargeType].activeTimer <= frames:
+                excessTime = frames - self.charges[chargeType].activeTimer
+                self.endAction(self, chargeType)
+                self.charges[chargeType].currentCharge -= excessTime
+
+        if self.tracerActiveTimer > 0 and self.tracerActiveTimer <= frames:
+           warnings += ["tracer expired without proc after " + self.sequence]
+        if self.burnTracerActiveTimer > 0 and self.burnTracerActiveTimer <= frames:
+           warnings += ["burn tracer expired without proc after " + self.sequence]    
 
         self.tracerActiveTimer = max(self.tracerActiveTimer - frames, 0)
         self.burnTracerActiveTimer = max(self.burnTracerActiveTimer - frames, 0)
+        self.gohtWaitTime = max(self.gohtWaitTime - frames, 0)
 
         self.punchSequenceTimer = max(self.punchSequenceTimer, 0)
         if self.punchSequenceTimer == 0:
             self.punchSequence = 0
+
+    def endAction(self, action): # ends current action and takes away the associated cooldown charge
+        self.charges[action].activeTimer = 0
+        if action != "s" or self.removeSwingOnEnd:
+            self.charges[action].currentCharge -= self.charges[action].rechargeTime
+        if action == "s":
+            self.hasSwingOverhead |= self.isAirborn and self.hasDoubleJump
+            self.hasJumpOverhead |= self.isAirborn and not self.hasDoubleJump

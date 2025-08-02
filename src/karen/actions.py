@@ -1,6 +1,7 @@
 PUNCH_SEQUENCE_MAX_DELAY = 90 # punch/kick must start <90 frames after last punch to advance the sequence
 TRACER_ACTIVE_TIME = 4 * 60
 TRACER_PROC_DAMAGE = 45
+TRACER_MARK_TIME = 12 # time between tracer starting against an untagged target and goht being usable
 
 BURN_TRACER_ACTIVE_TIME = 3 * 60
 BURN_TRACER_BURN_DAMAGE = 60
@@ -34,13 +35,12 @@ ACTION_NAMES = {
     "F" : "o+G+u", "saporenffamestack" : "o+G+u", "sapffamestack" : "o+G+u", "sapffame" : "o+G+u", "overheadsaporenffamestack" : "o+G+u", "ohsapffamestack" : "o+G+u", "ohsapffame" : "o+G+u",
     "punchsaporenffamestack" : "p+G+u", "punchsapffamestack" : "p+G+u", "punchsapffame" : "p+G+u",
     "kicksaporenffamestack" : "k+G+u", "kicksapffamestack" : "k+G+u", "kicksapffame" : "k+G+u",
-    "J" : "u+s+G", "spacejam" : "u+s+G", "sj" : "u+s+G",
+    "J" : "u+w+G", "spacejam" : "u+w+G", "sj" : "u+w+G", "u+s+G" : "u+w+G",
     "r" : "p+t", "reversetrigger" : "p+t", "rt" : "p+t", "backflash" : "p+t", "punchreversetrigger" : "p+t", "punchbackflash" : "p+t", "punchrt" : "p+t",
     "kickreversetrigger" : "k+t", "kickbackflash" : "k+t", "kickrt" : "k+t", "jashflash" : "k+t",
     "overheadreversetrigger" : "o+t", "overheadbackflash" : "o+t", "overheadrt" : "o+t", "ohreversetrigger" : "o+t", "ohbackflash" : "o+t", "ohrt" : "o+t",
     "unique3hitpunchstack" : "p+o", "uniquethreehitpunchstack" : "p+o","unique3hitpunch" : "p+o", "uniquethreehitpunch" : "p+o", "u3hpunchstack" : "p+o", "u3hpunch" : "p+o",
     "unique3hitkickstack" : "k+o", "uniquethreehitkickstack" : "k+o","unique3hitkick" : "k+o", "uniquethreehitkick" : "k+o", "u3hkickstack" : "k+o", "u3hkick" : "k+o",
-    "swingpreservegoht" : "s+G", "swingpreserve" : "s+G", "overheadpreserve" : "s+G", "ohpreserve" : "s+G", "overheadpreservegoht" : "s+G", "ohpreservegoht" : "s+G",
 
     "shortplink" : "so",
     "longplink" : "wto", "plink" : "wto",
@@ -55,6 +55,7 @@ class Action:
 
     damage = 0
     procsTracer = False
+    procTime = 0
 
     damageTime = 0 # number of frames between activation and damage registering
     cancelTimes = {} # dict maps action to how many frames into this actions' animation the given action can be used
@@ -64,16 +65,18 @@ class Action:
     endActivations = {} # some abilities cause others to start recharging immediately
     awaitCharges = {} # which cooldown charges have to be ready to use during the action, and how long into the action they're used (useful for stacks)
 
-    def __init__(self, name, damage = 0, procsTracer=False, damageTime=0, cancelTimes={}, moveStacks={}, chargeActivations={}, endActivations={}):
+    def __init__(self, name, damage = 0, procsTracer=False, procTime = 0, damageTime=0, cancelTimes={}, moveStacks={}, chargeActivations={}, endActivations={}, awaitCharges={}):
         self.name = name
         self.damage = damage
         self.procsTracer = procsTracer
+        self.procTime = damageTime if procTime == 0 else procTime
         self.damageTime = damageTime
         self.cancelTimes = cancelTimes
         self.moveStacks = moveStacks
         self.chargeActivations = chargeActivations
         self.cancelTimes[""] = damageTime # time to transition to the end of the combo is damageTime
         self.endActivations = endActivations
+        self.awaitCharges = awaitCharges
 
 
 ACTIONS = {
@@ -157,7 +160,8 @@ ACTIONS = {
         },
 
         chargeActivations = { "t" : 0 },
-        endActivations = ["s"]
+        endActivations = ["s"],
+        awaitCharges = { "t" : 0 }
     ),
 
     "s" : Action (
@@ -177,7 +181,8 @@ ACTIONS = {
         },
 
         chargeActivations = { "s" : 10 },
-        endActivations = ["g", "u", "b"]
+        endActivations = ["g", "u", "b"],
+        awaitCharges = { "s" : 0 }
     ),
 
     "w" : Action (
@@ -196,8 +201,9 @@ ACTIONS = {
             "b" : 1
         },
 
-        chargeActivations = { "s" : 53 }, # TO DO: ensure whiff refunds charge without allowing it on 0
-        endActivations = ["g", "u"]
+        chargeActivations = { "s" : 53 },
+        endActivations = ["g", "u", "b"],
+        awaitCharges = { "s" : 0 }
     ),
 
     "g" : Action (
@@ -218,10 +224,11 @@ ACTIONS = {
             "b" : 14
         },
 
-        chargeActivations = { "g" : 102 }
+        chargeActivations = { "g" : 102 },
+        awaitCharges = { "g" : 0 }
     ),
 
-    "G" : Action ( # TO DO: ensure goht can't pull until 12 frames after tracer animation starts
+    "G" : Action (
         name = "Get Over Here Targetting",
         damage = 55,
 
@@ -239,7 +246,8 @@ ACTIONS = {
             "b" : 28
         },
 
-        chargeActivations = { "g" : 61 }
+        chargeActivations = { "g" : 61 },
+        awaitCharges = { "g" : 0 }
     ),
 
     "u" : Action (
@@ -261,7 +269,8 @@ ACTIONS = {
             "b" : 19
         },
 
-        chargeActivations = { "u" : 70 }
+        chargeActivations = { "u" : 70 },
+        awaitCharges = { "u" : 0 }
     ),
 
     "b" : Action (
@@ -282,7 +291,8 @@ ACTIONS = {
             "b" : 70
         },
 
-        chargeActivations = { "b" : 70 }
+        chargeActivations = { "b" : 70 },
+        awaitCharges = { "b" : 0 }
     )
 }
 
@@ -302,16 +312,20 @@ def loadMoveStacks():
         name = "FFAmestack",
         damage = ACTIONS["G"].damage + ACTIONS["u"].damage,
         procsTracer = True,
+        procTime = ACTIONS["u"].procTime + 1,
         damageTime = ACTIONS["G"].damageTime,
         cancelTimes = ffamestackCancelTimes,
         chargeActivations = {
             "g" : ACTIONS["G"].chargeActivations["g"],
             "u" : ACTIONS["u"].chargeActivations["u"] + 1
+        },
+        awaitCharges = { 
+            "g" : 0,
+            "u" : 1 
         }
     )
 
     # saporen (p+G, k+G, o+G)
-    # TO DO: ensure tracer is still active when goht starts (also for saporen ffamestack & spacejam)
     for action in ACTIONS:
         ACTIONS[action].cancelTimes["p+G"] = ACTIONS[action].cancelTimes["p"]
         ACTIONS[action].cancelTimes["k+G"] = ACTIONS[action].cancelTimes["k"]
@@ -329,10 +343,14 @@ def loadMoveStacks():
         name = "Punch Saporen",
         damage = ACTIONS["p"].damage + ACTIONS["G"].damage,
         procsTracer = True,
+        procTime = ACTIONS["p"].procTime,
         damageTime = ACTIONS["p"].cancelTimes["G"] + ACTIONS["G"].damageTime - 1,
         cancelTimes = punchSaporenCancelTimes,
         chargeActivations = {
             "g" : ACTIONS["p"].cancelTimes["G"] + ACTIONS["G"].chargeActivations["g"] - 1
+        },
+        awaitCharges = { 
+            "g" :  ACTIONS["p"].cancelTimes["G"] - 1
         }
     )
 
@@ -340,10 +358,14 @@ def loadMoveStacks():
         name = "Kick Saporen",
         damage = ACTIONS["k"].damage + ACTIONS["G"].damage,
         procsTracer = True,
+        procTime = ACTIONS["k"].procTime,
         damageTime = ACTIONS["k"].cancelTimes["G"] + ACTIONS["G"].damageTime - 1,
         cancelTimes = kickSaporenCancelTimes,
         chargeActivations = {
             "g" : ACTIONS["k"].cancelTimes["G"] + ACTIONS["G"].chargeActivations["g"] - 1
+        },
+        awaitCharges = { 
+            "g" :  ACTIONS["k"].cancelTimes["G"] - 1
         }
     )
 
@@ -351,10 +373,14 @@ def loadMoveStacks():
         name = "Saporen",
         damage = ACTIONS["o"].damage + ACTIONS["G"].damage,
         procsTracer = True,
+        procTime = ACTIONS["o"].procTime,
         damageTime = ACTIONS["o"].cancelTimes["G"] + ACTIONS["G"].damageTime - 1,
         cancelTimes = overheadSaporenCancelTimes,
         chargeActivations = {
             "g" : ACTIONS["o"].cancelTimes["G"] + ACTIONS["G"].chargeActivations["g"] - 1
+        },
+        awaitCharges = { 
+            "o" :  ACTIONS["p"].cancelTimes["G"] - 1
         }
     )
 
@@ -376,11 +402,16 @@ def loadMoveStacks():
         name = "Punch Saporen FFAmestack",
         damage = ACTIONS["p"].damage + ACTIONS["G"].damage + ACTIONS["u"].damage,
         procsTracer = True,
+        procTime = ACTIONS["p"].procTime,
         damageTime = ACTIONS["p"].cancelTimes["G"] + ACTIONS["G+u"].damageTime -1,
         cancelTimes = punchSaporenFfamestackCancelTimes,
         chargeActivations = {
             "g" : ACTIONS["p"].cancelTimes["G"] + ACTIONS["G"].chargeActivations["g"] - 1,
             "u" : ACTIONS["p"].cancelTimes["G"] + ACTIONS["u"].chargeActivations["u"]
+        },
+        awaitCharges = { 
+            "g" :  ACTIONS["p"].cancelTimes["G"] - 1,
+            "u" : ACTIONS["p"].cancelTimes["G"]
         }
     )
 
@@ -388,11 +419,16 @@ def loadMoveStacks():
         name = "Kick Saporen FFAmestack",
         damage = ACTIONS["k"].damage + ACTIONS["G"].damage + ACTIONS["u"].damage,
         procsTracer = True,
+        procTime = ACTIONS["k"].procTime,
         damageTime = ACTIONS["k"].cancelTimes["G"] + ACTIONS["G+u"].damageTime - 1,
         cancelTimes = kickSaporenFfamestackCancelTimes,
         chargeActivations = {
             "g" : ACTIONS["k"].cancelTimes["G"] + ACTIONS["G"].chargeActivations["g"] - 1,
             "u" : ACTIONS["k"].cancelTimes["G"] + ACTIONS["u"].chargeActivations["u"]
+        },
+        awaitCharges = { 
+            "g" :  ACTIONS["k"].cancelTimes["G"] - 1,
+            "u" : ACTIONS["k"].cancelTimes["G"]
         }
     )
 
@@ -400,36 +436,45 @@ def loadMoveStacks():
         name = "Saporen FFAmestack",
         damage = ACTIONS["o"].damage + ACTIONS["G"].damage + ACTIONS["u"].damage,
         procsTracer = True,
+        procTime = ACTIONS["o"].procTime,
         damageTime = ACTIONS["o"].cancelTimes["G"] + ACTIONS["G+u"].damageTime - 1,
         cancelTimes = overheadSaporenFfamestackCancelTimes,
         chargeActivations = {
             "g" : ACTIONS["o"].cancelTimes["G"] + ACTIONS["G"].chargeActivations["g"] - 1,
             "u" : ACTIONS["o"].cancelTimes["G"] + ACTIONS["u"].chargeActivations["u"]
+        },
+        awaitCharges = { 
+            "g" :  ACTIONS["o"].cancelTimes["G"] - 1,
+            "u" : ACTIONS["o"].cancelTimes["G"]
         }
     )
 
-    # space jam (u+s+G)
+    # space jam (u+w+G)
     for action in ACTIONS:
-        ACTIONS[action].cancelTimes["u+s+G"] = ACTIONS[action].cancelTimes["u"]
+        ACTIONS[action].cancelTimes["u+w+G"] = ACTIONS[action].cancelTimes["u"]
 
     spacejamCancelTimes = ACTIONS["G"].cancelTimes
     for key in spacejamCancelTimes:
         spacejamCancelTimes[key] += ACTIONS["u"].cancelTimes["s"] + ACTIONS["s"].cancelTimes["G"]
 
-    ACTIONS["u+s+G"] = Action(
+    ACTIONS["u+w+G"] = Action(
         name = "Space Jam",
         damage = ACTIONS["G"].damage + ACTIONS["u"].damage,
         procsTracer = True,
-        damageTime = ACTIONS["G"].damageTime,
+        procTime = ACTIONS["u"].procTime,
+        damageTime =  ACTIONS["u"].cancelTimes["s"] + ACTIONS["s"].cancelTimes["G"] + ACTIONS["G"].damageTime,
         cancelTimes = spacejamCancelTimes,
         chargeActivations = {
             "u" : ACTIONS["u"].cancelTimes["u"],
             "g" : ACTIONS["u"].cancelTimes["s"] + ACTIONS["s"].cancelTimes["G"] + ACTIONS["G"].chargeActivations["g"]
+        },
+        awaitCharges = { 
+            "u" :  0,
+            "g" : ACTIONS["u"].cancelTimes["s"]
         }
     )
 
-    # reverse trigger (p+t, k+t, o+t)
-    # TO DO: ensure tag is applied before processing reverse trigger     
+    # reverse trigger (p+t, k+t, o+t) 
     for action in ACTIONS:
         ACTIONS[action].cancelTimes["p+t"] = ACTIONS[action].cancelTimes["p"]
         ACTIONS[action].cancelTimes["k+t"] = ACTIONS[action].cancelTimes["k"]
@@ -447,10 +492,14 @@ def loadMoveStacks():
         name = "Punch Reverse Trigger",
         damage = ACTIONS["p"].damage + ACTIONS["t"].damage,
         procsTracer = True,
+        procTime = 0,
         damageTime = ACTIONS["p"].damageTime,
         cancelTimes = punchReverseTriggerCancelTimes,
         chargeActivations = {
             "t" : ACTIONS["p"].cancelTimes["t"] - 1 + ACTIONS["t"].chargeActivations["t"]
+        },
+        awaitCharges = { 
+            "t" :  ACTIONS["p"].cancelTimes["t"] - 1
         }
     )
 
@@ -458,10 +507,14 @@ def loadMoveStacks():
         name = "Kick Reverse Trigger",
         damage = ACTIONS["k"].damage + ACTIONS["t"].damage,
         procsTracer = True,
+        procTime = 0,
         damageTime = ACTIONS["k"].damageTime,
         cancelTimes = punchReverseTriggerCancelTimes,
         chargeActivations = {
             "t" : ACTIONS["k"].cancelTimes["t"] - 1 + ACTIONS["t"].chargeActivations["t"]
+        },
+        awaitCharges = { 
+            "t" :  ACTIONS["k"].cancelTimes["t"] - 1
         }
     )
 
@@ -469,57 +522,36 @@ def loadMoveStacks():
         name = "Overhead Reverse Trigger",
         damage = ACTIONS["o"].damage + ACTIONS["t"].damage,
         procsTracer = True,
+        procTime = 0,
         damageTime = ACTIONS["o"].damageTime,
         cancelTimes = punchReverseTriggerCancelTimes,
         chargeActivations = {
             "t" : ACTIONS["o"].cancelTimes["t"] - 1 + ACTIONS["t"].chargeActivations["t"]
+        },
+        awaitCharges = { 
+            "t" :  ACTIONS["o"].cancelTimes["t"] - 1
         }
     )
 
     # unique 3 hit (p+o, k+o)
-    # TO DO: ensure timing aligns with ending of whiff
     for action in ACTIONS:
         ACTIONS[action].cancelTimes["p+o"] = ACTIONS[action].cancelTimes["p"]
         ACTIONS[action].cancelTimes["k+o"] = ACTIONS[action].cancelTimes["k"]
-
-    punchUniqueThreeHitCancelTimes = ACTIONS["o"].cancelTimes
-    kickUniqueThreeHitCancelTimes = ACTIONS["o"].cancelTimes
-    for key in punchUniqueThreeHitCancelTimes:
-        punchUniqueThreeHitCancelTimes[key] += 2
-        kickUniqueThreeHitCancelTimes[key] += 2
 
     ACTIONS["p+o"] = Action(
         name = "U3H Punch Stack",
         damage = ACTIONS["p"].damage + ACTIONS["o"].damage,
         procsTracer = True,
-        damageTime = ACTIONS["o"].damageTime + 2,
-        cancelTimes = punchUniqueThreeHitCancelTimes
+        procTime = ACTIONS["p"].procTime,
+        damageTime = ACTIONS["o"].damageTime,
+        cancelTimes = ACTIONS["o"].cancelTimes
     )
 
     ACTIONS["k+o"] = Action(
         name = "U3H Kick Stack",
         damage = ACTIONS["k"].damage + ACTIONS["o"].damage,
         procsTracer = True,
-        damageTime = ACTIONS["o"].damageTime + 2,
-        cancelTimes = kickUniqueThreeHitCancelTimes
-    )
-
-    # goht overhead preserve (s+G)
-    for action in ACTIONS:
-        ACTIONS[action].cancelTimes["s+G"] = ACTIONS[action].cancelTimes["s"]
-
-    overheadPreserveCancelTimes = ACTIONS["G"].cancelTimes
-    for key in overheadPreserveCancelTimes:
-        overheadPreserveCancelTimes[key] += ACTIONS["s"].cancelTimes["G"]
-
-    ACTIONS["s+G"] = Action(
-        name = "Swing Preserve GOHT",
-        damage = ACTIONS["G"].damage + ACTIONS["u"].damage,
-        procsTracer = True,
-        damageTime = ACTIONS["s"].cancelTimes["G"] + ACTIONS["G"].damageTime,
-        cancelTimes = overheadPreserveCancelTimes,
-        chargeActivations = {
-            "s" : ACTIONS["s"].chargeActivations["s"],
-            "g" : ACTIONS["G"].chargeActivations["g"] + ACTIONS["s"].cancelTimes["G"]
-        }
+        procTime = ACTIONS["k"].procTime,
+        damageTime = ACTIONS["o"].damageTime,
+        cancelTimes = ACTIONS["o"].cancelTimes
     )

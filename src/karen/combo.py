@@ -53,21 +53,104 @@ def getComboSequence(inputString="", warnings=[]):
 
     return foldSequence
 
-def addAction(state=State(), action="", warnings=[]):
+def addAction(state=State(), action="", nextAction="", warnings=[]):
 
     if not ("G+u" in ACTIONS):
         loadMoveStacks()
 
-    # awaits cooldowns
-    if action in state.charges:
-        state.incrementCooldowns(state.charges[action].activeTimer)
-        state.incrementCooldowns(state.charges[action].cooldownTime)
-        state.incrementCooldowns(max(0, 1 - state.charges[action].currentCharges))
+    # awaits required cooldowns
+    for a in ACTIONS[action].awaitCharges:
+        state.incrementTime(state.charges[a].activeTimer, warnings)
+        state.incrementTime(state.charges[a].cooldownTime - ACTIONS[action].awaitCharges[a], warnings)
+        state.incrementTime(max(0, state.charges[a].rechargeTime - state.charges[a].currentCharge) - ACTIONS[action].awaitCharges[a], warnings)
 
-    # movestack cooldown awaiting calculations
-    if "+" in action:
-        pass
+    # awaits tracer register for GOHT
+    if "g" in ACTIONS[action].awaitCharges:
+        state.incrementTime(state.gohtWaitTime - ACTIONS[action].awaitCharges["g"], warnings)
+
+    # awaits kick expiration for punch
+    if "p" in action and state.punchSequence == 2:
+        state.incrementTime(state.punchSequenceTimer, warnings)
+
+    # awaits whiff end for overhead
+    if "o" in action and (not state.hasJumpOverhead) and (not state.hasSwingOverhead) and state.charges["s"].activeTimer > 0:
+        state.incrementTime(state.charges["s"].activeTimer, warnings)
+
+    if "k" in action and state.punchSequence < 2:
+        warnings += ["uses impossible kick after " + state.sequence]
     
+    if "G" in action and state.tracerActiveTimer < ACTIONS[action].awaitCharges["g"]:
+        warnings += ["uses GOHT on nonxistent or expired tracer after " + state.sequence]
+
+    
+    # processes overhead logic
+    if "o" in action and (not state.hasSwingOverhead) and (not state.hasJumpOverhead):
+        warnings += ["uses impossible overhead after " + state.sequence]
+
+    if action == "l":
+        state.hasDoubleJump = True
+        state.hasSwingOverhead = False
+        state.hasJumpOverhead = False
+   
+    if action == "j" and state.isAirborn:
+        if not state.hasDoubleJump: 
+            warnings += ["uses impossible double jump after " + state.sequence]
+        state.hasDoubleJump = False
+        state.hasJumpOverhead = True
+
+    elif action == "j" or "u" in action:
+        state.isAirborn = True
+
+    if action in ["o", "G", "G+u", "p+G", "k+G", "p+G+u", "k+G+u", "p+G+u", "k+G+u", "o+t", "p+o", "k+o"]:
+        if state.hasSwingOverhead:
+            state.hasSwingOverhead = False
+        else:
+            state.hasJumpOverhead = False
+    if action in ["o+G", "o+G+u"]:
+        state.hasSwingOverhead = False
+        state.hasJumpOverhead = False
+    if action == "u+w+G":
+        state.hasSwingOverhead = True
+        state.hasJumpOverhead = False
+
+    if action in ["s", "b"] or "u" in action:
+        state.hasDoubleJump = True
+        state.hasJumpOverhead = False
+    
+    if action == "b":
+        state.hasSwingOverhead = True
+
+    # ends current cancellable actions
+    for cancelCharge in ACTIONS[action].endActivations:
+        if state.charges[cancelCharge].activeTimer > 0:
+            state.endAction(cancelCharge)
 
 
-    state.sequence += "> " + {ACTIONS[action].name}
+    # activating actions/consuming cooldowns
+    # TO DO
+    if action == "s":
+        state.removeSwingOnEnd = True
+    if "w" in action:
+        state.removeSwingOnEnd = False
+        
+
+    # adding tracer tags
+    if action in ["t", "b"] and state.tracerActiveTimer == 0 and state.burnTracerActiveTimer == 0:
+        state.gohtWaitTime = TRACER_MARK_TIME
+    if action == "t":
+        state.tracerActiveTimer = TRACER_ACTIVE_TIME + TRACER_MARK_TIME
+    if action == "b":
+        state.burnTracerActiveTimer = BURN_TRACER_ACTIVE_TIME + TRACER_MARK_TIME       
+
+    # proccing tracers
+    if ACTIONS[action].procsTracer and state.tracerActiveTimer >= ACTIONS[action].procTime or action in ["p+t", "k+t", "o+t"]:
+        state.damageDealt += TRACER_PROC_DAMAGE
+        state.tracerActiveTimer = 0
+    if ACTIONS[action].procsTracer and state.burnTracerActiveTimer >= ACTIONS[action].procTime:
+        state.burnActiveTimer = BURN_TRACER_BURN_TIME
+        state.burnTracerActiveTimer = 0
+
+    state.damageDealt += ACTIONS[action].damage
+    state.incrementTime(ACTIONS[action].damageTime if nextAction == "" else ACTIONS[action].cancelTimes[nextAction], warnings)
+
+    state.sequence += ("" if state.sequence == "" else " > ") + {ACTIONS[action].name}
