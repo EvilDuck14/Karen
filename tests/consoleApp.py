@@ -11,7 +11,7 @@ while True:
         print("!exit : closes the terminal")
 
     elif len(inputString) > 4 and inputString[:5] == "eval ":
-        evaluate(inputString[5:])
+        print(evaluate(inputString[5:]))
 
     elif len(inputString) > 4 and inputString[:5] == "exit ":
         break

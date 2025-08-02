@@ -1,32 +1,54 @@
-PUNCH_SEQUENCE_MAX_DELAY = 0 * 60 # to be determined
+PUNCH_SEQUENCE_MAX_DELAY = 90 # punch/kick must start <90 frames after last punch to advance the sequence
 TRACER_ACTIVE_TIME = 4 * 60
 TRACER_PROC_DAMAGE = 45
 
+BURN_TRACER_ACTIVE_TIME = 3 * 60
+BURN_TRACER_BURN_DAMAGE = 60
+BURN_TRACER_BURN_TIME = 230
+
+
 INITIAL_CONDITION_NAMES = {
     "t" : "t", "tagged" : "t", "tag" : "t",
-    "a" : "a", "isairborne" : "a", "airborne" : "a", "air" : "a",
-    "s" : "s", "hasswingoverhead" : "s",
-    "j" : "j", "hasjumpoverhead" : "j",
-    "A" : "A", "opponentairborne" : "A",
-    "p" : "p", "haspunchb" : "p", "openpunchb" : "p",
-    "k" : "k", "haskick" : "k", "openkick" : "k"
+    "b" : "b", "burn" : "b", "burntagged" : "b", "burntag" : "b", "burnt" : "b"
 }
 
 ACTION_NAMES = {
-    "j" : "j", "jump" : "j", "dj" : "j",
+    "j" : "j", "jump" : "j", "dj" : "j", "d" : "j",
     "l" : "l", "land" : "l",
     "p" : "p", "punch" : "p", "puncha" : "p",  "punchb" : "p", "meleepunch" : "p",  "meleepuncha" : "p",  "meleepunchb" : "p",
     "k" : "k", "kick" : "k",  "meleekick" : "k",
-    "o" : "o", "overheadslam" : "o",  "overhead" : "o",  "oh" : "o",  "meleeoverhead" : "o",  "slam" : "o",
+    "o" : "o", "overheadslam" : "o",  "overhead" : "o", "over" : "o", "oh" : "o",  "meleeoverhead" : "o",  "slam" : "o",
     "t" : "t", "tracer" : "t",  "webtracer" : "t",  "cluster" : "t",  "webcluster" : "t",
-    "s" : "s", "swing" : "s", "webswing" : "s",  "highswing" : "s",  "lowswing" : "s",
+    "s" : "s", "swing" : "s", "webswing" : "s",  "highswing" : "s",  "lowswing" : "s", "zip" : "s", "webzip" : "s",
     "w" : "w", "whiff" : "w", "webwhiff" : "w", "swingwhiff" : "w",
     "g" : "g", "getoverhere" : "g", "goh" : "g",
     "G" : "G", "getoverheretargetting" : "G", "goht" : "G",
     "u" : "u", "uppercut" : "u", "upper" : "u", "amazingcombo" : "u",
-    "S" : "S", "symbiote" : "S", "symbiot" : "S",
-    "+" : "+"
+    "b" : "b", "burn" : "b", "burntracer" : "b", "burncluster" : "b", "fire" : "b", "firetracer" : "b", "firecluster" : "b", "flame" : "b", "flametracer" : "b", "flamecluster" : "b",
+    "+" : "+", "/" : "+",
+
+    "f" : "G+u", "ffame" : "G+u", "ffamestack" : "G+u",
+    "n" : "o+G", "saporen" : "o+G", "sap" : "o+G", "overheadsaporen" : "o+G", "ohsap" : "o+G",
+    "punchsaporen" : "p+G", "punchsap" : "p+G",
+    "kicksaporen" : "k+G", "punchsap" : "k+G",
+    "F" : "o+G+u", "saporenffamestack" : "o+G+u", "sapffamestack" : "o+G+u", "sapffame" : "o+G+u", "overheadsaporenffamestack" : "o+G+u", "ohsapffamestack" : "o+G+u", "ohsapffame" : "o+G+u",
+    "punchsaporenffamestack" : "p+G+u", "punchsapffamestack" : "p+G+u", "punchsapffame" : "p+G+u",
+    "kicksaporenffamestack" : "k+G+u", "kicksapffamestack" : "k+G+u", "kicksapffame" : "k+G+u",
+    "J" : "u+s+G", "spacejam" : "u+s+G", "sj" : "u+s+G",
+    "r" : "p+t", "reversetrigger" : "p+t", "rt" : "p+t", "backflash" : "p+t", "punchreversetrigger" : "p+t", "punchbackflash" : "p+t", "punchrt" : "p+t",
+    "kickreversetrigger" : "k+t", "kickbackflash" : "k+t", "kickrt" : "k+t", "jashflash" : "k+t",
+    "overheadreversetrigger" : "o+t", "overheadbackflash" : "o+t", "overheadrt" : "o+t", "ohreversetrigger" : "o+t", "ohbackflash" : "o+t", "ohrt" : "o+t",
+    "unique3hitpunchstack" : "p+o", "uniquethreehitpunchstack" : "p+o","unique3hitpunch" : "p+o", "uniquethreehitpunch" : "p+o", "u3hpunchstack" : "p+o", "u3hpunch" : "p+o",
+    "unique3hitkickstack" : "k+o", "uniquethreehitkickstack" : "k+o","unique3hitkick" : "k+o", "uniquethreehitkick" : "k+o", "u3hkickstack" : "k+o", "u3hkick" : "k+o",
+    "swingpreservegoht" : "s+G", "swingpreserve" : "s+G", "overheadpreserve" : "s+G", "ohpreserve" : "s+G", "overheadpreservegoht" : "s+G", "ohpreservegoht" : "s+G",
+
+    "shortplink" : "so",
+    "longplink" : "wto", "plink" : "wto",
+    "breadandbutter" : "tGu", "breadnbutter" : "tGu", "bnb" : "tGu",
+    "uniquethreehit" : "wpp+o", "unique3hit" : "wpp+o", "u3h" : "wpp+o",
+    "slytech" : "suo", "sly" : "suo"
 }
+
 
 class Action:
     name = ""
@@ -34,56 +56,45 @@ class Action:
     damage = 0
     procsTracer = False
 
-    cancelTime = 0 # number of frames until the damage is dealt / until the non-damaging move is cancellable
-    fullTime = 0 # number of frames until another action which doesn't cancel this one can begin
-    deltaTime = 0
+    damageTime = 0 # number of frames between activation and damage registering
+    cancelTimes = {} # dict maps action to how many frames into this actions' animation the given action can be used
+    moveStacks = {} # dict maps action which stacks over this move with the time taken to initiate the second move of the stack
+    
+    chargeActivations = {} # the cooldown charges used and how long before the recharge starts from the action start time (for activeTimer)
+    endActivations = {} # some abilities cause others to start recharging immediately
+    awaitCharges = {} # which cooldown charges have to be ready to use during the action, and how long into the action they're used (useful for stacks)
 
-    cancelledBy = []
-    moveStacks = {} # dict maps action which stacks over this move with the time taken to initiate the move stack
-
-    maxCharges = 0
-    chargeTime = 0
-    maxChargeCost = 0 #
-    inducesCooldowns = {} # some abilities induce cooldowns on themselves and/or other abilities
-
-    def __init__(self, name, damage = 0, procsTracer=False, cancelTime=0, fullTime=0, cancelledBy=[], moveStacks={}, maxCharges=0, chargeTime=0, inducesCooldowns={}):
+    def __init__(self, name, damage = 0, procsTracer=False, damageTime=0, cancelTimes={}, moveStacks={}, chargeActivations={}, endActivations={}):
         self.name = name
         self.damage = damage
         self.procsTracer = procsTracer
-        self.cancelTime = cancelTime
-        self.fullTime = fullTime
-        self.deltaTime = fullTime - cancelTime
-        self.cancelledBy = cancelledBy
+        self.damageTime = damageTime
+        self.cancelTimes = cancelTimes
         self.moveStacks = moveStacks
-        self.maxCharges = maxCharges
-        self.chargeTime = chargeTime
-        self.maxChargeCost = maxCharges * chargeTime
-        self.inducesCooldowns = inducesCooldowns
+        self.chargeActivations = chargeActivations
+        self.cancelTimes[""] = damageTime # time to transition to the end of the combo is damageTime
+        self.endActivations = endActivations
+
 
 ACTIONS = {
-
-    "j" : Action (
-        name = "Jump",
-        inducesCooldowns = {
-            "j" : 0 # to be determined
-        }
-    ),
-
-    "l" : Action (
-        name = "Land"
-    ),
 
     "p" : Action (
         name = "Punch",
         damage = 25, 
         procsTracer = True, 
-        cancelTime = 0, # to be determined
-        fullTime = 0, # to be determined
-        cancelledBy = ["o", "t", "s", "w", "g", "G", "u", "S"],
-        moveStacks = { 
-            "o" : 0, # unique 3-hit stack - to be determined
-            "t" : 0, # backflash - to be determined
-            "G" : 0 # saporen tech - to be determined
+        
+        damageTime = 14,
+        cancelTimes = {
+            "p" : 23,
+            "k" : 23,
+            "o" : 23,
+            "t" : 11,
+            "s" : 11,
+            "w" : 11,
+            "g" : 11,
+            "G" : 11,
+            "u" : 11,
+            "b" : 11
         }
     ),
 
@@ -91,137 +102,424 @@ ACTIONS = {
         name = "Kick",
         damage = 40, 
         procsTracer = True,
-        cancelTime = 0, # to be determined
-        fullTime = 0, # to be determined 
-        cancelledBy = ["o", "t", "s", "w", "g", "G", "u", "S"],
-        moveStacks = { 
-            "o" : 0, # unique 3-hit stack - to be determined
-            "t" : 0, # backflash - to be determined
-            "G" : 0, # saporen tech - to be determined
-            "u" : 0 # early cancel - to be determined
+        
+        damageTime = 24,
+        cancelTimes = {
+            "p" : 49,
+            "k" : 49,
+            "o" : 49,
+            "t" : 22,
+            "s" : 22,
+            "w" : 22,
+            "g" : 22,
+            "G" : 22,
+            "u" : 22,
+            "b" : 22
         }
     ),
 
     "o" : Action (
         name = "Overhead",
-        damage = 50, 
+        damage = 55, 
         procsTracer = True, 
-        cancelTime = 0, # to be determined
-        fullTime = 0, # to be determined
-        cancelledBy = ["t", "s", "w", "g", "G", "u", "S"],
-        moveStacks = {
-            "G" : 0, # saporen tech - to be determined
-            "u" : 0 # early cancel - to be determined
+        
+        damageTime = 38,
+        cancelTimes = {
+            "p" : 53,
+            "k" : 53,
+            "o" : 53,
+            "t" : 33,
+            "s" : 33,
+            "w" : 33,
+            "g" : 33,
+            "G" : 33,
+            "u" : 33,
+            "b" : 33
         }
     ),
 
     "t" : Action (
         name = "Tracer",
         damage = 30, 
-        cancelTime = 0, # to be determined
-        fullTime = 0, # to be determined
-        cancelledBy = ["s", "w", "g", "G", "u", "S"],
-        maxCharges = 5,
-        chargeTime = 2.5 * 60,
-        inducesCooldowns = {
-            "t" : 0, # do be determined
-            "s" : 0 # do be determined
-        }
+        
+        damageTime = 12,
+        cancelTimes = {
+            "p" : 30,
+            "k" : 30,
+            "o" : 30,
+            "t" : 30,
+            "s" : 6,
+            "w" : 6,
+            "g" : 6,
+            "G" : 6,
+            "u" : 6,
+            "b" : 6
+        },
+
+        chargeActivations = { "t" : 0 },
+        endActivations = ["s"]
     ),
 
     "s" : Action (
         name = "Swing",
-        cancelTime = 0, # to be determined
-        fullTime = 0, # to be determined
-        cancelledBy = ["t", "g", "G", "u", "S"],
-        moveStacks = {
-            "G" : 0 # goht overhead preserve - to be determined
+        
+        cancelTimes = {
+            "p" : 10,
+            "k" : 10,
+            "o" : 10,
+            "t" : 10,
+            "s" : 10,
+            "w" : 10,
+            "g" : 1,
+            "G" : 1,
+            "u" : 1,
+            "b" : 1
         },
-        maxCharges = 3,
-        chargeTime = 6 * 60,
-        inducesCooldowns = {
-            # do be determined
-        }
+
+        chargeActivations = { "s" : 10 },
+        endActivations = ["g", "u", "b"]
     ),
 
     "w" : Action (
         name = "Whiff",
-        cancelTime = 0, # to be determined
-        fullTime = 0, # to be determined
-        cancelledBy = ["t", "g", "G", "u", "S"],
-        inducesCooldowns = {
-            # do be determined
-        }
+        
+        cancelTimes = {
+            "p" : 27,
+            "k" : 27,
+            "o" : 27,
+            "t" : 10,
+            "s" : 53,
+            "w" : 53,
+            "g" : 1,
+            "G" : 1,
+            "u" : 1,
+            "b" : 1
+        },
+
+        chargeActivations = { "s" : 53 }, # TO DO: ensure whiff refunds charge without allowing it on 0
+        endActivations = ["g", "u"]
     ),
 
     "g" : Action (
         name = "Get Over Here",
         damage = 25,
-        cancelTime = 0, # to be determined
-        fullTime = 0, # to be determined
-        cancelledBy = ["s", "w", "S"],
-        maxCharges = 1,
-        chargeTime = 8 * 60,
-        inducesCooldowns = {
-            # do be determined
-        }
+        
+        damageTime = 17,
+        cancelTimes = {
+            "p" : 50,
+            "k" : 50,
+            "o" : 50,
+            "t" : 46,
+            "s" : 14,
+            "w" : 14,
+            "g" : 102,
+            "G" : 50,
+            "u" : 47,
+            "b" : 14
+        },
+
+        chargeActivations = { "g" : 102 }
     ),
 
-    "G" : Action (
+    "G" : Action ( # TO DO: ensure goht can't pull until 12 frames after tracer animation starts
         name = "Get Over Here Targetting",
-        damage = 50,
-        cancelTime = 0, # to be determined
-        fullTime = 0, # to be determined
-        cancelledBy = ["s", "w", "S"],
-        moveStacks = {
-            "G" : 0 # ffame stack - to be determined
+        damage = 55,
+
+        damageTime = 37,
+        cancelTimes = {
+            "p" : 61,
+            "k" : 61,
+            "o" : 61,
+            "t" : 61,
+            "s" : 28,
+            "w" : 28,
+            "g" : 61,
+            "G" : 61,
+            "u" : 32,
+            "b" : 28
         },
-        inducesCooldowns = {
-            # do be determined
-        }
+
+        chargeActivations = { "g" : 61 }
     ),
 
     "u" : Action (
         name = "Uppercut",
-        damage = 55, 
+        damage = 60, 
         procsTracer = True,
-        cancelTime = 0, # to be determined
-        fullTime = 0, # to be determined
-        cancelledBy = ["s", "w", "S"],    
-        maxCharges = 2,
-        chargeTime = 6 * 60,
-        inducesCooldowns = {
-            # do be determined
-            "u" : 2 * 60
-        }
+        
+        damageTime = 23,
+        cancelTimes = {
+            "p" : 48,
+            "k" : 48,
+            "o" : 48,
+            "t" : 56,
+            "s" : 19,
+            "w" : 19,
+            "g" : 48,
+            "G" : 48,
+            "u" : 70,
+            "b" : 19
+        },
+
+        chargeActivations = { "u" : 70 }
     ),
 
-    "S" : Action (
-        name = "Symbiote",
-        damage = 50,
-        cancelTime = 0, # to be determined
-        fullTime = 0, # to be determined
-        cancelledBy = ["s", "w"],
-        maxCharges = 1,
-        chargeTime = 40 * 60,
-        inducesCooldowns = {
-            # do be determined
-        }
+    "b" : Action (
+        name = "Burn Tracer",
+        damage = 30,
+        
+        damageTime = 17,
+        cancelTimes = {
+            "p" : 30,
+            "k" : 30,
+            "o" : 30,
+            "t" : 10,
+            "s" : 10,
+            "w" : 10,
+            "g" : 10,
+            "G" : 10,
+            "u" : 1,
+            "b" : 70
+        },
+
+        chargeActivations = { "b" : 70 }
     )
 }
 
-# for actions which share cooldowns
-ACTION_EQUIVALENCE = {
-    "j" : "j",
-    "l" : "",
-    "p" : "",
-    "k" : "",
-    "o" : "",
-    "t" : "t",
-    "s" : "s",
-    "w" : "s",
-    "g" : "g",
-    "G" : "g",
-    "u" : "u",
-    "S" : "S"
-}
+
+# generate movestack timings procedurally to simplify code/maintenence
+def loadMoveStacks(): 
+
+    # ffamestack (G+u)
+    for action in ACTIONS:
+        ACTIONS[action].cancelTimes["G+u"] = ACTIONS[action].cancelTimes["G"]
+
+    ffamestackCancelTimes = ACTIONS["G"].cancelTimes
+    for key in ffamestackCancelTimes:
+        ffamestackCancelTimes[key] = max(ACTIONS["u"].cancelTimes[key] + 1, ffamestackCancelTimes[key])
+
+    ACTIONS["G+u"] = Action(
+        name = "FFAmestack",
+        damage = ACTIONS["G"].damage + ACTIONS["u"].damage,
+        procsTracer = True,
+        damageTime = ACTIONS["G"].damageTime,
+        cancelTimes = ffamestackCancelTimes,
+        chargeActivations = {
+            "g" : ACTIONS["G"].chargeActivations["g"],
+            "u" : ACTIONS["u"].chargeActivations["u"] + 1
+        }
+    )
+
+    # saporen (p+G, k+G, o+G)
+    # TO DO: ensure tracer is still active when goht starts (also for saporen ffamestack & spacejam)
+    for action in ACTIONS:
+        ACTIONS[action].cancelTimes["p+G"] = ACTIONS[action].cancelTimes["p"]
+        ACTIONS[action].cancelTimes["k+G"] = ACTIONS[action].cancelTimes["k"]
+        ACTIONS[action].cancelTimes["o+G"] = ACTIONS[action].cancelTimes["o"]
+
+    punchSaporenCancelTimes = ACTIONS["G"].cancelTimes
+    kickSaporenCancelTimes = ACTIONS["G"].cancelTimes
+    overheadSaporenCancelTimes = ACTIONS["G"].cancelTimes
+    for key in punchSaporenCancelTimes:
+        punchSaporenCancelTimes[key] += ACTIONS["p"].cancelTimes["G"] - 1
+        kickSaporenCancelTimes[key] += ACTIONS["k"].cancelTimes["G"] - 1
+        overheadSaporenCancelTimes[key] += ACTIONS["o"].cancelTimes["G"]  -1
+
+    ACTIONS["p+G"] = Action(
+        name = "Punch Saporen",
+        damage = ACTIONS["p"].damage + ACTIONS["G"].damage,
+        procsTracer = True,
+        damageTime = ACTIONS["p"].cancelTimes["G"] + ACTIONS["G"].damageTime - 1,
+        cancelTimes = punchSaporenCancelTimes,
+        chargeActivations = {
+            "g" : ACTIONS["p"].cancelTimes["G"] + ACTIONS["G"].chargeActivations["g"] - 1
+        }
+    )
+
+    ACTIONS["k+G"] = Action(
+        name = "Kick Saporen",
+        damage = ACTIONS["k"].damage + ACTIONS["G"].damage,
+        procsTracer = True,
+        damageTime = ACTIONS["k"].cancelTimes["G"] + ACTIONS["G"].damageTime - 1,
+        cancelTimes = kickSaporenCancelTimes,
+        chargeActivations = {
+            "g" : ACTIONS["k"].cancelTimes["G"] + ACTIONS["G"].chargeActivations["g"] - 1
+        }
+    )
+
+    ACTIONS["o+G"] = Action(
+        name = "Saporen",
+        damage = ACTIONS["o"].damage + ACTIONS["G"].damage,
+        procsTracer = True,
+        damageTime = ACTIONS["o"].cancelTimes["G"] + ACTIONS["G"].damageTime - 1,
+        cancelTimes = overheadSaporenCancelTimes,
+        chargeActivations = {
+            "g" : ACTIONS["o"].cancelTimes["G"] + ACTIONS["G"].chargeActivations["g"] - 1
+        }
+    )
+
+    # saporen ffamestack (p+G+u, k+G+u, o+G+u)
+    for action in ACTIONS:
+        ACTIONS[action].cancelTimes["p+G+u"] = ACTIONS[action].cancelTimes["p"]
+        ACTIONS[action].cancelTimes["k+G+u"] = ACTIONS[action].cancelTimes["k"]
+        ACTIONS[action].cancelTimes["o+G+u"] = ACTIONS[action].cancelTimes["o"]
+
+    punchSaporenFfamestackCancelTimes = ACTIONS["G+u"].cancelTimes
+    kickSaporenFfamestackCancelTimes = ACTIONS["G+u"].cancelTimes
+    overheadSaporenFfamestackCancelTimes = ACTIONS["G+u"].cancelTimes
+    for key in punchSaporenFfamestackCancelTimes:
+        punchSaporenFfamestackCancelTimes[key] += ACTIONS["p"].cancelTimes["G"] - 1
+        kickSaporenFfamestackCancelTimes[key] += ACTIONS["k"].cancelTimes["G"] - 1
+        overheadSaporenFfamestackCancelTimes[key] += ACTIONS["o"].cancelTimes["G"] - 1
+
+    ACTIONS["p+G+u"] = Action(
+        name = "Punch Saporen FFAmestack",
+        damage = ACTIONS["p"].damage + ACTIONS["G"].damage + ACTIONS["u"].damage,
+        procsTracer = True,
+        damageTime = ACTIONS["p"].cancelTimes["G"] + ACTIONS["G+u"].damageTime -1,
+        cancelTimes = punchSaporenFfamestackCancelTimes,
+        chargeActivations = {
+            "g" : ACTIONS["p"].cancelTimes["G"] + ACTIONS["G"].chargeActivations["g"] - 1,
+            "u" : ACTIONS["p"].cancelTimes["G"] + ACTIONS["u"].chargeActivations["u"]
+        }
+    )
+
+    ACTIONS["k+G+u"] = Action(
+        name = "Kick Saporen FFAmestack",
+        damage = ACTIONS["k"].damage + ACTIONS["G"].damage + ACTIONS["u"].damage,
+        procsTracer = True,
+        damageTime = ACTIONS["k"].cancelTimes["G"] + ACTIONS["G+u"].damageTime - 1,
+        cancelTimes = kickSaporenFfamestackCancelTimes,
+        chargeActivations = {
+            "g" : ACTIONS["k"].cancelTimes["G"] + ACTIONS["G"].chargeActivations["g"] - 1,
+            "u" : ACTIONS["k"].cancelTimes["G"] + ACTIONS["u"].chargeActivations["u"]
+        }
+    )
+
+    ACTIONS["o+G+u"] = Action(
+        name = "Saporen FFAmestack",
+        damage = ACTIONS["o"].damage + ACTIONS["G"].damage + ACTIONS["u"].damage,
+        procsTracer = True,
+        damageTime = ACTIONS["o"].cancelTimes["G"] + ACTIONS["G+u"].damageTime - 1,
+        cancelTimes = overheadSaporenFfamestackCancelTimes,
+        chargeActivations = {
+            "g" : ACTIONS["o"].cancelTimes["G"] + ACTIONS["G"].chargeActivations["g"] - 1,
+            "u" : ACTIONS["o"].cancelTimes["G"] + ACTIONS["u"].chargeActivations["u"]
+        }
+    )
+
+    # space jam (u+s+G)
+    for action in ACTIONS:
+        ACTIONS[action].cancelTimes["u+s+G"] = ACTIONS[action].cancelTimes["u"]
+
+    spacejamCancelTimes = ACTIONS["G"].cancelTimes
+    for key in spacejamCancelTimes:
+        spacejamCancelTimes[key] += ACTIONS["u"].cancelTimes["s"] + ACTIONS["s"].cancelTimes["G"]
+
+    ACTIONS["u+s+G"] = Action(
+        name = "Space Jam",
+        damage = ACTIONS["G"].damage + ACTIONS["u"].damage,
+        procsTracer = True,
+        damageTime = ACTIONS["G"].damageTime,
+        cancelTimes = spacejamCancelTimes,
+        chargeActivations = {
+            "u" : ACTIONS["u"].cancelTimes["u"],
+            "g" : ACTIONS["u"].cancelTimes["s"] + ACTIONS["s"].cancelTimes["G"] + ACTIONS["G"].chargeActivations["g"]
+        }
+    )
+
+    # reverse trigger (p+t, k+t, o+t)
+    # TO DO: ensure tag is applied before processing reverse trigger     
+    for action in ACTIONS:
+        ACTIONS[action].cancelTimes["p+t"] = ACTIONS[action].cancelTimes["p"]
+        ACTIONS[action].cancelTimes["k+t"] = ACTIONS[action].cancelTimes["k"]
+        ACTIONS[action].cancelTimes["o+t"] = ACTIONS[action].cancelTimes["o"]
+
+    punchReverseTriggerCancelTimes = ACTIONS["t"].cancelTimes
+    kickReverseTriggerCancelTimes = ACTIONS["t"].cancelTimes
+    overheadReverseTriggerCancelTimes = ACTIONS["t"].cancelTimes
+    for key in punchReverseTriggerCancelTimes:
+        punchReverseTriggerCancelTimes[key] += ACTIONS["p"].cancelTimes["t"] - 1
+        kickReverseTriggerCancelTimes[key] += ACTIONS["k"].cancelTimes["t"] - 1
+        overheadReverseTriggerCancelTimes[key] += ACTIONS["o"].cancelTimes["t"] - 1
+
+    ACTIONS["p+t"] = Action(
+        name = "Punch Reverse Trigger",
+        damage = ACTIONS["p"].damage + ACTIONS["t"].damage,
+        procsTracer = True,
+        damageTime = ACTIONS["p"].damageTime,
+        cancelTimes = punchReverseTriggerCancelTimes,
+        chargeActivations = {
+            "t" : ACTIONS["p"].cancelTimes["t"] - 1 + ACTIONS["t"].chargeActivations["t"]
+        }
+    )
+
+    ACTIONS["k+t"] = Action(
+        name = "Kick Reverse Trigger",
+        damage = ACTIONS["k"].damage + ACTIONS["t"].damage,
+        procsTracer = True,
+        damageTime = ACTIONS["k"].damageTime,
+        cancelTimes = punchReverseTriggerCancelTimes,
+        chargeActivations = {
+            "t" : ACTIONS["k"].cancelTimes["t"] - 1 + ACTIONS["t"].chargeActivations["t"]
+        }
+    )
+
+    ACTIONS["o+t"] = Action(
+        name = "Overhead Reverse Trigger",
+        damage = ACTIONS["o"].damage + ACTIONS["t"].damage,
+        procsTracer = True,
+        damageTime = ACTIONS["o"].damageTime,
+        cancelTimes = punchReverseTriggerCancelTimes,
+        chargeActivations = {
+            "t" : ACTIONS["o"].cancelTimes["t"] - 1 + ACTIONS["t"].chargeActivations["t"]
+        }
+    )
+
+    # unique 3 hit (p+o, k+o)
+    # TO DO: ensure timing aligns with ending of whiff
+    for action in ACTIONS:
+        ACTIONS[action].cancelTimes["p+o"] = ACTIONS[action].cancelTimes["p"]
+        ACTIONS[action].cancelTimes["k+o"] = ACTIONS[action].cancelTimes["k"]
+
+    punchUniqueThreeHitCancelTimes = ACTIONS["o"].cancelTimes
+    kickUniqueThreeHitCancelTimes = ACTIONS["o"].cancelTimes
+    for key in punchUniqueThreeHitCancelTimes:
+        punchUniqueThreeHitCancelTimes[key] += 2
+        kickUniqueThreeHitCancelTimes[key] += 2
+
+    ACTIONS["p+o"] = Action(
+        name = "U3H Punch Stack",
+        damage = ACTIONS["p"].damage + ACTIONS["o"].damage,
+        procsTracer = True,
+        damageTime = ACTIONS["o"].damageTime + 2,
+        cancelTimes = punchUniqueThreeHitCancelTimes
+    )
+
+    ACTIONS["k+o"] = Action(
+        name = "U3H Kick Stack",
+        damage = ACTIONS["k"].damage + ACTIONS["o"].damage,
+        procsTracer = True,
+        damageTime = ACTIONS["o"].damageTime + 2,
+        cancelTimes = kickUniqueThreeHitCancelTimes
+    )
+
+    # goht overhead preserve (s+G)
+    for action in ACTIONS:
+        ACTIONS[action].cancelTimes["s+G"] = ACTIONS[action].cancelTimes["s"]
+
+    overheadPreserveCancelTimes = ACTIONS["G"].cancelTimes
+    for key in overheadPreserveCancelTimes:
+        overheadPreserveCancelTimes[key] += ACTIONS["s"].cancelTimes["G"]
+
+    ACTIONS["s+G"] = Action(
+        name = "Swing Preserve GOHT",
+        damage = ACTIONS["G"].damage + ACTIONS["u"].damage,
+        procsTracer = True,
+        damageTime = ACTIONS["s"].cancelTimes["G"] + ACTIONS["G"].damageTime,
+        cancelTimes = overheadPreserveCancelTimes,
+        chargeActivations = {
+            "s" : ACTIONS["s"].chargeActivations["s"],
+            "g" : ACTIONS["G"].chargeActivations["g"] + ACTIONS["s"].cancelTimes["G"]
+        }
+    )

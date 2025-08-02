@@ -3,6 +3,9 @@ from karen.state import State
 
 def getComboSequence(inputString="", warnings=[]):
 
+    if not ("G+u" in ACTIONS):
+        loadMoveStacks()
+
     # removes whitespace
     inputString = "".join(inputString.split())
 
@@ -11,8 +14,19 @@ def getComboSequence(inputString="", warnings=[]):
     if "(" in inputString and ")" in inputString[inputString.find("("):]:
         sequence = inputString[:inputString.find("(")] + inputString[inputString[inputString.find("("):].find(")") + inputString.find("(") + 1:]
 
+    # infers whether the combo is long form or letter notation
+    longForm = ">" in sequence
+    if not longForm:
+        for char in sequence:
+            if not (char in ACTION_NAMES):
+                for name in ACTION_NAMES:
+                    if len(name) > 1 and name in sequence:
+                        longForm = True
+                        break
+                break
+
     # handles long-form by converting to list
-    if ">" in sequence:
+    if longForm:
         sequence = sequence.replace("+", ">+>").split(">") # make sure '+' characters are split out as their own entries
         sequence = [x for x in sequence if x != ""] # removes empty entries caused by double '>' characters
     
@@ -22,49 +36,38 @@ def getComboSequence(inputString="", warnings=[]):
     warnings += [unknownAction + " is not a recognised action" for unknownAction in sequence if not unknownAction.lower() in ACTION_NAMES]
     
     # converts to a list of correctly formatted keys in ACTION_NAMES
-    sequence = [(x if x in ACTION_NAMES else x.lower()) for x in sequence if (x.lower() in ACTION_NAMES)] 
+    sequence = [(ACTION_NAMES[x] if x in ACTION_NAMES else x.lower()) for x in sequence if (x.lower() in ACTION_NAMES)] 
+    sequence = list("".join(sequence))
 
     # folds movestack indicators into actions
+    foldSequence = []
     for i in range(len(sequence)):
-        if i > 0 and sequence[i-1] == "+":
-            sequence[i] = "+" + sequence[i]
-    sequence = [x for x in sequence if x != "+"]
+        if len(foldSequence) > 0 and sequence[i-1] == "+":
+            if foldSequence[-1] + "+" + sequence[i] in ACTIONS:
+                foldSequence[-1] += "+" + sequence[i]
+                continue
+            else:
+                warnings += [foldSequence[-1] + "+" + sequence[i] + " is not a regocnised movestack"]
+        if sequence[i] != "+":
+            foldSequence.append(sequence[i])
 
-    return sequence
+    return foldSequence
 
-def addAction(state=State(), actionName="", warnings=[]):
+def addAction(state=State(), action="", warnings=[]):
 
-    # checks movestack indicator
-    moveStack = actionName[0] == "+"
-    if moveStack:
-        actionName = actionName[1:]
+    if not ("G+u" in ACTIONS):
+        loadMoveStacks()
 
-    # using the single shorthand name for most operations
-    action = ACTION_NAMES[actionName]
+    # awaits cooldowns
+    if action in state.charges:
+        state.incrementCooldowns(state.charges[action].activeTimer)
+        state.incrementCooldowns(state.charges[action].cooldownTime)
+        state.incrementCooldowns(max(0, 1 - state.charges[action].currentCharges))
 
-    # bad movestack flag
-    if moveStack and not action in ACTIONS[state.currentAnimation].moveStacks.keys:
-        warnings += [f"attempted nonexistant movestack {state.currentAnimation}+{action}"]
-        moveStack = False
-
-    # measures the time between the cancel time of the previous action and the start time of the current one
-    # the first reason this could be nonzero is if the current animation isn't simply cancelled
-    waitTime = 0
-    if moveStack:
-        waitTime = ACTIONS[state.currentAnimation].cancelTime - ACTIONS[state.currentAnimation].moveStacks[action] #negative number
-    elif not action in ACTIONS[state.currentAnimation].cancelledBy:
-        waitTime = ACTIONS[state.currentAnimation].deltaTime   
-
-    # it could also happen if the action being added is on cooldown
-    actionEquivalent = ACTION_EQUIVALENCE[action]
-    if state.cooldowns[actionEquivalent] > max(0, waitTime) and not moveStack: # movestack cooldown detetion is done on the previous action
-        waitTime = state.cooldowns[actionEquivalent]
-    if state.charges[actionEquivalent] < ACTIONS[action].chargeTime:
-        waitTime = max(waitTime, ACTIONS[action].chargeTime - state.charges[actionEquivalent])
-        if (moveStack):
-            warnings += [f"attempted to movestack {state.currentAnimation}+{action} while {action} is on cooldown"]
-
-    # TO DO: if next move is a movestack which will still be on cooldown, throw a warning
+    # movestack cooldown awaiting calculations
+    if "+" in action:
+        pass
+    
 
 
-    state.sequence += f" {"" if len(state.sequence) == 0 or state.sequence[-1] == ")" else ("+ " if moveStack else "> ")}{ACTIONS[action].name}"
+    state.sequence += "> " + {ACTIONS[action].name}

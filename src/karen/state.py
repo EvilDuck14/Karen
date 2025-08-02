@@ -1,49 +1,69 @@
 from karen.actions import *
 
+class Charge:
+    maxCharges = 0
+    currentCharges = 0
+    rechargeTime = 0
+    cooldownTime = 0
+    currentCooldownLevel = 0
+    activeTimer = 0 # cooldown refresh= doesn't start until icon is no longer yellow
+
+    def __init__(self, maxCharges, rechargeTime, cooldownTime = 0, activeTime = 0):
+        self.maxCharges = maxCharges
+        self.currentCharges = maxCharges
+        self.rechargeTime = rechargeTime
+        self.cooldownTime = cooldownTime
+        self.activeTime = activeTime
+
+
 class State:
 
     # charges/cooldowns - to avoid floating point innacuracy, using an ability takes charge equal to the number of frames it will take to recharge
     charges = {
-        "t" : ACTIONS["t"].maxChargeCost,
-        "s" : ACTIONS["s"].maxChargeCost,
-        "g" : ACTIONS["g"].maxChargeCost,
-        "u" : ACTIONS["u"].maxChargeCost,
-        "S" : ACTIONS["S"].maxChargeCost,
-        "" : 0
-    }
-    cooldowns = {
-        "j" : 0, # double jump is on a delay from initial jump
-        "t" : 0,
-        "s" : 0,
-        "g" : 0,
-        "u" : 0,
-        "" : 0
+        "t" : Charge(
+            maxCharges = 5, 
+            rechargeTime = 2.5 * 60,
+            cooldownTime = 0.5 * 60
+        ),
+        "s" : Charge(
+            maxCharges = 3, 
+            rechargeTime = 6 * 60
+        ),
+        "g" : Charge(
+            maxCharges = 1, 
+            rechargeTime = 8 * 60
+        ),
+        "u" : Charge(
+            maxCharges = 2, 
+            rechargeTime = 6 * 60,
+            cooldownTime = 2 * 60
+        ),
+        "b" : Charge(
+            maxCharges = 1, 
+            rechargeTime = 12 * 60
+        )
     }
     tracerActiveTimer = 0 # frames remaining until tracer on opponent expires
+    burnTracerActiveTimer = 0
 
     # airborne
     isAirborn = False
-    opponentAirborn = False # grounded opponent forces landing after GOHT
 
     # overheads
-    hasDoubleJump = False
+    hasDoubleJump = True
     hasJumpOverhead = False
     hasSwingOverhead = False
-    overheadOnSwingEnd = False # swing cooldown caused by tracer/uppercut doesn't award swing overhead
 
     # punch sequence
     punchSequence = 0 # 0 & 1 correspond to punches, 2 corresponds to kick
     punchSequenceTimer = 0 # frames remaining until punch sequence resets
 
     # seasonal boost
-    damageMultiplier = 1.1
+    damageMultiplier = 1
 
     # tracking metrics
     damageDealt = 0
     timeTaken = 0
-
-    # calculating cancel/stack times
-    currentAnimation = "l"
 
     # sequence output
     sequence = ""
@@ -101,20 +121,24 @@ class State:
             if len(conditions) > 0:
                 self.sequence = self.sequence[:-2] + ") " # removes trailing comma & space
 
-    def incrementCooldowns(self, frames):
+    def incrementTime(self, frames):
+
+        if frames == 0:
+            return
         
-        # awards swing overhead on swing end
-        if self.overheadOnSwingEnd and self.cooldowns["s"] <= frames:
+        self.timeTaken += frames
+
+        # awards overhead on swing end
+        if self.cooldowns["s"] > 0 and self.cooldowns["s"] <= frames:
             self.overheadOnSwingEnd = False
-            self.hasSwingOverhead = self.isAirborn
+            self.hasSwingOverhead |= self.isAirborn and self.hasDoubleJump
+            self.hasJumpOverhead |= self.isAirborn and not self.hasDoubleJump
 
-        for key in self.charges.keys:
-            self.charges[key] = min(self.charges[key] + frames, ACTIONS[key].maxChargeCost)
-        
-        for key in self.cooldowns.keys:
-            self.cooldowns[key] = max(self.charges[key] - frames, 0)
+        for chargeType in self.charges.keys:
+            self.charges[chargeType] = min(self.charges[chargeType] + frames, ACTIONS[chargeType].maxChargeCost)
 
-        self.tracerActiveTimer = max(self.tracerActiveTimer, 0)
+        self.tracerActiveTimer = max(self.tracerActiveTimer - frames, 0)
+        self.burnTracerActiveTimer = max(self.burnTracerActiveTimer - frames, 0)
 
         self.punchSequenceTimer = max(self.punchSequenceTimer, 0)
         if self.punchSequenceTimer == 0:
