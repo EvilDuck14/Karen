@@ -1,17 +1,11 @@
 PUNCH_SEQUENCE_MAX_DELAY = 90 # punch/kick must start <90 frames after last punch to advance the sequence
 TRACER_ACTIVE_TIME = 4 * 60
 TRACER_PROC_DAMAGE = 45
-TRACER_MARK_TIME = 12 # time between tracer starting against an untagged target and goht being usable
 
 BURN_TRACER_ACTIVE_TIME = 3 * 60
-BURN_TRACER_BURN_DAMAGE = 60
-BURN_TRACER_BURN_TIME = 230
+BURN_TRACER_DPS = 15
+BURN_TRACER_BURN_TIME = 240
 
-
-INITIAL_CONDITION_NAMES = {
-    "t" : "t", "tagged" : "t", "tag" : "t",
-    "b" : "b", "burn" : "b", "burntagged" : "b", "burntag" : "b", "burnt" : "b"
-}
 
 ACTION_NAMES = {
     "j" : "j", "jump" : "j", "dj" : "j", "d" : "j",
@@ -28,19 +22,19 @@ ACTION_NAMES = {
     "b" : "b", "burn" : "b", "burntracer" : "b", "burncluster" : "b", "fire" : "b", "firetracer" : "b", "firecluster" : "b", "flame" : "b", "flametracer" : "b", "flamecluster" : "b",
     "+" : "+", "/" : "+",
 
-    "f" : "G+u", "ffame" : "G+u", "ffamestack" : "G+u",
-    "n" : "o+G", "saporen" : "o+G", "sap" : "o+G", "overheadsaporen" : "o+G", "ohsap" : "o+G",
-    "punchsaporen" : "p+G", "punchsap" : "p+G",
-    "kicksaporen" : "k+G", "punchsap" : "k+G",
-    "F" : "o+G+u", "saporenffamestack" : "o+G+u", "sapffamestack" : "o+G+u", "sapffame" : "o+G+u", "overheadsaporenffamestack" : "o+G+u", "ohsapffamestack" : "o+G+u", "ohsapffame" : "o+G+u",
-    "punchsaporenffamestack" : "p+G+u", "punchsapffamestack" : "p+G+u", "punchsapffame" : "p+G+u",
-    "kicksaporenffamestack" : "k+G+u", "kicksapffamestack" : "k+G+u", "kicksapffame" : "k+G+u",
-    "J" : "u+w+G", "spacejam" : "u+w+G", "sj" : "u+w+G", "u+s+G" : "u+w+G",
-    "r" : "p+t", "reversetrigger" : "p+t", "rt" : "p+t", "backflash" : "p+t", "punchreversetrigger" : "p+t", "punchbackflash" : "p+t", "punchrt" : "p+t",
-    "kickreversetrigger" : "k+t", "kickbackflash" : "k+t", "kickrt" : "k+t", "jashflash" : "k+t",
-    "overheadreversetrigger" : "o+t", "overheadbackflash" : "o+t", "overheadrt" : "o+t", "ohreversetrigger" : "o+t", "ohbackflash" : "o+t", "ohrt" : "o+t",
-    "unique3hitpunchstack" : "p+o", "uniquethreehitpunchstack" : "p+o","unique3hitpunch" : "p+o", "uniquethreehitpunch" : "p+o", "u3hpunchstack" : "p+o", "u3hpunch" : "p+o",
-    "unique3hitkickstack" : "k+o", "uniquethreehitkickstack" : "k+o","unique3hitkick" : "k+o", "uniquethreehitkick" : "k+o", "u3hkickstack" : "k+o", "u3hkick" : "k+o",
+    "G+u" : "G+u", "f" : "G+u", "ffame" : "G+u", "ffamestack" : "G+u",
+    "o+G" : "o+G", "n" : "o+G", "saporen" : "o+G", "sap" : "o+G", "overheadsaporen" : "o+G", "ohsap" : "o+G",
+    "p+G" : "p+G", "punchsaporen" : "p+G", "punchsap" : "p+G",
+    "k+G" : "k+G","kicksaporen" : "k+G", "punchsap" : "k+G",
+    "o+G+u" : "o+G+u", "F" : "o+G+u", "saporenffamestack" : "o+G+u", "sapffamestack" : "o+G+u", "sapffame" : "o+G+u", "overheadsaporenffamestack" : "o+G+u", "ohsapffamestack" : "o+G+u", "ohsapffame" : "o+G+u",
+    "p+G+u" : "p+G+u", "punchsaporenffamestack" : "p+G+u", "punchsapffamestack" : "p+G+u", "punchsapffame" : "p+G+u",
+    "k+G+u" : "k+G+u", "kicksaporenffamestack" : "k+G+u", "kicksapffamestack" : "k+G+u", "kicksapffame" : "k+G+u",
+    "u+w+G" : "u+w+G", "J" : "u+w+G", "spacejam" : "u+w+G", "sj" : "u+w+G", "u+s+G" : "u+w+G",
+    "p+t" : "p+t", "r" : "p+t", "reversetrigger" : "p+t", "rt" : "p+t", "backflash" : "p+t", "punchreversetrigger" : "p+t", "punchbackflash" : "p+t", "punchrt" : "p+t",
+    "k+t" : "k+t", "kickreversetrigger" : "k+t", "kickbackflash" : "k+t", "kickrt" : "k+t", "jashflash" : "k+t",
+    "o+t" : "o+t", "overheadreversetrigger" : "o+t", "overheadbackflash" : "o+t", "overheadrt" : "o+t", "ohreversetrigger" : "o+t", "ohbackflash" : "o+t", "ohrt" : "o+t",
+    "p+o" : "p+o", "unique3hitpunchstack" : "p+o", "uniquethreehitpunchstack" : "p+o","unique3hitpunch" : "p+o", "uniquethreehitpunch" : "p+o", "u3hpunchstack" : "p+o", "u3hpunch" : "p+o",
+    "k+o" : "k+o", "unique3hitkickstack" : "k+o", "uniquethreehitkickstack" : "k+o","unique3hitkick" : "k+o", "uniquethreehitkick" : "k+o", "u3hkickstack" : "k+o", "u3hkick" : "k+o",
 
     "shortplink" : "so",
     "longplink" : "wto", "plink" : "wto",
@@ -304,7 +298,7 @@ def loadMoveStacks():
     for action in ACTIONS:
         ACTIONS[action].cancelTimes["G+u"] = ACTIONS[action].cancelTimes["G"]
 
-    ffamestackCancelTimes = ACTIONS["G"].cancelTimes
+    ffamestackCancelTimes = ACTIONS["G"].cancelTimes.copy()
     for key in ffamestackCancelTimes:
         ffamestackCancelTimes[key] = max(ACTIONS["u"].cancelTimes[key] + 1, ffamestackCancelTimes[key])
 
@@ -331,9 +325,9 @@ def loadMoveStacks():
         ACTIONS[action].cancelTimes["k+G"] = ACTIONS[action].cancelTimes["k"]
         ACTIONS[action].cancelTimes["o+G"] = ACTIONS[action].cancelTimes["o"]
 
-    punchSaporenCancelTimes = ACTIONS["G"].cancelTimes
-    kickSaporenCancelTimes = ACTIONS["G"].cancelTimes
-    overheadSaporenCancelTimes = ACTIONS["G"].cancelTimes
+    punchSaporenCancelTimes = ACTIONS["G"].cancelTimes.copy()
+    kickSaporenCancelTimes = ACTIONS["G"].cancelTimes.copy()
+    overheadSaporenCancelTimes = ACTIONS["G"].cancelTimes.copy()
     for key in punchSaporenCancelTimes:
         punchSaporenCancelTimes[key] += ACTIONS["p"].cancelTimes["G"] - 1
         kickSaporenCancelTimes[key] += ACTIONS["k"].cancelTimes["G"] - 1
@@ -390,9 +384,9 @@ def loadMoveStacks():
         ACTIONS[action].cancelTimes["k+G+u"] = ACTIONS[action].cancelTimes["k"]
         ACTIONS[action].cancelTimes["o+G+u"] = ACTIONS[action].cancelTimes["o"]
 
-    punchSaporenFfamestackCancelTimes = ACTIONS["G+u"].cancelTimes
-    kickSaporenFfamestackCancelTimes = ACTIONS["G+u"].cancelTimes
-    overheadSaporenFfamestackCancelTimes = ACTIONS["G+u"].cancelTimes
+    punchSaporenFfamestackCancelTimes = ACTIONS["G+u"].cancelTimes.copy()
+    kickSaporenFfamestackCancelTimes = ACTIONS["G+u"].cancelTimes.copy()
+    overheadSaporenFfamestackCancelTimes = ACTIONS["G+u"].cancelTimes.copy()
     for key in punchSaporenFfamestackCancelTimes:
         punchSaporenFfamestackCancelTimes[key] += ACTIONS["p"].cancelTimes["G"] - 1
         kickSaporenFfamestackCancelTimes[key] += ACTIONS["k"].cancelTimes["G"] - 1
@@ -480,9 +474,9 @@ def loadMoveStacks():
         ACTIONS[action].cancelTimes["k+t"] = ACTIONS[action].cancelTimes["k"]
         ACTIONS[action].cancelTimes["o+t"] = ACTIONS[action].cancelTimes["o"]
 
-    punchReverseTriggerCancelTimes = ACTIONS["t"].cancelTimes
-    kickReverseTriggerCancelTimes = ACTIONS["t"].cancelTimes
-    overheadReverseTriggerCancelTimes = ACTIONS["t"].cancelTimes
+    punchReverseTriggerCancelTimes = ACTIONS["t"].cancelTimes.copy()
+    kickReverseTriggerCancelTimes = ACTIONS["t"].cancelTimes.copy()
+    overheadReverseTriggerCancelTimes = ACTIONS["t"].cancelTimes.copy()
     for key in punchReverseTriggerCancelTimes:
         punchReverseTriggerCancelTimes[key] += ACTIONS["p"].cancelTimes["t"] - 1
         kickReverseTriggerCancelTimes[key] += ACTIONS["k"].cancelTimes["t"] - 1
@@ -544,7 +538,7 @@ def loadMoveStacks():
         procsTracer = True,
         procTime = ACTIONS["p"].procTime,
         damageTime = ACTIONS["o"].damageTime,
-        cancelTimes = ACTIONS["o"].cancelTimes
+        cancelTimes = ACTIONS["o"].cancelTimes.copy()
     )
 
     ACTIONS["k+o"] = Action(
@@ -553,5 +547,15 @@ def loadMoveStacks():
         procsTracer = True,
         procTime = ACTIONS["k"].procTime,
         damageTime = ACTIONS["o"].damageTime,
-        cancelTimes = ACTIONS["o"].cancelTimes
+        cancelTimes = ACTIONS["o"].cancelTimes.copy()
+    )
+
+    ACTIONS["j"] = Action(
+        name = "Jump",
+        cancelTimes = { a : 0 for a in ACTIONS }
+    )
+
+    ACTIONS["l"] = Action(
+        name = "Land",
+        cancelTimes = { a : 0 for a in ACTIONS }
     )
