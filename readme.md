@@ -41,7 +41,7 @@ Note that shortened names are still used; in this format, single letter, shortha
 | Kick | k | kick <br> melee kick |
 | Overhead Slam | o | overhead slam <br> overhead <br> over <br> oh <br> melee overhead <br> slam |
 | Tracer | t | tracer <br> web tracer <br> cluster <br> web cluster |
-| Swing | s | swing <br> web swing <br> high swing <br> low swing <br> web zip <br> zip |
+| Swing | s <br> z | swing <br> web swing <br> high swing <br> low swing <br> web zip <br> zip |
 | Whiff | w | whiff <br> web whiff <br> swing whiff |
 | Get Over Here | g | get over here <br> goh <br> web pull <br> pull |
 | Get Over Here Targeting | G | get over here targeting <br> goht |
@@ -49,7 +49,7 @@ Note that shortened names are still used; in this format, single letter, shortha
 | Burn Tracer | b | burn tracer <br> burn cluster <br> burn <br> fire tracer <br> fire cluster <br> fire <br> flame tracer <br> flame cluster <br> flame |
 
 > [!TIP]
-> The single letter names of actions are case sensetive, while all of the longer-form versions of names ignore case and spaces, so *"MeleePU NCH b"* will be interpreted as a punch.
+> The single letter names of actions are case sensitive, while all of the longer-form versions of names ignore case and spaces, so *"MeleePU NCH b"* will be interpreted as a punch.
 
 > [!WARNING]
 > Certain names such as *"dj"* and *"meleePunchB"* imply that the actions occur in contexts that aren't strictly enforced by the evaluation function - since *'dj'* is parsed as a jump, the calculator will interpret it as a single jump if it believes you're on the ground.

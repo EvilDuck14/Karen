@@ -75,10 +75,6 @@ def addAction(state=State(), action="", nextAction="", warnings=[]):
     if "p" in action and state.punchSequence == 2:
         state.incrementTime(state.punchSequenceTimer, warnings)
 
-    # awaits whiff end for overhead
-    if "o" in action and (not state.hasJumpOverhead) and (not state.hasSwingOverhead) and state.charges["s"].activeTimer > 0:
-        state.incrementTime(state.charges["s"].activeTimer, warnings)
-
     if "k" in action and state.punchSequence < 2:
         warnings += ["uses impossible kick after " + state.sequence]
     
@@ -89,6 +85,10 @@ def addAction(state=State(), action="", nextAction="", warnings=[]):
         warnings += ["uses punch when overhead was expected after " + state.sequence]
     if "k" in action and (state.hasSwingOverhead or state.hasJumpOverhead):
         warnings += ["uses kick when overhead was expected after " + state.sequence]
+
+    # awaits whiff end for overhead
+    if "o" in action and (not state.hasJumpOverhead) and (not state.hasSwingOverhead) and state.charges["s"].activeTimer > 0:
+        state.incrementTime(state.charges["s"].activeTimer, warnings)
 
     # punch sequence increment
     if "p" in action:

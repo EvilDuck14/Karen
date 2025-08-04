@@ -25,5 +25,5 @@ def evaluate(inputString):
     comboName = classify("".join(comboSequence))
 
     warningsCollected = f"```\n{"\n".join(["WARNING: " + x for x in warnings])}\n```"
-    output = f"**{comboName}**\n> {state.sequence}\n**Time:** {round(state.timeTaken / 60, 3)} seconds ({state.timeTaken} frames)\n**Damage:** {state.damageDealt} {burnTracerBonusDamage}" + ("\n" + warningsCollected if len(warnings) > 0 else "")
+    output = f"**{comboName}**\n> {state.sequence}\n**Time:** {round(state.timeTaken / 60, 3)} seconds ({state.timeTaken} frames)\n**Damage:** {int(state.damageDealt)} {burnTracerBonusDamage}" + ("\n" + warningsCollected if len(warnings) > 0 else "")
     return output

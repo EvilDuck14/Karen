@@ -14,10 +14,10 @@ ACTION_NAMES = {
     "k" : "k", "kick" : "k",  "meleekick" : "k",
     "o" : "o", "overheadslam" : "o",  "overhead" : "o", "over" : "o", "oh" : "o",  "meleeoverhead" : "o",  "slam" : "o",
     "t" : "t", "tracer" : "t",  "webtracer" : "t",  "cluster" : "t",  "webcluster" : "t",
-    "s" : "s", "swing" : "s", "webswing" : "s",  "highswing" : "s",  "lowswing" : "s", "zip" : "s", "webzip" : "s",
+    "s" : "s", "swing" : "s", "webswing" : "s",  "highswing" : "s",  "lowswing" : "s", "z" : "s", "zip" : "s", "webzip" : "s",
     "w" : "w", "whiff" : "w", "webwhiff" : "w", "swingwhiff" : "w",
-    "g" : "g", "getoverhere" : "g", "goh" : "g",
-    "G" : "G", "getoverheretargetting" : "G", "goht" : "G",
+    "g" : "g", "getoverhere" : "g", "goh" : "g", "webpull" : "g", "pull" : "g",
+    "G" : "G", "getoverheretargeting" : "G", "getoverheretargetting" : "G", "goht" : "G",
     "u" : "u", "uppercut" : "u", "upper" : "u", "amazingcombo" : "u",
     "b" : "b", "burn" : "b", "burntracer" : "b", "burncluster" : "b", "fire" : "b", "firetracer" : "b", "firecluster" : "b", "flame" : "b", "flametracer" : "b", "flamecluster" : "b",
     "+" : "+", "/" : "+",
@@ -25,7 +25,7 @@ ACTION_NAMES = {
     "G+u" : "G+u", "f" : "G+u", "ffame" : "G+u", "ffamestack" : "G+u",
     "o+G" : "o+G", "n" : "o+G", "saporen" : "o+G", "sap" : "o+G", "overheadsaporen" : "o+G", "ohsap" : "o+G",
     "p+G" : "p+G", "punchsaporen" : "p+G", "punchsap" : "p+G",
-    "k+G" : "k+G","kicksaporen" : "k+G", "punchsap" : "k+G",
+    "k+G" : "k+G","kicksaporen" : "k+G", "kicksap" : "k+G",
     "o+G+u" : "o+G+u", "F" : "o+G+u", "saporenffamestack" : "o+G+u", "sapffamestack" : "o+G+u", "sapffame" : "o+G+u", "overheadsaporenffamestack" : "o+G+u", "ohsapffamestack" : "o+G+u", "ohsapffame" : "o+G+u",
     "p+G+u" : "p+G+u", "punchsaporenffamestack" : "p+G+u", "punchsapffamestack" : "p+G+u", "punchsapffame" : "p+G+u",
     "k+G+u" : "k+G+u", "kicksaporenffamestack" : "k+G+u", "kicksapffamestack" : "k+G+u", "kicksapffame" : "k+G+u",
@@ -223,7 +223,7 @@ ACTIONS = {
     ),
 
     "G" : Action (
-        name = "Get Over Here Targetting",
+        name = "Get Over Here Targeting",
         damage = 55,
 
         damageTime = 37,
@@ -374,7 +374,7 @@ def loadMoveStacks():
             "g" : ACTIONS["o"].cancelTimes["G"] + ACTIONS["G"].chargeActivations["g"] - 1
         },
         awaitCharges = { 
-            "o" :  ACTIONS["p"].cancelTimes["G"] - 1
+            "g" :  ACTIONS["o"].cancelTimes["G"] - 1
         }
     )
 
