@@ -141,8 +141,8 @@ class State:
     def inferInitialState(self, comboSequence, warnings):
         foldSequence = "".join(comboSequence)
 
-        # pre-tag if GOHT used before tracer
-        if "G" in foldSequence and ((not ("t" in foldSequence)) or foldSequence.index("G") < foldSequence.index("t")):
+        # pre-tag if GOHT used before tracer / burn tracer
+        if "G" in foldSequence and ((not ("t" in foldSequence or "b" in foldSequence)) or foldSequence.index("G") < min((foldSequence+"bt").index("t"), (foldSequence+"bt").index("b"))):
             self.tracerActiveTimer = TRACER_ACTIVE_TIME
             warnings += ["inferred target starts with tracer applied to enable GOHT"]
         
