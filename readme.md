@@ -1,4 +1,4 @@
-# Karen
+`Karen`# Karen
 
 > *"Congratulations on completing the rigorous Training Wheels Protocol and gaining access to your suit’s full capabilities... Would you like me to engage Enhanced Combat Mode?"* - Karen
 
@@ -15,7 +15,7 @@
 
 ## Installation
 
-Installation instructions will be provided once basic functionality has been acheived
+Clone the repository using your preferred method. The *"tests"* folder includes a console application where commands can be run, as well as a discord bot application (note that you will have to copy your bot's token into the script to connect it to your bot).
 
 ## Usage
 
@@ -25,7 +25,7 @@ Installation instructions will be provided once basic functionality has been ach
     !eval tGusto
 ```
 
-The above evaluates the combo **tracer > get over here targetting > uppercut > swing > tracer > overhead slam**. Each action in a combo is assigned a single letter for maximum efficiency, but a combo can also be given in long-form by breaking up actions with instances of "**>**" - so the following is another valid way of writing the same command:
+The above evaluates the combo **tracer > get over here targeting > uppercut > swing > tracer > overhead slam**. Each action in a combo is assigned a single letter for maximum efficiency, but a combo can also be given in long-form by breaking up actions with instances of "**>**" - so the following is another valid way of writing the same command:
 
 ```
     !eval tracer > goht > upper > swing > tracer > oh
@@ -37,48 +37,32 @@ Note that shortened names are still used; in this format, single letter, shortha
 | :---: | :---: | :---:|
 | Jump | j | jump <br> dj |
 | Land | l | land |
-| Punch | p | punch <br> punchA <br> punchB <br> meleePunch <br> meleePunchA <br> meleePunchB |
-| Kick | k | kick <br> meleeKick |
-| Overhead Slam | o | overheadSlam <br> overhead <br> oh <br> meleeOverhead <br> slam |
-| Tracer | t | tracer <br> webTracer <br> cluster <br> webCluster |
-| Swing | s | swing <br> webSwing <br> highSwing <br> lowSwing |
-| Whiff | w | whiff <br> webWhiff <br> swingWhiff |
-| Get Over Here | g | getOverHere <br> goh |
-| Get Over Here Targetting | G | getOverHereTargetting <br> goht |
-| Uppercut | u | uppercut <br> upper <br> amazingCombo |
-| Symbiote | S | symbiote <br> symbiot |
+| Punch | p | punch <br> punch A <br> punch B <br> melee punch <br> melee punch A <br> melee punch B |
+| Kick | k | kick <br> melee kick |
+| Overhead Slam | o | overhead slam <br> overhead <br> over <br> oh <br> melee overhead <br> slam |
+| Tracer | t | tracer <br> web tracer <br> cluster <br> web cluster |
+| Swing | s | swing <br> web swing <br> high swing <br> low swing <br> web zip <br> zip |
+| Whiff | w | whiff <br> web whiff <br> swing whiff |
+| Get Over Here | g | get over here <br> goh <br> web pull <br> pull |
+| Get Over Here Targeting | G | get over here targeting <br> goht |
+| Uppercut | u | uppercut <br> upper <br> amazing combo |
+| Burn Tracer | b | burn tracer <br> burn cluster <br> burn <br> fire tracer <br> fire cluster <br> fire <br> flame tracer <br> flame cluster <br> flame |
 
 > [!TIP]
-> The single letter names of actions are case sensetive, while all of the longer-form versions of names ignore case and spaces, so *"MELEE punch a"* will be interpreted as a punch.
+> The single letter names of actions are case sensetive, while all of the longer-form versions of names ignore case and spaces, so *"MeleePU NCH b"* will be interpreted as a punch.
 
 > [!WARNING]
-> Certain names such as *"dj"* and *"meleePunchB"* imply that the actions occur in contexts that aren't strictly enforced by the evaluation function - in these cases, the evaluation will come with a warning that the combo isn't being executed in the way that the user likely intended.
+> Certain names such as *"dj"* and *"meleePunchB"* imply that the actions occur in contexts that aren't strictly enforced by the evaluation function - since *'dj'* is parsed as a jump, the calculator will interpret it as a single jump if it believes you're on the ground.
 
 ### Initial State
 
-Some combos involve a setup that you don't want to list as a part of the combo - this setup can be detailed in brackets before the combo. For example;
+Some combos involve a setup that you don't want to list as a part of the combo - `Karen` will automatically infer certain properties about the initial state.
 
-```
-    !eval (tA)Gjo
-```
+If you use Get Over Here Targeting before tagging the target with a tracer/burn tracer, `Karen` will infer that the target initially had a tracer applied (this will send a warning in the console).
 
-The above combo has the initial conditions of the opponent being tagged with a tracer, and the opponent being airborne. This means that goht is able to be used right away, and that the user is airborn after doing so, meaning the jump is a double jump, granting a jump overhead. Initial conditions can also be written in long-form, separated by commas:
+If you use a kick before using two punches, `Karen` will infer punches had been used immediately before beginning the combo.
 
-```
-    !eval (tagged, targetAirborne) goht > dj > oh
-```
-
-The full list of initial conditions is given below:
-
-| Initial Condition | Letter | Other Names |
-| :---: | :---: | :---: |
-| Opponent tagged with tracer | t | tagged <br> tag|
-| Player is airborne | a | isAirborne <br> airborne <br> air |
-| Player is airborne with swing overhead | s | hasSwingOverhead |
-| Player is airborne with jump overhead | j | hasJumpOverhead |
-| Opponent is airborne | A | opponentAirborne |
-| Punch sequence is up to punch B | p | hasPunchB <br> openPunchB |
-| Punch sequence is up to kick | k | hasKick <br> openKick |
+If you use an overhead before getting airborne with a jump, burn tracer, or upercut, `Karen` will assume you started the combo in an airborne state. If you use an overhead before acquiring one with a jump, swing, whiff, or burn tracer, `Karen` will infer you started with a swing overhead. If you use two overheads before acquiring one, `Karen` will assume you started with both overheads and no double jump.
 
 ### Move Stacks
 
@@ -91,7 +75,7 @@ A movestack is indicated by a "**+**" - for example, a FFAme stack would be writ
 In long-form commands, the "**>**" separator can be entirely replaced by a "**+**", or they can be used in conjunction. If the command contains no instaces of the "**>**" character, it will not be recognised as a command, so the following are valid:
 
 ```
-    !eval (tag) goht >+ upper
+    !eval tracer goht >+ upper
 ```
 
 ```
@@ -101,27 +85,34 @@ In long-form commands, the "**>**" separator can be entirely replaced by a "**+*
 But the following will not work, as the command will not be recognised as being long-form, since no "**>**" characters are present:
 
 ```
-    !eval (tag) goht + upper
+    !eval goht + upper
 ```
 
 All movestacks are listed below:
 
-|Name | Sequence(/s) |
-| :---: | :---: |
-| FFAme Stack | G+u | 
-| Saporen Tech | (t) o+G <br> (t) p+G <br> (t) k+G |
-| Backflash | p+t <br> k+t <br> o+t |
-| Unique 3-Hit Stack | p+o <br> k+o |
-| GOHT Overhead Preserve | (t) s+G |
-| Early Animation Cancels | o+u <br> k+u |
+|Name | Short notation(/s) | Other Names |
+| :---: | :---: | :---: |
+| FFAme Stack | G+u <br> f | ffame stack <br> ffame | 
+| Saporen Tech (Overhead) | o+G <br> n| saporen <br> sap <br> overhead saporen <br> oh sap |
+| Saporen Tech (Punch) | p+G | punch saporen <br> punch sap |
+| Saporen Tech (Kick) | k+G | kick saporen <br> kick sap |
+| Saporen FFAme Stack (Overhead) | o+G+u <br> F | saporen ffame stack <br> sap ffame stack <br> sap ffame <br> overhead saporen ffame stack <br> oh sap ffame stack <br> oh sap ffame |
+| Saporen FFAme Stack (Punch) | p+G+u | punch saporen ffame stack <br> punch sap ffame stack <br> punch sap ffame |
+| Saporen FFAme Stack (Kick) | k+G+u | kick saporen ffame stack <br> kick sap ffame stack <br> kick sap ffame |
+| Space Jam | u+w+G <br> J | space jam <br> sj |
+| Backflash (Punch) | p+t <br> r | backflash <br> punch backflash <br> reverse trigger <br> rt <br> punch reverse trigger <br> punch rt |
+| Backflash (Kick) | k+t | kick backflash <br> jashflash <br> kick reverse trigger <br> kick rt |
+| Backflash (Overhead) | o+t | overhead backflash <br> oh backflash <br> overhead reverse trigger <br> oh reverse trigger <br> overhead rt <br> oh rt |
+| Unique 3-Hit Stack (Punch) | p+o | unique three hit punch stack <br> unique three hit punch <br> unique 3 hit punch stack <br> unique 3 hit punch <br> u3h punch stack <br> u3h punch |
+| Unique 3-Hit Stack (Kick) | p+o | unique three hit kick stack <br> unique three hit kick <br> unique 3 hit kick stack <br> unique 3 hit kick <br> u3h kick stack <br> u3h kick |
 
 ## Roadmap
 
 - [x] Add parsing of commands in all formats
-- [ ] Measure & record all action timings
-- [ ] Add evaluation function
-- [ ] Add error detection & warnings
-- [ ] Add discord bot functionality
+- [x] Measure & record all action timings
+- [x] Add evaluation function
+- [x] Add error detection & warnings
+- [x] Add discord bot functionality
 - [ ] Add combo generator
 - [ ] Optimise combo generator by removing unneeded actions
 
