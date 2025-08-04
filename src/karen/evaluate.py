@@ -4,7 +4,7 @@ from karen.classify import classify
 from math import floor
 from karen.actions import *
 
-def evaluate(inputString):
+def evaluate(inputString, printWarnings = True):
     warnings = []
 
     state = State()
@@ -17,13 +17,18 @@ def evaluate(inputString):
         nextAction = [j for j in comboSequence[i+1:] if not j in ["j", "l"]][0]
         addAction(state, comboSequence[i], nextAction, warnings)
 
-    # TO DO: checks for continued burn tracer damage after final action
+    # checks for continued burn tracer damage after final action
     burnTracerBonusDamage = ""
     if state.burnActiveTimer > 12:
         burnTracerBonusDamage = "(plus " + str(int(floor((state.burnActiveTimer - 1) / 12) * BURN_TRACER_DPS / 5)) +" burn over time)"
 
+    # TO DO: runs a second evaluation with maximum action ranges
+
     comboName = classify("".join(comboSequence))
 
+    if not printWarnings:
+        warnings = []
     warningsCollected = f"```\n{"\n".join(["WARNING: " + x for x in warnings])}\n```"
+    
     output = f"**{comboName}**\n> {state.sequence}\n**Time:** {round(state.timeTaken / 60, 3)} seconds ({state.timeTaken} frames)\n**Damage:** {int(state.damageDealt)} {burnTracerBonusDamage}" + ("\n" + warningsCollected if len(warnings) > 0 else "")
     return output

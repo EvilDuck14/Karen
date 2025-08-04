@@ -49,7 +49,7 @@ Note that shortened names are still used; in this format, single letter, shortha
 | Burn Tracer | b | burn tracer <br> burn cluster <br> burn <br> fire tracer <br> fire cluster <br> fire <br> flame tracer <br> flame cluster <br> flame |
 
 > [!TIP]
-> The single letter names of actions are case sensitive, while all of the longer-form versions of names ignore case and spaces, so *"MeleePU NCH b"* will be interpreted as a punch.
+> Spaces and anything between parentheses is ignored by the bot. The single letter names of actions are case sensitive, while all of the longer-form versions of names ignore case, so *"MeleePU N(N)CH b"* will be interpreted as a punch.
 
 > [!WARNING]
 > Certain names such as *"dj"* and *"meleePunchB"* imply that the actions occur in contexts that aren't strictly enforced by the evaluation function - since *'dj'* is parsed as a jump, the calculator will interpret it as a single jump if it believes you're on the ground.
@@ -115,6 +115,10 @@ All movestacks are listed below:
 - [x] Add discord bot functionality
 - [ ] Add combo generator
 - [ ] Optimise combo generator by removing unneeded actions
+
+## Acknowledgement
+
+Special thanks to NonJohns for feedback on the design/featureset and for help with quality assurance.
 
 ## License
 
