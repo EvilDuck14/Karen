@@ -158,8 +158,15 @@ class State:
         preAirborne = temp[:min(temp.index("j"), temp.index("u"), temp.index("b"))]
         self.isAirborn = "o" in preAirborne or "l" in preAirborne
 
+        # also airborne if only one jump is used before overhead
+        if "o" in foldSequence and not self.isAirborn:
+            preOH = foldSequence[:temp.index("o")]
+            self.isAirborn = not ("s" in preOH or "w" in preOH or "b" in preOH or preOH.count("j") >= 2)
+
         # has swing overhead if overhead is used before payout
-        temp = foldSequence + "jswb"
+        temp = foldSequence + "jjswb"
+        if not self.isAirborn: # ignore the first jump for overhead payouts if not airborne
+            temp[temp.index("j")] = " "
         preOverheadPayout = temp[:min(temp.index("j"), temp.index("s"), temp.index("w"), temp.index("b"))]
         self.hasSwingOverhead = preOverheadPayout.count("o") >= 1
 
