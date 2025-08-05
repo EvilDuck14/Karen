@@ -166,7 +166,7 @@ class State:
         # has swing overhead if overhead is used before payout
         temp = foldSequence + "jjswb"
         if not self.isAirborn: # ignore the first jump for overhead payouts if not airborne
-            temp[temp.index("j")] = " "
+            temp = temp[:temp.index("j")] + temp[temp.index("j") + 1:]
         preOverheadPayout = temp[:min(temp.index("j"), temp.index("s"), temp.index("w"), temp.index("b"))]
         self.hasSwingOverhead = preOverheadPayout.count("o") >= 1
 
