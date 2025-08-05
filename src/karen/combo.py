@@ -14,19 +14,8 @@ def getComboSequence(inputString="", warnings=[]):
     while "(" in sequence and ")" in sequence[sequence.find("("):]:
         sequence = sequence[:sequence.find("(")] + sequence[sequence[sequence.find("("):].find(")") + sequence.find("(") + 1:]
 
-    # infers whether the combo is long form or letter notation
-    longForm = ">" in sequence
-    if not longForm:
-        for char in sequence:
-            if not (char in ACTION_NAMES):
-                for name in ACTION_NAMES:
-                    if len(name) > 1 and name in sequence:
-                        longForm = True
-                        break
-                break
-
     # handles long-form by converting to list
-    if longForm:
+    if ">" in sequence:
         sequence = sequence.replace("+", ">+>").split(">") # make sure '+' characters are split out as their own entries
         sequence = [x for x in sequence if x != ""] # removes empty entries caused by double '>' characters
     
