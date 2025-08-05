@@ -66,6 +66,7 @@ class State:
     # tracking metrics
     damageDealt = 0
     timeTaken = 0
+    firstDamageTime = 0
 
     # sequence output
     sequence = ""

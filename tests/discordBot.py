@@ -13,28 +13,10 @@ intents.message_content = True
 
 bot = commands.Bot(command_prefix="!", intents=intents)
 
-GUILD_ID = discord.Object(id=1401751994477056010)
-
-# @bot.tree.command(name="eval", description="evaluates given combo", guild=GUILD_ID)
-# async def eval(interaction: discord.Interaction, combo: str):
-#     output = evaluate(combo)
-#     try:
-#         await interaction.response.send_message(output)
-#     except Exception as e:
-#         print(e)
-
-# @bot.tree.command(name="evaln", description="evaluates given combo with no errors shown", guild=GUILD_ID)
-# async def evaln(interaction: discord.Interaction, combo: str):
-#     output = evaluate(combo, printWarnings=False)
-#     try:
-#         await interaction.response.send_message(output)
-#     except Exception as e:
-#         print(e)
-
 @bot.command()
 async def eval(ctx, *arr):
     inputString = "".join(str(x) for x in arr)
-    output = evaluate(inputString)
+    output = evaluate(inputString, limitLength=True)
     try:
         await ctx.send(output)
     except Exception as e:
@@ -43,7 +25,25 @@ async def eval(ctx, *arr):
 @bot.command()
 async def evaln(ctx, *arr):
     inputString = "".join(str(x) for x in arr)
-    output = evaluate(inputString, printWarnings=False)
+    output = evaluate(inputString, printWarnings=False, limitLength=True)
+    try:
+        await ctx.send(output)
+    except Exception as e:
+        print(e)
+
+@bot.command()
+async def evald(ctx, *arr):
+    inputString = "".join(str(x) for x in arr)
+    output = evaluate(inputString, timeFromDamage=True, limitLength=True)
+    try:
+        await ctx.send(output)
+    except Exception as e:
+        print(e)
+
+@bot.command()
+async def evaldn(ctx, *arr):
+    inputString = "".join(str(x) for x in arr)
+    output = evaluate(inputString, timeFromDamage=True, printWarnings=False, limitLength=True)
     try:
         await ctx.send(output)
     except Exception as e:
@@ -53,8 +53,8 @@ async def evaln(ctx, *arr):
 async def on_ready():
     print(f'Logged in as {bot.user} (ID: {bot.user.id})')
     try:
-        await bot.tree.sync(guild=GUILD_ID)
-        print("synced commands")
+        await bot.tree.sync()
+        print("synced successfully")
     except Exception as e:
         print(e)
 

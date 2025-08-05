@@ -169,6 +169,9 @@ def addAction(state=State(), action="", nextAction="", warnings=[]):
         state.burnActiveTimer = BURN_TRACER_BURN_TIME + ACTIONS[action].procTime
         state.burnTracerActiveTimer = 0
 
+    if state.firstDamageTime == 0 and ACTIONS[action].damage > 0:
+        state.firstDamageTime = state.timeTaken + ACTIONS[action].firstDamageTime
+
     state.damageDealt += ACTIONS[action].damage
     state.incrementTime(ACTIONS[action].damageTime if nextAction == "" else ACTIONS[action].cancelTimes[nextAction], warnings)
 

@@ -4,7 +4,7 @@ from karen.classify import classify
 from math import floor
 from karen.actions import *
 
-def evaluate(inputString, printWarnings = True):
+def evaluate(inputString, printWarnings = True, timeFromDamage = False, limitLength = False):
     warnings = []
 
     state = State()
@@ -26,9 +26,28 @@ def evaluate(inputString, printWarnings = True):
 
     comboName = classify("".join(comboSequence))
 
-    if not printWarnings:
-        warnings = []
-    warningsCollected = f"```\n{"\n".join(["WARNING: " + x for x in warnings])}\n```"
     
-    output = f"**{comboName}**\n> {state.sequence}\n**Time:** {round(state.timeTaken / 60, 3)} seconds ({state.timeTaken} frames)\n**Damage:** {int(state.damageDealt)} {burnTracerBonusDamage}" + ("\n" + warningsCollected if len(warnings) > 0 else "")
+    framesTaken = state.timeTaken - (state.firstDamageTime if timeFromDamage else 0)
+
+    output = ( f"**{comboName}**"
+    f"\n> {state.sequence}"
+    f"\n**Time{" From Damage" if timeFromDamage else ""}:** {round(framesTaken / 60, 3)} seconds ({framesTaken} frames)"
+    f"\n**Damage:** {int(state.damageDealt)} {burnTracerBonusDamage}" )
+
+    
+
+    if len(warnings) > 0 and printWarnings:
+        warninglist = ["\nWARNING: " + x for x in warnings]
+
+        output += "\n'''"
+        while len(warninglist) > 0 and len(output) + len(warninglist[0]) + len(f"\n...({len(warninglist)} warnings)\n'''") < 4000:
+            output += warninglist[0]
+            warninglist = warninglist[1:]
+        if len(warninglist) > 0:
+            output += f"\n...({len(warninglist)} warnings)"
+        output += "\n'''"
+
+    if limitLength and len(output) >= 4000:
+        return "'''\nERROR: Combo too long for Discord API\n```"  
+    
     return output

@@ -32,7 +32,9 @@ CLASSIFICATIONS = {
     "otbu" : "Burn Overhead Burst",
     "tgptbu" : "Fried Fish / Firehook",
     "tbuwtg" : "In And Out",
-    "tptbu" : "Burn One Two"
+    "tptbu" : "Burn One Two",
+    "tGbtu" : "Burn Weave",
+    "tGwtbu" : "Burn Weave"
 }
 
 def classify(comboString):

@@ -15,7 +15,7 @@ ACTION_NAMES = {
     "o" : "o", "overheadslam" : "o",  "overhead" : "o", "over" : "o", "oh" : "o",  "meleeoverhead" : "o",  "slam" : "o",
     "t" : "t", "tracer" : "t",  "webtracer" : "t",  "cluster" : "t",  "webcluster" : "t",
     "s" : "s", "swing" : "s", "webswing" : "s",  "highswing" : "s",  "lowswing" : "s", "z" : "s", "zip" : "s", "webzip" : "s",
-    "w" : "w", "whiff" : "w", "webwhiff" : "w", "swingwhiff" : "w",
+    "w" : "w", "whiff" : "w", "webwhiff" : "w", "swingwhiff" : "w", "wiff" : "w", "web wiff" : "w", "swing wiff" : "w",
     "g" : "g", "getoverhere" : "g", "goh" : "g", "webpull" : "g", "pull" : "g",
     "G" : "G", "getoverheretargeting" : "G", "getoverheretargetting" : "G", "goht" : "G",
     "u" : "u", "uppercut" : "u", "upper" : "u", "amazingcombo" : "u",
@@ -51,7 +51,8 @@ class Action:
     procsTracer = False
     procTime = 0
 
-    damageTime = 0 # number of frames between activation and damage registering
+    damageTime = 0 # number of frames between activation and all damage registering
+    firstDamageTime = 0 # for movestacks with multiple hits
     cancelTimes = {} # dict maps action to how many frames into this actions' animation the given action can be used
     moveStacks = {} # dict maps action which stacks over this move with the time taken to initiate the second move of the stack
     
@@ -59,12 +60,13 @@ class Action:
     endActivations = {} # some abilities cause others to start recharging immediately
     awaitCharges = {} # which cooldown charges have to be ready to use during the action, and how long into the action they're used (useful for stacks)
 
-    def __init__(self, name, damage = 0, procsTracer=False, procTime = 0, damageTime=0, cancelTimes={}, moveStacks={}, chargeActivations={}, endActivations={}, awaitCharges={}):
+    def __init__(self, name, damage = 0, procsTracer=False, procTime = 0, damageTime = 0, firstDamageTime = 0, cancelTimes={}, moveStacks={}, chargeActivations={}, endActivations={}, awaitCharges={}):
         self.name = name
         self.damage = damage
         self.procsTracer = procsTracer
         self.procTime = damageTime if procTime == 0 else procTime
         self.damageTime = damageTime
+        self.firstDamageTime = firstDamageTime if firstDamageTime != 0 else damageTime
         self.cancelTimes = cancelTimes
         self.moveStacks = moveStacks
         self.chargeActivations = chargeActivations
@@ -339,6 +341,7 @@ def loadMoveStacks():
         procsTracer = True,
         procTime = ACTIONS["p"].procTime,
         damageTime = ACTIONS["p"].cancelTimes["G"] + ACTIONS["G"].damageTime - 1,
+        firstDamageTime = ACTIONS["p"].damageTime,
         cancelTimes = punchSaporenCancelTimes,
         chargeActivations = {
             "g" : ACTIONS["p"].cancelTimes["G"] + ACTIONS["G"].chargeActivations["g"] - 1
@@ -354,6 +357,7 @@ def loadMoveStacks():
         procsTracer = True,
         procTime = ACTIONS["k"].procTime,
         damageTime = ACTIONS["k"].cancelTimes["G"] + ACTIONS["G"].damageTime - 1,
+        firstDamageTime = ACTIONS["k"].damageTime,
         cancelTimes = kickSaporenCancelTimes,
         chargeActivations = {
             "g" : ACTIONS["k"].cancelTimes["G"] + ACTIONS["G"].chargeActivations["g"] - 1
@@ -364,11 +368,12 @@ def loadMoveStacks():
     )
 
     ACTIONS["o+G"] = Action(
-        name = "Saporen",
+        name = "Overhead Saporen",
         damage = ACTIONS["o"].damage + ACTIONS["G"].damage,
         procsTracer = True,
         procTime = ACTIONS["o"].procTime,
         damageTime = ACTIONS["o"].cancelTimes["G"] + ACTIONS["G"].damageTime - 1,
+        firstDamageTime = ACTIONS["o"].damageTime,
         cancelTimes = overheadSaporenCancelTimes,
         chargeActivations = {
             "g" : ACTIONS["o"].cancelTimes["G"] + ACTIONS["G"].chargeActivations["g"] - 1
@@ -398,6 +403,7 @@ def loadMoveStacks():
         procsTracer = True,
         procTime = ACTIONS["p"].procTime,
         damageTime = ACTIONS["p"].cancelTimes["G"] + ACTIONS["G+u"].damageTime -1,
+        firstDamageTime = ACTIONS["p"].damageTime,
         cancelTimes = punchSaporenFfamestackCancelTimes,
         chargeActivations = {
             "g" : ACTIONS["p"].cancelTimes["G"] + ACTIONS["G"].chargeActivations["g"] - 1,
@@ -415,6 +421,7 @@ def loadMoveStacks():
         procsTracer = True,
         procTime = ACTIONS["k"].procTime,
         damageTime = ACTIONS["k"].cancelTimes["G"] + ACTIONS["G+u"].damageTime - 1,
+        firstDamageTime = ACTIONS["k"].damageTime,
         cancelTimes = kickSaporenFfamestackCancelTimes,
         chargeActivations = {
             "g" : ACTIONS["k"].cancelTimes["G"] + ACTIONS["G"].chargeActivations["g"] - 1,
@@ -427,11 +434,12 @@ def loadMoveStacks():
     )
 
     ACTIONS["o+G+u"] = Action(
-        name = "Saporen FFAmestack",
+        name = "Overhead Saporen FFAmestack",
         damage = ACTIONS["o"].damage + ACTIONS["G"].damage + ACTIONS["u"].damage,
         procsTracer = True,
         procTime = ACTIONS["o"].procTime,
         damageTime = ACTIONS["o"].cancelTimes["G"] + ACTIONS["G+u"].damageTime - 1,
+        firstDamageTime = ACTIONS["o"].damageTime,
         cancelTimes = overheadSaporenFfamestackCancelTimes,
         chargeActivations = {
             "g" : ACTIONS["o"].cancelTimes["G"] + ACTIONS["G"].chargeActivations["g"] - 1,
@@ -457,6 +465,7 @@ def loadMoveStacks():
         procsTracer = True,
         procTime = ACTIONS["u"].procTime,
         damageTime =  ACTIONS["u"].cancelTimes["s"] + ACTIONS["s"].cancelTimes["G"] + ACTIONS["G"].damageTime,
+        firstDamageTime = ACTIONS["u"].damageTime,
         cancelTimes = spacejamCancelTimes,
         chargeActivations = {
             "u" : ACTIONS["u"].cancelTimes["u"],
@@ -488,6 +497,7 @@ def loadMoveStacks():
         procsTracer = True,
         procTime = 0,
         damageTime = ACTIONS["p"].damageTime,
+        firstDamageTime = ACTIONS["p"].damageTime,
         cancelTimes = punchReverseTriggerCancelTimes,
         chargeActivations = {
             "t" : ACTIONS["p"].cancelTimes["t"] - 1 + ACTIONS["t"].chargeActivations["t"]
@@ -503,6 +513,7 @@ def loadMoveStacks():
         procsTracer = True,
         procTime = 0,
         damageTime = ACTIONS["k"].damageTime,
+        firstDamageTime = ACTIONS["k"].damageTime,
         cancelTimes = punchReverseTriggerCancelTimes,
         chargeActivations = {
             "t" : ACTIONS["k"].cancelTimes["t"] - 1 + ACTIONS["t"].chargeActivations["t"]
@@ -518,6 +529,7 @@ def loadMoveStacks():
         procsTracer = True,
         procTime = 0,
         damageTime = ACTIONS["o"].damageTime,
+        firstDamageTime = ACTIONS["o"].damageTime,
         cancelTimes = punchReverseTriggerCancelTimes,
         chargeActivations = {
             "t" : ACTIONS["o"].cancelTimes["t"] - 1 + ACTIONS["t"].chargeActivations["t"]
@@ -538,6 +550,7 @@ def loadMoveStacks():
         procsTracer = True,
         procTime = ACTIONS["p"].procTime,
         damageTime = ACTIONS["o"].damageTime,
+        firstDamageTime = ACTIONS["p"].damageTime,
         cancelTimes = ACTIONS["o"].cancelTimes.copy()
     )
 
@@ -547,6 +560,7 @@ def loadMoveStacks():
         procsTracer = True,
         procTime = ACTIONS["k"].procTime,
         damageTime = ACTIONS["o"].damageTime,
+        firstDamageTime = ACTIONS["k"].damageTime,
         cancelTimes = ACTIONS["o"].cancelTimes.copy()
     )
 
