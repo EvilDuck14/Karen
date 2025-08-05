@@ -29,7 +29,7 @@ ACTION_NAMES = {
     "o+G+u" : "o+G+u", "F" : "o+G+u", "saporenffamestack" : "o+G+u", "sapffamestack" : "o+G+u", "sapffame" : "o+G+u", "overheadsaporenffamestack" : "o+G+u", "ohsapffamestack" : "o+G+u", "ohsapffame" : "o+G+u",
     "p+G+u" : "p+G+u", "punchsaporenffamestack" : "p+G+u", "punchsapffamestack" : "p+G+u", "punchsapffame" : "p+G+u",
     "k+G+u" : "k+G+u", "kicksaporenffamestack" : "k+G+u", "kicksapffamestack" : "k+G+u", "kicksapffame" : "k+G+u",
-    "u+w+G" : "u+w+G", "J" : "u+w+G", "spacejam" : "u+w+G", "sj" : "u+w+G", "u+s+G" : "u+w+G",
+    "u+w+G" : "u+w+G", "J" : "u+w+G", "spacejam" : "u+w+G", "sj" : "u+w+G", "u+s+G" : "u+w+G", "u+G" : "u+w+G",
     "p+t" : "p+t", "r" : "p+t", "reversetrigger" : "p+t", "rt" : "p+t", "backflash" : "p+t", "punchreversetrigger" : "p+t", "punchbackflash" : "p+t", "punchrt" : "p+t",
     "k+t" : "k+t", "kickreversetrigger" : "k+t", "kickbackflash" : "k+t", "kickrt" : "k+t", "jashflash" : "k+t",
     "o+t" : "o+t", "overheadreversetrigger" : "o+t", "overheadbackflash" : "o+t", "overheadrt" : "o+t", "ohreversetrigger" : "o+t", "ohbackflash" : "o+t", "ohrt" : "o+t",

@@ -39,15 +39,15 @@ def evaluate(inputString, printWarnings = True, timeFromDamage = False, limitLen
     if len(warnings) > 0 and printWarnings:
         warninglist = ["\nWARNING: " + x for x in warnings]
 
-        output += "\n'''"
-        while len(warninglist) > 0 and len(output) + len(warninglist[0]) + len(f"\n...({len(warninglist)} warnings)\n'''") < 4000:
+        output += "\n```"
+        while len(warninglist) > 0 and len(output) + len(warninglist[0]) + len(f"\n...({len(warninglist)} warnings)\n```") < 2000:
             output += warninglist[0]
             warninglist = warninglist[1:]
         if len(warninglist) > 0:
             output += f"\n...({len(warninglist)} warnings)"
-        output += "\n'''"
+        output += "\n```"
 
-    if limitLength and len(output) >= 4000:
-        return "'''\nERROR: Combo too long for Discord API\n```"  
+    if limitLength and len(output) >= 2000:
+        return "```\nERROR: Combo too long for Discord API\n```"  
     
     return output
