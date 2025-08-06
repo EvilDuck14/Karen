@@ -1,9 +1,8 @@
 import discord
 from discord.ext import commands
-#from discord import app_commands
 
 from karen.evaluate import evaluate
-from karen.getCombo import getCombo
+from karen.getCombo import *
 
 from karen import hiddenData # delete - used for environment variables
 BOT_TOKEN = hiddenData.BOT_TOKEN # your token here
@@ -54,6 +53,14 @@ async def evaldn(ctx, *arr):
 async def combo(ctx, *arr):
     inputString = "".join(str(x) for x in arr)
     output = getCombo(inputString)
+    try:
+        await ctx.send(output)
+    except Exception as e:
+        print(e)
+
+@bot.command()
+async def combos(ctx, *arr):
+    output = listCombos()
     try:
         await ctx.send(output)
     except Exception as e:

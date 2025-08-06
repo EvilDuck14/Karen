@@ -68,3 +68,16 @@ def getCombo(name):
         if CLASSIFICATIONS[sequence] == COMBO_NAMES[filterName]:
             output = "\n".join(evaluate(sequence, timeFromDamage=False).split("\n")[:3] + evaluate(sequence, timeFromDamage=True).split("\n")[2:])
             return output
+        
+def listCombos():
+    comboList = []
+    sequenceList = []
+    maxLength = 0
+
+    for sequence in CLASSIFICATIONS:
+        if not CLASSIFICATIONS[sequence] in comboList:
+            comboList += [CLASSIFICATIONS[sequence]]
+            sequenceList += [sequence]
+            maxLength = max(maxLength, len(comboList[-1]))
+
+    return ">" + "\n>".join([comboList[i] + " " * (maxLength - len(comboList[i])) + " | " + sequenceList[i] for i in range(len(comboList))])
