@@ -43,7 +43,7 @@ def loadComboNames():
         COMBO_NAMES[filterName] = CLASSIFICATIONS[sequence]
 
     for name in COMBO_NAMES.copy():
-        if len(name) > 3 and name[:3] == "bnb":
+        if len(name) >= 3 and name[:3] == "bnb":
             COMBO_NAMES["b&b" + name[3:]] = COMBO_NAMES[name]
             COMBO_NAMES["bandb" + name[3:]] = COMBO_NAMES[name]
             COMBO_NAMES["breadnbutter" + name[3:]] = COMBO_NAMES[name]
