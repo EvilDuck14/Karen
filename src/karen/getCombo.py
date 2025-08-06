@@ -50,7 +50,7 @@ def loadComboNames():
 
     for name in COMBO_NAMES.copy(): 
         if len(name) > 5 and name[-5:] == "combo":
-            COMBO_NAMES[name[-5:]] = COMBO_NAMES[name]
+            COMBO_NAMES[name[:-5]] = COMBO_NAMES[name]
         else:
             COMBO_NAMES[name + "combo"] = COMBO_NAMES[name]
 
@@ -80,4 +80,4 @@ def listCombos():
             sequenceList += [sequence]
             maxLength = max(maxLength, len(comboList[-1]))
 
-    return ">" + "\n>".join([comboList[i] + " " * (maxLength - len(comboList[i])) + " | " + sequenceList[i] for i in range(len(comboList))])
+    return "```\n" + "\n".join([comboList[i] + " " * (maxLength - len(comboList[i])) + " | " + sequenceList[i] for i in range(len(comboList))]) + "\n```"
