@@ -3,6 +3,7 @@ from discord.ext import commands
 #from discord import app_commands
 
 from karen.evaluate import evaluate
+from karen.getCombo import getCombo
 
 from karen import hiddenData # delete - used for environment variables
 BOT_TOKEN = hiddenData.BOT_TOKEN # your token here
@@ -16,7 +17,7 @@ bot = commands.Bot(command_prefix="!", intents=intents)
 @bot.command()
 async def eval(ctx, *arr):
     inputString = "".join(str(x) for x in arr)
-    output = evaluate(inputString, limitLength=True)
+    output = evaluate(inputString)
     try:
         await ctx.send(output)
     except Exception as e:
@@ -25,7 +26,7 @@ async def eval(ctx, *arr):
 @bot.command()
 async def evaln(ctx, *arr):
     inputString = "".join(str(x) for x in arr)
-    output = evaluate(inputString, printWarnings=False, limitLength=True)
+    output = evaluate(inputString, printWarnings=False)
     try:
         await ctx.send(output)
     except Exception as e:
@@ -34,7 +35,7 @@ async def evaln(ctx, *arr):
 @bot.command()
 async def evald(ctx, *arr):
     inputString = "".join(str(x) for x in arr)
-    output = evaluate(inputString, timeFromDamage=True, limitLength=True)
+    output = evaluate(inputString, timeFromDamage=True)
     try:
         await ctx.send(output)
     except Exception as e:
@@ -43,7 +44,16 @@ async def evald(ctx, *arr):
 @bot.command()
 async def evaldn(ctx, *arr):
     inputString = "".join(str(x) for x in arr)
-    output = evaluate(inputString, timeFromDamage=True, printWarnings=False, limitLength=True)
+    output = evaluate(inputString, timeFromDamage=True, printWarnings=False)
+    try:
+        await ctx.send(output)
+    except Exception as e:
+        print(e)
+
+@bot.command()
+async def combo(ctx, *arr):
+    inputString = "".join(str(x) for x in arr)
+    output = getCombo(inputString)
     try:
         await ctx.send(output)
     except Exception as e:
@@ -57,5 +67,6 @@ async def on_ready():
         print("synced successfully")
     except Exception as e:
         print(e)
+    
 
 bot.run(BOT_TOKEN)

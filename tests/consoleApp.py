@@ -1,4 +1,5 @@
 from karen.evaluate import evaluate
+from karen.getCombo import getCombo
 
 while True:
 
@@ -21,6 +22,9 @@ while True:
 
     elif len(inputString) > 6 and inputString[:7] == "evaldn ":
         print(evaluate(inputString[7:], timeFromDamage=True, printWarnings=False))
+
+    elif len(inputString) > 5 and inputString[:6] == "combo ":
+        print(getCombo(inputString[6:]))
 
     elif len(inputString) > 4 and inputString[:5] == "exit ":
         break

@@ -4,7 +4,7 @@ from karen.classify import classify
 from math import floor
 from karen.actions import *
 
-def evaluate(inputString, printWarnings = True, timeFromDamage = False, limitLength = False):
+def evaluate(inputString, printWarnings = True, timeFromDamage = False):
     warnings = []
 
     state = State()
@@ -47,7 +47,7 @@ def evaluate(inputString, printWarnings = True, timeFromDamage = False, limitLen
             output += f"\n...({len(warninglist)} warnings)"
         output += "\n```"
 
-    if limitLength and len(output) >= 2000:
+    if len(output) >= 2000:
         return "```\nERROR: Combo too long for Discord API\n```"  
     
     return output
