@@ -30,9 +30,9 @@ ACTION_NAMES = {
     "p+G+u" : "p+G+u", "punchsaporenffamestack" : "p+G+u", "punchsapffamestack" : "p+G+u", "punchsapffame" : "p+G+u",
     "k+G+u" : "k+G+u", "kicksaporenffamestack" : "k+G+u", "kicksapffamestack" : "k+G+u", "kicksapffame" : "k+G+u",
     "u+w+G" : "u+w+G", "J" : "u+w+G", "spacejam" : "u+w+G", "sj" : "u+w+G", "u+s+G" : "u+w+G", "u+G" : "u+w+G",
-    "p+t" : "p+t", "r" : "p+t", "reversetrigger" : "p+t", "rt" : "p+t", "backflash" : "p+t", "punchreversetrigger" : "p+t", "punchbackflash" : "p+t", "punchrt" : "p+t",
-    "k+t" : "k+t", "kickreversetrigger" : "k+t", "kickbackflash" : "k+t", "kickrt" : "k+t", "jashflash" : "k+t",
-    "o+t" : "o+t", "overheadreversetrigger" : "o+t", "overheadbackflash" : "o+t", "overheadrt" : "o+t", "ohreversetrigger" : "o+t", "ohbackflash" : "o+t", "ohrt" : "o+t",
+    "p+t" : "p+t", "r" : "p+t", "reversetrigger" : "p+t", "rt" : "p+t", "backflash" : "p+t", "punchreversetrigger" : "p+t", "punchbackflash" : "p+t", "punchrt" : "p+t", "punchblackflash" : "p+t", "blackflash" : "p+t",
+    "k+t" : "k+t", "kickreversetrigger" : "k+t", "kickbackflash" : "k+t", "kickrt" : "k+t", "jashflash" : "k+t", "kickblackflash" : "k+t",
+    "o+t" : "o+t", "overheadreversetrigger" : "o+t", "overheadbackflash" : "o+t", "overheadrt" : "o+t", "ohreversetrigger" : "o+t", "ohbackflash" : "o+t", "ohrt" : "o+t", "overheadblackflash" : "o+t", "ohblackflash" : "o+t",
     "p+o" : "p+o", "unique3hitpunchstack" : "p+o", "uniquethreehitpunchstack" : "p+o","unique3hitpunch" : "p+o", "uniquethreehitpunch" : "p+o", "u3hpunchstack" : "p+o", "u3hpunch" : "p+o",
     "k+o" : "k+o", "unique3hitkickstack" : "k+o", "uniquethreehitkickstack" : "k+o","unique3hitkick" : "k+o", "uniquethreehitkick" : "k+o", "u3hkickstack" : "k+o", "u3hkick" : "k+o",
 
