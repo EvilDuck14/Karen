@@ -16,12 +16,7 @@ COMBO_NAMES = {
     "agnikai" : "Agni-Kai Yo-Yo",
     "bald" : "Bald Slam",
 
-    "bnbburn" : "Burn BnB / Fadeaway",
-    "burnb&b" : "Burn BnB / Fadeaway",
-    "burnbandb" : "Burn BnB / Fadeaway",
-    "burnbreadnbutter" : "Burn BnB / Fadeaway",
-    "burnbread&butter" : "Burn BnB / Fadeaway",
-    "burnbreadandbutter" : "Burn BnB / Fadeaway",
+    "burnbnb" : "Burn BnB / Fadeaway",
     "fadeaway" : "Burn BnB / Fadeaway",
     "burnohburst" : "Burn Overhead Burst",
     "burnoverhead" : "Burn Overhead Burst",
@@ -43,12 +38,12 @@ def loadComboNames():
         COMBO_NAMES[filterName] = CLASSIFICATIONS[sequence]
 
     for name in COMBO_NAMES.copy():
-        if len(name) >= 3 and name[:3] == "bnb":
-            COMBO_NAMES["b&b" + name[3:]] = COMBO_NAMES[name]
-            COMBO_NAMES["bandb" + name[3:]] = COMBO_NAMES[name]
-            COMBO_NAMES["breadnbutter" + name[3:]] = COMBO_NAMES[name]
-            COMBO_NAMES["bread&butter" + name[3:]] = COMBO_NAMES[name]
-            COMBO_NAMES["breadandbutter" + name[3:]] = COMBO_NAMES[name]
+        if "bnb" in name:
+            COMBO_NAMES[name.replace("bnb", "b&b")] = COMBO_NAMES[name]
+            COMBO_NAMES[name.replace("bnb", "bandb")] = COMBO_NAMES[name]
+            COMBO_NAMES[name.replace("bnb", "breadnbutter")] = COMBO_NAMES[name]
+            COMBO_NAMES[name.replace("bnb", "bread&butter")] = COMBO_NAMES[name]
+            COMBO_NAMES[name.replace("bnb", "breadandbutter")] = COMBO_NAMES[name]
 
 
 def getCombo(name):
