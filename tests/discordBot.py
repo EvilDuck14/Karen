@@ -32,24 +32,6 @@ async def evaln(ctx, *arr):
         print(e)
 
 @bot.command()
-async def evald(ctx, *arr):
-    inputString = "".join(str(x) for x in arr)
-    output = evaluate(inputString, timeFromDamage=True)
-    try:
-        await ctx.send(output)
-    except Exception as e:
-        print(e)
-
-@bot.command()
-async def evaldn(ctx, *arr):
-    inputString = "".join(str(x) for x in arr)
-    output = evaluate(inputString, timeFromDamage=True, printWarnings=False)
-    try:
-        await ctx.send(output)
-    except Exception as e:
-        print(e)
-
-@bot.command()
 async def combo(ctx, *arr):
     inputString = "".join(str(x) for x in arr)
     output = getCombo(inputString)

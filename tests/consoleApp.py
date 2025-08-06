@@ -17,12 +17,6 @@ while True:
     elif len(inputString) > 5 and inputString[:6] == "evaln ":
         print(evaluate(inputString[6:], printWarnings=False))
 
-    elif len(inputString) > 5 and inputString[:6] == "evald ":
-        print(evaluate(inputString[6:], timeFromDamage=True))
-
-    elif len(inputString) > 6 and inputString[:7] == "evaldn ":
-        print(evaluate(inputString[7:], timeFromDamage=True, printWarnings=False))
-
     elif len(inputString) > 5 and inputString[:6] == "combo ":
         print(getCombo(inputString[6:]))
 

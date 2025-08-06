@@ -4,7 +4,7 @@ from karen.classify import CLASSIFICATIONS
 COMBO_NAMES = {
     "bnb" : "Bread & Butter (BnB)",
     "bnbplink" : "BnB Long Plink",
-    "fishingcombo" : "Fishing Combo / Sekkombo",
+    "fishing" : "Fishing Combo / Sekkombo",
     "fish" : "Fishing Combo / Sekkombo",
     "sekkombo" : "Fishing Combo / Sekkombo",
     "sekombo" : "Fishing Combo / Sekkombo",
@@ -38,6 +38,8 @@ COMBO_NAMES = {
 def loadComboNames():
     for sequence in CLASSIFICATIONS:
         filterName = CLASSIFICATIONS[sequence].replace(" ", "").replace("-", "").lower()
+        if len(filterName) > 5 and filterName[-5:] == "combo":
+            filterName = filterName[:-5]
         COMBO_NAMES[filterName] = CLASSIFICATIONS[sequence]
 
     for name in COMBO_NAMES.copy():
@@ -48,26 +50,21 @@ def loadComboNames():
             COMBO_NAMES["bread&butter" + name[3:]] = COMBO_NAMES[name]
             COMBO_NAMES["breadandbutter" + name[3:]] = COMBO_NAMES[name]
 
-    for name in COMBO_NAMES.copy(): 
-        if len(name) > 5 and name[-5:] == "combo":
-            COMBO_NAMES[name[:-5]] = COMBO_NAMES[name]
-        else:
-            COMBO_NAMES[name + "combo"] = COMBO_NAMES[name]
-
 
 def getCombo(name):
     if not "b&b" in COMBO_NAMES:
         loadComboNames()
 
     filterName = name.replace(" ", "").replace("-", "").lower()
+    if len(filterName) > 5 and filterName[-5:] == "combo":
+            filterName = filterName[:-5]
 
     if not filterName in COMBO_NAMES:
         return "```\nERROR: Combo not found\n```"
     
     for sequence in CLASSIFICATIONS:
         if CLASSIFICATIONS[sequence] == COMBO_NAMES[filterName]:
-            output = "\n".join(evaluate(sequence, timeFromDamage=False).split("\n")[:3] + evaluate(sequence, timeFromDamage=True).split("\n")[2:])
-            return output
+            return evaluate(sequence)
         
 def listCombos():
     comboList = []

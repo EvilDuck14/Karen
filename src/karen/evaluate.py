@@ -4,7 +4,7 @@ from karen.classify import classify
 from math import floor
 from karen.actions import *
 
-def evaluate(inputString, printWarnings = True, timeFromDamage = False):
+def evaluate(inputString, printWarnings = True):
     warnings = []
 
     state = State()
@@ -26,12 +26,10 @@ def evaluate(inputString, printWarnings = True, timeFromDamage = False):
 
     comboName = classify("".join(comboSequence))
 
-    
-    framesTaken = state.timeTaken - (state.firstDamageTime if timeFromDamage else 0)
-
     output = ( f"**{comboName}**"
     f"\n> {state.sequence}"
-    f"\n**Time{" From Damage" if timeFromDamage else ""}:** {round(framesTaken / 60, 3)} seconds ({framesTaken} frames)"
+    f"\n**Time:** {round(state.timeTaken / 60, 3)} seconds ({state.timeTaken} frames)"
+    f"\n**Time From Damage:** {round(state.timeTaken - state.firstDamageTime / 60, 3)} seconds ({state.timeTaken - state.firstDamageTime} frames)"
     f"\n**Damage:** {int(state.damageDealt)} {burnTracerBonusDamage}" )
 
     
