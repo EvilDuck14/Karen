@@ -1,8 +1,8 @@
-`Karen`# Karen
+# Karen
 
 > *"Congratulations on completing the rigorous Training Wheels Protocol and gaining access to your suit’s full capabilities... Would you like me to engage Enhanced Combat Mode?"* - Karen
 
-`Karen` is named after Spider-Man's virtual assistant in *Spider-Man: Homecoming*, who advised Peter in strategy and combat. This python script is designed to quickly, easily, and accurately analyse Spider-Man's combos in Marvel Rivals.
+`karen` is named after Spider-Man's virtual assistant in *Spider-Man: Homecoming*, who advised Peter in strategy and combat. This python script is designed to quickly, easily, and accurately analyse Spider-Man's combos in Marvel Rivals.
 
 ## Table of Contents
 
@@ -15,11 +15,17 @@
 
 ## Installation
 
-Clone the repository using your preferred method. The *"tests"* folder includes a console application where commands can be run, as well as a discord bot application (note that you will have to copy your bot's token into the script to connect it to your bot).
+Install the `karen` python package using [pip](https://pypi.org/project/pip/):
+
+```bash
+pip install karen
+```
+
+The functions in this library can be used to create your own interface - but most likely you will prefer to download and run one of the scripts in the [tests folder](https://github.com/EvilDuck14/Karen/tree/main/tests), where command line & discord bot interfaces have already been implemented.
 
 ## Usage
 
-`Karen` evaluates combos given to it by the **!eval** command:
+`karen` evaluates combos given to it by the **!eval** command:
 
 ```
     !eval tGusto
@@ -35,7 +41,8 @@ Note that shortened names are still used; in this format, single letter, shortha
 
 | Action | Letter | Other Names |
 | :---: | :---: | :---:|
-| Jump | j | jump <br> dj |
+| Jump | j | jump |
+| Double Jump | d | double jump <br> dj |
 | Land | l | land |
 | Punch | p | punch <br> punch A <br> punch B <br> melee punch <br> melee punch A <br> melee punch B |
 | Kick | k | kick <br> melee kick |
@@ -56,13 +63,13 @@ Note that shortened names are still used; in this format, single letter, shortha
 
 ### Initial State
 
-Some combos involve a setup that you don't want to list as a part of the combo - `Karen` will automatically infer certain properties about the initial state.
+Some combos involve a setup that you don't want to list as a part of the combo - `karen` will automatically infer certain properties about the initial state.
 
-If you use Get Over Here Targeting before tagging the target with a tracer/burn tracer, `Karen` will infer that the target initially had a tracer applied (this will send a warning in the console).
+If you use Get Over Here Targeting before tagging the target with a tracer/burn tracer, `karen` will infer that the target initially had a tracer applied (this will send a warning in the console).
 
-If you use a kick before using two punches, `Karen` will infer punches had been used immediately before beginning the combo.
+If you use a kick before using two punches, `karen` will infer punches had been used immediately before beginning the combo.
 
-If you use an overhead before getting airborne with a jump, burn tracer, or upercut, `Karen` will assume you started the combo in an airborne state. If you use an overhead before acquiring one with a jump, swing, whiff, or burn tracer, `Karen` will infer you started with a swing overhead. If you use two overheads before acquiring one, `Karen` will assume you started with both overheads and no double jump.
+If you use an overhead before getting airborne with a jump, burn tracer, or upercut, `karen` will assume you started the combo in an airborne state. If you use an overhead before acquiring one with a jump, swing, whiff, or burn tracer, `karen` will infer you started with a swing overhead. If you use two overheads before acquiring one, `karen` will assume you started with both overheads and no double jump.
 
 ### Move Stacks
 
@@ -116,10 +123,14 @@ All movestacks are listed below:
 - [ ] Add combo generator
 - [ ] Optimise combo generator by removing unneeded actions
 
+More detailed/frequent progress updates are given on the [testing discord server](https://discord.gg/RpQf2zVAMP).
+
 ## Acknowledgement
 
 Special thanks to NonJohns for feedback on the design/featureset and for help with quality assurance.
 
+Additional thanks to Venom, Fancy_Spider, and Mrpoolman, and all other testers who helped find bugs.
+
 ## License
 
-`Karen` is distributed under the terms of the [MIT](https://spdx.org/licenses/MIT.html) license.
+`karen` is distributed under the terms of the [MIT](https://spdx.org/licenses/MIT.html) license.

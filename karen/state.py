@@ -153,9 +153,9 @@ class State:
             self.punchSequence = max(0, 2 - priorPunches)
             self.punchSequenceTimer = PUNCH_SEQUENCE_MAX_DELAY - ACTIONS["p"].cancelTimes[foldSequence.replace("j", "").replace("l", "")[0]] # set punch sequence timer as if pre-punching was the last thing done before the combo
         
-        # airborne if overhead/land is used before jump/uppercut/burn tracer
-        temp = foldSequence + "jub" # ensures index funtions don't error
-        preAirborne = temp[:min(temp.index("j"), temp.index("u"), temp.index("b"))]
+        # airborne if overhead/land is used before jump/swing/uppercut/burn tracer
+        temp = foldSequence + "jdsub" # ensures index funtions don't error
+        preAirborne = temp[:min(temp.index("j"), temp.index("s"), temp.index("d"), temp.index("u"), temp.index("b"))]
         self.isAirborn = "o" in preAirborne or "l" in preAirborne
 
         # also airborne if only one jump is used before overhead
@@ -164,13 +164,40 @@ class State:
             self.isAirborn = not ("s" in preOH or "w" in preOH or "b" in preOH or preOH.count("j") >= 2)
 
         # has swing overhead if overhead is used before payout
-        temp = foldSequence + "jjswb"
+        temp = foldSequence + "jjdswb"
         if not self.isAirborn: # ignore the first jump for overhead payouts if not airborne
             temp = temp[:temp.index("j")] + temp[temp.index("j") + 1:]
-        preOverheadPayout = temp[:min(temp.index("j"), temp.index("s"), temp.index("w"), temp.index("b"))]
+        preOverheadPayout = temp[:min(temp.index("j"), temp.index("d"), temp.index("s"), temp.index("w"), temp.index("b"))]
         self.hasSwingOverhead = preOverheadPayout.count("o") >= 1
 
         # has jump ovehead if two overheads are used before payout
         if preOverheadPayout.count("o") >= 2:
             self.hasJumpOverhead = True
             self.hasDoubleJump = False
+
+        # infers jump overhead being preserved through goht
+        if "G" in preOverheadPayout and (not ("sG" in preOverheadPayout or "wG" in preOverheadPayout)) and "o" in preOverheadPayout[preOverheadPayout.index("G"):]:
+            self.hasJumpOverhead = True
+            self.hasDoubleJump = False
+        
+
+    def correctJumps(self, combo):
+
+        isAirborne = self.isAirborn
+
+        correctedCombo = ""
+        for action in combo:
+            if isAirborne and action == "j":
+                correctedCombo += "d"
+            else:
+                correctedCombo += action
+            
+            if action in ["j", "s", "d", "u", "b"]:
+                isAirborne = True
+            elif action == "l":
+                isAirborne = False
+        
+        correctedCombo = correctedCombo.replace("jd", "d")
+        correctedCombo = [a for a in correctedCombo] + [""]
+
+        return correctedCombo

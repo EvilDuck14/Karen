@@ -8,7 +8,8 @@ BURN_TRACER_BURN_TIME = 240
 
 
 ACTION_NAMES = {
-    "j" : "j", "jump" : "j", "dj" : "j", "d" : "j",
+    "j" : "j", "jump" : "j",
+    "d" : "d", "double jump" : "d", "dj" : "d",
     "l" : "l", "land" : "l",
     "p" : "p", "punch" : "p", "puncha" : "p",  "punchb" : "p", "meleepunch" : "p",  "meleepuncha" : "p",  "meleepunchb" : "p",
     "k" : "k", "kick" : "k",  "meleekick" : "k",
@@ -304,7 +305,7 @@ def loadMoveStacks():
     for key in ffamestackCancelTimes:
         ffamestackCancelTimes[key] = max(ACTIONS["u"].cancelTimes[key] + 1, ffamestackCancelTimes[key])
 
-    ACTIONS["G+u"] = Action(
+    ACTIONS["G+u"] = Action (
         name = "FFAmestack",
         damage = ACTIONS["G"].damage + ACTIONS["u"].damage,
         procsTracer = True,
@@ -335,7 +336,7 @@ def loadMoveStacks():
         kickSaporenCancelTimes[key] += ACTIONS["k"].cancelTimes["G"] - 1
         overheadSaporenCancelTimes[key] += ACTIONS["o"].cancelTimes["G"]  -1
 
-    ACTIONS["p+G"] = Action(
+    ACTIONS["p+G"] = Action (
         name = "Punch Saporen",
         damage = ACTIONS["p"].damage + ACTIONS["G"].damage,
         procsTracer = True,
@@ -351,7 +352,7 @@ def loadMoveStacks():
         }
     )
 
-    ACTIONS["k+G"] = Action(
+    ACTIONS["k+G"] = Action (
         name = "Kick Saporen",
         damage = ACTIONS["k"].damage + ACTIONS["G"].damage,
         procsTracer = True,
@@ -367,7 +368,7 @@ def loadMoveStacks():
         }
     )
 
-    ACTIONS["o+G"] = Action(
+    ACTIONS["o+G"] = Action (
         name = "Overhead Saporen",
         damage = ACTIONS["o"].damage + ACTIONS["G"].damage,
         procsTracer = True,
@@ -397,7 +398,7 @@ def loadMoveStacks():
         kickSaporenFfamestackCancelTimes[key] += ACTIONS["k"].cancelTimes["G"] - 1
         overheadSaporenFfamestackCancelTimes[key] += ACTIONS["o"].cancelTimes["G"] - 1
 
-    ACTIONS["p+G+u"] = Action(
+    ACTIONS["p+G+u"] = Action (
         name = "Punch Saporen FFAmestack",
         damage = ACTIONS["p"].damage + ACTIONS["G"].damage + ACTIONS["u"].damage,
         procsTracer = True,
@@ -415,7 +416,7 @@ def loadMoveStacks():
         }
     )
 
-    ACTIONS["k+G+u"] = Action(
+    ACTIONS["k+G+u"] = Action (
         name = "Kick Saporen FFAmestack",
         damage = ACTIONS["k"].damage + ACTIONS["G"].damage + ACTIONS["u"].damage,
         procsTracer = True,
@@ -433,7 +434,7 @@ def loadMoveStacks():
         }
     )
 
-    ACTIONS["o+G+u"] = Action(
+    ACTIONS["o+G+u"] = Action (
         name = "Overhead Saporen FFAmestack",
         damage = ACTIONS["o"].damage + ACTIONS["G"].damage + ACTIONS["u"].damage,
         procsTracer = True,
@@ -459,7 +460,7 @@ def loadMoveStacks():
     for key in spacejamCancelTimes:
         spacejamCancelTimes[key] += ACTIONS["u"].cancelTimes["s"] + ACTIONS["s"].cancelTimes["G"]
 
-    ACTIONS["u+w+G"] = Action(
+    ACTIONS["u+w+G"] = Action (
         name = "Space Jam",
         damage = ACTIONS["G"].damage + ACTIONS["u"].damage,
         procsTracer = True,
@@ -491,7 +492,7 @@ def loadMoveStacks():
         kickReverseTriggerCancelTimes[action] += ACTIONS["k"].damageTime - 1 - ACTIONS["t"].damageTime
         overheadReverseTriggerCancelTimes[action] += ACTIONS["o"].damageTime - 1 - ACTIONS["t"].damageTime
 
-    ACTIONS["p+t"] = Action(
+    ACTIONS["p+t"] = Action (
         name = "Punch Reverse Trigger",
         damage = ACTIONS["p"].damage + ACTIONS["t"].damage,
         procsTracer = True,
@@ -507,7 +508,7 @@ def loadMoveStacks():
         }
     )
 
-    ACTIONS["k+t"] = Action(
+    ACTIONS["k+t"] = Action (
         name = "Kick Reverse Trigger",
         damage = ACTIONS["k"].damage + ACTIONS["t"].damage,
         procsTracer = True,
@@ -523,7 +524,7 @@ def loadMoveStacks():
         }
     )
 
-    ACTIONS["o+t"] = Action(
+    ACTIONS["o+t"] = Action (
         name = "Overhead Reverse Trigger",
         damage = ACTIONS["o"].damage + ACTIONS["t"].damage,
         procsTracer = True,
@@ -544,7 +545,7 @@ def loadMoveStacks():
         ACTIONS[action].cancelTimes["p+o"] = ACTIONS[action].cancelTimes["p"]
         ACTIONS[action].cancelTimes["k+o"] = ACTIONS[action].cancelTimes["k"]
 
-    ACTIONS["p+o"] = Action(
+    ACTIONS["p+o"] = Action (
         name = "U3H Punch Stack",
         damage = ACTIONS["p"].damage + ACTIONS["o"].damage,
         procsTracer = True,
@@ -554,7 +555,7 @@ def loadMoveStacks():
         cancelTimes = ACTIONS["o"].cancelTimes.copy()
     )
 
-    ACTIONS["k+o"] = Action(
+    ACTIONS["k+o"] = Action (
         name = "U3H Kick Stack",
         damage = ACTIONS["k"].damage + ACTIONS["o"].damage,
         procsTracer = True,
@@ -564,12 +565,17 @@ def loadMoveStacks():
         cancelTimes = ACTIONS["o"].cancelTimes.copy()
     )
 
-    ACTIONS["j"] = Action(
+    ACTIONS["j"] = Action (
         name = "Jump",
         cancelTimes = { a : 0 for a in ACTIONS }
     )
 
-    ACTIONS["l"] = Action(
+    ACTIONS["d"] = Action (
+        name = "Double Jump",
+        cancelTimes = { a : 0 for a in ACTIONS }
+    )
+
+    ACTIONS["l"] = Action (
         name = "Land",
         cancelTimes = { a : 0 for a in ACTIONS }
     )

@@ -102,8 +102,15 @@ def addAction(state=State(), action="", nextAction="", warnings=[]):
         state.hasDoubleJump = False
         state.hasJumpOverhead = True
 
-    elif action in ["j", "b"] or "u" in action:
+    elif action in ["j", "s", "b"] or "u" in action:
         state.isAirborn = True
+
+    if action == "d":
+        if not state.hasDoubleJump: 
+            warnings += ["uses impossible double jump after " + state.sequence]
+        state.isAirborn = True
+        state.hasDoubleJump = False
+        state.hasJumpOverhead = True
 
     if action in ["o", "G", "G+u", "p+G", "k+G", "p+G+u", "k+G+u", "p+G+u", "k+G+u", "o+t", "p+o", "k+o"]:
         if state.hasSwingOverhead:

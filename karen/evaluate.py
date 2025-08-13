@@ -12,9 +12,10 @@ def evaluate(inputString, printWarnings = True):
 
     # infer initial state being airborne/having overhead
     state.inferInitialState(comboSequence, warnings)
+    comboSequence = state.correctJumps(comboSequence)
 
     for i in range(len(comboSequence) - 1):
-        nextAction = [j for j in comboSequence[i+1:] if not j in ["j", "l"]][0]
+        nextAction = [j for j in comboSequence[i+1:] if not j in ["j", "d", "l"]][0]
         addAction(state, comboSequence[i], nextAction, warnings)
 
     # checks for continued burn tracer damage after final action
@@ -29,7 +30,7 @@ def evaluate(inputString, printWarnings = True):
     output = ( f"**{comboName}**"
     f"\n> {state.sequence}"
     f"\n**Time:** {round(state.timeTaken / 60, 3)} seconds ({state.timeTaken} frames)"
-    f"\n**Time From Damage:** {round(state.timeTaken - state.firstDamageTime / 60, 3)} seconds ({state.timeTaken - state.firstDamageTime} frames)"
+    f"\n**Time From Damage:** {round((state.timeTaken - state.firstDamageTime) / 60, 3)} seconds ({state.timeTaken - state.firstDamageTime} frames)"
     f"\n**Damage:** {int(state.damageDealt)} {burnTracerBonusDamage}" )
 
     

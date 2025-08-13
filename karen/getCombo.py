@@ -1,7 +1,22 @@
 from karen.evaluate import evaluate
 from karen.classify import CLASSIFICATIONS
 
-COMBO_NAMES = {
+COMBO_SEQUENCES = {}
+
+OVERRIDE_COMBO_SEQUENCES = {
+    "Fast Panther" : "tGslptu",
+    "Reverse Yo-Yo" : "tgdotu",
+    "Master Manipulator" : "otslptu",
+    "Further Beyond" : "otuwtotgwtuwtodto",
+    "Yo-Yo" : "gdwtuwto",
+    "Botched Yo-Yo" : "gdwtuototu",
+    "Agni-Kai Yo-Yo" : "gdtutp",
+    "Bald Slam" : "twGuot",
+    "Vortex" : "uwtdGo",
+    "In And Out" : "tbuwtg"
+}
+
+COMBO_ALIASES = {
     "bnb" : "Bread & Butter (BnB)",
     "bnbplink" : "BnB Long Plink",
     "fishing" : "Fishing Combo / Sekkombo",
@@ -30,36 +45,39 @@ COMBO_NAMES = {
     "in&out" : "In And Out"
 }
 
-def loadComboNames():
+def loadComboSequences():
+    for sequence in CLASSIFICATIONS:
+        COMBO_SEQUENCES[CLASSIFICATIONS[sequence]] = sequence
+    for combo in OVERRIDE_COMBO_SEQUENCES:
+        COMBO_SEQUENCES[combo] = OVERRIDE_COMBO_SEQUENCES[combo]
+
     for sequence in CLASSIFICATIONS:
         filterName = CLASSIFICATIONS[sequence].replace(" ", "").replace("-", "").lower()
         if len(filterName) > 5 and filterName[-5:] == "combo":
             filterName = filterName[:-5]
-        COMBO_NAMES[filterName] = CLASSIFICATIONS[sequence]
+        COMBO_ALIASES[filterName] = CLASSIFICATIONS[sequence]
 
-    for name in COMBO_NAMES.copy():
+    for name in COMBO_ALIASES.copy():
         if "bnb" in name:
-            COMBO_NAMES[name.replace("bnb", "b&b")] = COMBO_NAMES[name]
-            COMBO_NAMES[name.replace("bnb", "bandb")] = COMBO_NAMES[name]
-            COMBO_NAMES[name.replace("bnb", "breadnbutter")] = COMBO_NAMES[name]
-            COMBO_NAMES[name.replace("bnb", "bread&butter")] = COMBO_NAMES[name]
-            COMBO_NAMES[name.replace("bnb", "breadandbutter")] = COMBO_NAMES[name]
+            COMBO_ALIASES[name.replace("bnb", "b&b")] = COMBO_ALIASES[name]
+            COMBO_ALIASES[name.replace("bnb", "bandb")] = COMBO_ALIASES[name]
+            COMBO_ALIASES[name.replace("bnb", "breadnbutter")] = COMBO_ALIASES[name]
+            COMBO_ALIASES[name.replace("bnb", "bread&butter")] = COMBO_ALIASES[name]
+            COMBO_ALIASES[name.replace("bnb", "breadandbutter")] = COMBO_ALIASES[name]
 
 
 def getCombo(name):
-    if not "b&b" in COMBO_NAMES:
-        loadComboNames()
+    if len(COMBO_SEQUENCES) == 0:
+        loadComboSequences()
 
     filterName = name.replace(" ", "").replace("-", "").lower()
     if len(filterName) > 5 and filterName[-5:] == "combo":
             filterName = filterName[:-5]
 
-    if not filterName in COMBO_NAMES:
+    if not filterName in COMBO_ALIASES or not COMBO_ALIASES[filterName] in COMBO_SEQUENCES:
         return "```\nERROR: Combo not found\n```"
     
-    for sequence in CLASSIFICATIONS:
-        if CLASSIFICATIONS[sequence] == COMBO_NAMES[filterName]:
-            return evaluate(sequence)
+    return evaluate(COMBO_SEQUENCES[COMBO_ALIASES[filterName]])
         
 def listCombos():
     comboList = []

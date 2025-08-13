@@ -38,7 +38,7 @@ CLASSIFICATIONS = {
 }
 
 def classify(comboString):
-    comboString = comboString.replace("j", "").replace("l", "") # doesnt consider jumping/landing in classificaiton
+    comboString = comboString.replace("j", "").replace("d", "").replace("l", "") # doesnt consider jumping/landing in classificaiton
 
     if comboString in CLASSIFICATIONS:
         return CLASSIFICATIONS[comboString]
