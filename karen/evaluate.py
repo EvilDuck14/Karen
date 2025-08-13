@@ -12,7 +12,7 @@ def evaluate(inputString, printWarnings = True):
 
     # infer initial state being airborne/having overhead
     state.inferInitialState(comboSequence, warnings)
-    comboSequence = state.correctJumps(comboSequence)
+    comboSequence = state.correctSequence(comboSequence)
 
     for i in range(len(comboSequence) - 1):
         nextAction = [j for j in comboSequence[i+1:] if not j in ["j", "d", "l"]][0]

@@ -13,7 +13,8 @@ OVERRIDE_COMBO_SEQUENCES = {
     "Agni-Kai Yo-Yo" : "gdtutp",
     "Bald Slam" : "twGuot",
     "Vortex" : "uwtdGo",
-    "In And Out" : "tbuwtg"
+    "In And Out" : "tbuwtg",
+    "Hydro Combo" : "tgptslptu" # TO DO: change to autoswing when implemented
 }
 
 COMBO_ALIASES = {

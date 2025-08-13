@@ -27,6 +27,7 @@ CLASSIFICATIONS = {
     "tuwtGu" : "Driveby",
     "twGuot" : "Bald Slam",
     "uwtGo" : "Vortex",
+    "tgptsptu" : "Hydro Combo",
 
     "tGbu" : "Burn BnB / Fadeaway",
     "otbu" : "Burn Overhead Burst",
@@ -39,6 +40,7 @@ CLASSIFICATIONS = {
 
 def classify(comboString):
     comboString = comboString.replace("j", "").replace("d", "").replace("l", "") # doesnt consider jumping/landing in classificaiton
+    comboString = comboString.replace("a", "s") # autoswings are equivalent to swings for classification purposes
 
     if comboString in CLASSIFICATIONS:
         return CLASSIFICATIONS[comboString]

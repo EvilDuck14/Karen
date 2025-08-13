@@ -181,23 +181,59 @@ class State:
             self.hasDoubleJump = False
         
 
-    def correctJumps(self, combo):
+    def correctSequence(self, combo):
 
+        # Converts relevant jumps to double jumps
         isAirborne = self.isAirborn
-
-        correctedCombo = ""
+        correctedCombo = []
         for action in combo:
             if isAirborne and action == "j":
-                correctedCombo += "d"
+                correctedCombo += ["d"]
             else:
-                correctedCombo += action
+                correctedCombo += [action]
             
             if action in ["j", "s", "d", "u", "b"]:
                 isAirborne = True
             elif action == "l":
                 isAirborne = False
         
-        correctedCombo = correctedCombo.replace("jd", "d")
-        correctedCombo = [a for a in correctedCombo] + [""]
+        # Corrects action sequences
+        temp = correctedCombo
+        correctedCombo = []
+        i = 0
+        while i in range(len(temp)):
 
+            # space jam
+            if i+2 < len(temp):
+                print("".join(temp[i:i+3]))
+            if i+2 < len(temp) and ("".join(temp[i:i+3]) in ["uwG", "usG"]):
+                print("TEST")
+                correctedCombo += ["u+w+G"]
+                i += 3
+                continue
+                
+            if i+1 < len(temp):
+                sequence = "".join(temp[i:i+2])
+                
+                # space jam
+                if sequence == "uG":
+                    correctedCombo += ["u+w+G"]
+                    i += 2
+                    continue
+
+                # double jump
+                if sequence == "dj":
+                    correctedCombo += ["d"]
+                    i += 2
+                    continue
+
+                # saporens
+                if sequence in ["pG", "kG", "oG"]:
+                    correctedCombo += [sequence[0] + "+G"]
+                    i += 2
+                    continue
+
+            correctedCombo += [temp[i]]
+            i += 1
+        
         return correctedCombo
