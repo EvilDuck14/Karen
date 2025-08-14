@@ -10,6 +10,10 @@ def evaluate(inputString, printWarnings = True):
     state = State()
     comboSequence = getComboSequence(inputString, warnings) + [""]
 
+    # runs a second evaluation with maximum action ranges
+    maxTravelTimeState = State()
+    maxTravelTimeState.inferInitialState(comboSequence)
+
     # infer initial state being airborne/having overhead
     state.inferInitialState(comboSequence, warnings)
     comboSequence = state.correctSequence(comboSequence)
@@ -17,20 +21,19 @@ def evaluate(inputString, printWarnings = True):
     for i in range(len(comboSequence) - 1):
         nextAction = [j for j in comboSequence[i+1:] if not j in ["j", "d", "l"]][0]
         addAction(state, comboSequence[i], nextAction, warnings)
+        addAction(maxTravelTimeState, comboSequence[i], nextAction, maxTravelTimes=True)
 
     # checks for continued burn tracer damage after final action
     burnTracerBonusDamage = ""
     if state.burnActiveTimer > 12:
         burnTracerBonusDamage = "(plus " + str(int(floor((state.burnActiveTimer - 1) / 12) * BURN_TRACER_DPS / 5)) +" burn over time)"
 
-    # TO DO: runs a second evaluation with maximum action ranges
-
     comboName = classify("".join(comboSequence))
 
     output = ( f"**{comboName}**"
     f"\n> {state.sequence}"
-    f"\n**Time:** {round(state.timeTaken / 60, 3)} seconds ({state.timeTaken} frames)"
-    f"\n**Time From Damage:** {round((state.timeTaken - state.firstDamageTime) / 60, 3)} seconds ({state.timeTaken - state.firstDamageTime} frames)"
+    f"\n**Time:** {round(state.timeTaken / 60, 2)}{f"-{round(maxTravelTimeState.timeTaken / 60, 2)}" if maxTravelTimeState.timeTaken != state.timeTaken else ""} seconds ({state.timeTaken}{f"-{maxTravelTimeState.timeTaken}" if maxTravelTimeState.timeTaken != state.timeTaken else ""} frames)"
+    f"\n**Time From Damage:** {round((state.timeTaken - state.firstDamageTime) / 60, 2)}{f"-{round((maxTravelTimeState.timeTaken - maxTravelTimeState.firstDamageTime) / 60, 2)}" if maxTravelTimeState.timeTaken - maxTravelTimeState.firstDamageTime != state.timeTaken - state.firstDamageTime else ""} seconds ({state.timeTaken - state.firstDamageTime} frames)"
     f"\n**Damage:** {int(state.damageDealt)} {burnTracerBonusDamage}" )
 
     

@@ -18,34 +18,13 @@ class Charge:
 class State:
 
     # charges/cooldowns - to avoid floating point innacuracy, using an ability takes charge equal to the number of frames it will take to recharge
-    charges = {
-        "t" : Charge(
-            MAX_CHARGES = 5, 
-            RECHARGE_TIME = 2.5 * 60,
-            COOLDOWN_TIME = 0.5 * 60
-        ),
-        "s" : Charge(
-            MAX_CHARGES = 3, 
-            RECHARGE_TIME = 6 * 60
-        ),
-        "g" : Charge(
-            MAX_CHARGES = 1, 
-            RECHARGE_TIME = 8 * 60
-        ),
-        "u" : Charge(
-            MAX_CHARGES = 2, 
-            RECHARGE_TIME = 6 * 60,
-            COOLDOWN_TIME = 2 * 60
-        ),
-        "b" : Charge(
-            MAX_CHARGES = 1, 
-            RECHARGE_TIME = 12 * 60
-        )
-    }
+    charges = {}
     tracerActiveTimer = 0 # frames remaining until tracer on opponent expires
     burnTracerActiveTimer = 0
     burnActiveTimer = 0 # timer for while burn tracer deals damage after procced
     gohtWaitTime = 0 # countdown from when tracer fired at unmarked target to when goht can be used
+
+    maxPossibleRange = 24 # for lowering the upper bound when factoring in travel time
 
     # airborne
     isAirborn = False
@@ -73,11 +52,30 @@ class State:
 
     def __init__(self):
 
-        # resets cooldowns
-        for charge in self.charges:
-            self.charges[charge].currentCharge = self.charges[charge].MAX_CHARGES * self.charges[charge].RECHARGE_TIME
-            self.charges[charge].cooldownTimer = 0
-            self.charges[charge].activeTimer = 0
+        self.charges = {
+            "t" : Charge(
+                MAX_CHARGES = 5, 
+                RECHARGE_TIME = 2.5 * 60,
+                COOLDOWN_TIME = 0.5 * 60
+            ),
+            "s" : Charge(
+                MAX_CHARGES = 3, 
+                RECHARGE_TIME = 6 * 60
+            ),
+            "g" : Charge(
+                MAX_CHARGES = 1, 
+                RECHARGE_TIME = 8 * 60
+            ),
+            "u" : Charge(
+                MAX_CHARGES = 2, 
+                RECHARGE_TIME = 6 * 60,
+                COOLDOWN_TIME = 2 * 60
+            ),
+            "b" : Charge(
+                MAX_CHARGES = 1, 
+                RECHARGE_TIME = 12 * 60
+            )
+        }
 
     def incrementTime(self, frames, warnings):
 
@@ -94,7 +92,6 @@ class State:
                 excessTime = frames - self.charges[chargeType].activeTimer
                 self.endAction(chargeType)
                 self.charges[chargeType].currentCharge += excessTime
-            
 
         if self.tracerActiveTimer > 0 and self.tracerActiveTimer <= frames:
            warnings += ["tracer expired without proc after " + self.sequence]
@@ -139,7 +136,7 @@ class State:
             self.hasSwingOverhead |= self.isAirborn and self.hasDoubleJump
             self.hasJumpOverhead |= self.isAirborn and not self.hasDoubleJump
 
-    def inferInitialState(self, comboSequence, warnings):
+    def inferInitialState(self, comboSequence, warnings=[]):
         foldSequence = "".join(comboSequence)
 
         # pre-tag if GOHT used before tracer / burn tracer
@@ -179,6 +176,14 @@ class State:
         if "G" in preOverheadPayout and (not ("sG" in preOverheadPayout or "wG" in preOverheadPayout)) and "o" in preOverheadPayout[preOverheadPayout.index("G"):]:
             self.hasJumpOverhead = True
             self.hasDoubleJump = False
+
+        # infers starting within 5m if melee is used before goht/goh
+        preGOH = foldSequence + "gG"
+        preGOH = preGOH[:min(preGOH.index("G"), preGOH.index("g"))]
+        for a in preGOH:
+            if a in "pkou":
+                self.maxPossibleRange = 5
+                break
         
 
     def correctSequence(self, combo):

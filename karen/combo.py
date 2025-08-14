@@ -12,7 +12,11 @@ def getComboSequence(inputString="", warnings=[]):
         sequence = sequence[:sequence.find("(")] + sequence[sequence[sequence.find("("):].find(")") + sequence.find("(") + 1:]
     
     # uses long form if ">" is in sequence, there are invalid characters, or non-leading/trailing spaces
-    if ">" in sequence or len([x for x in sequence if not x in ACTION_NAMES]) > 0 or len([x for x in sequence.split(" ") if x != ""]) > 1:
+    if len([x for x in sequence if not (x.lower() in ACTION_NAMES or x in ["", " "])]) > 0:
+        print([x for x in sequence if not (x.lower() in ACTION_NAMES or x in ["", " "])])
+    if len([x for x in sequence.split(" ") if x != ""]) > 1:
+        print("B")
+    if ">" in sequence or len([x for x in sequence if not (x.lower() in ACTION_NAMES or x in ["", " "])]) > 0 or len([x for x in sequence.split(" ") if x != ""]) > 1:
         words = [x for x in sequence.replace("+", " + ").replace(">", " > ").split(" ") if x != ""]
         sequence = []
         while len(words) > 0:
@@ -52,7 +56,7 @@ def getComboSequence(inputString="", warnings=[]):
 
     return verifySequence
 
-def addAction(state=State(), action="", nextAction="", warnings=[]):
+def addAction(state=State(), action="", nextAction="", warnings=[], maxTravelTimes=False):
 
     if not ("G+u" in ACTIONS):
         loadMoveStacks()
@@ -86,6 +90,19 @@ def addAction(state=State(), action="", nextAction="", warnings=[]):
     if "o" in action and (not state.hasJumpOverhead) and (not state.hasSwingOverhead) and state.charges["s"].activeTimer > 0:
         state.incrementTime(state.charges["s"].activeTimer, warnings)
 
+    # precomputes max travel time, factoring in the known max range
+    travelTime = 0 if not maxTravelTimes else ACTIONS[action].maxTravelTime
+    if action != "s" and ACTIONS[action].range > state.maxPossibleRange:
+        travelTime = int(travelTime / ACTIONS[action].range * state.maxPossibleRange)
+
+    # handling changes of max possible range
+    if action != "s" and ACTIONS[action].range != 0:
+        state.maxPossibleRange = min(state.maxPossibleRange, ACTIONS[action].range)
+    if action == "b":
+        state.maxPossibleRange += BURN_TRACER_BACKFLIP_DISTANCE
+    if action == "G":
+        state.maxPossibleRange = 0
+
     # punch sequence increment
     if "p" in action:
         state.punchSequence += 1
@@ -109,7 +126,7 @@ def addAction(state=State(), action="", nextAction="", warnings=[]):
         state.hasDoubleJump = False
         state.hasJumpOverhead = True
 
-    elif action in ["j", "s", "b"] or "u" in action:
+    elif action in ["j", "s", "a", "b"] or "u" in action:
         state.isAirborn = True
 
     if action == "d":
@@ -131,7 +148,7 @@ def addAction(state=State(), action="", nextAction="", warnings=[]):
         state.hasSwingOverhead = True
         state.hasJumpOverhead = False
 
-    if action in ["s", "b"] or "u" in action:
+    if action in ["s", "a", "b"] or "u" in action:
         state.hasDoubleJump = True
         state.hasJumpOverhead = False
     
@@ -144,7 +161,7 @@ def addAction(state=State(), action="", nextAction="", warnings=[]):
             state.endAction(cancelCharge)
 
     # activating actions/consuming cooldowns
-    if action == "s":
+    if action in ["s", "a"]:
         state.removeSwingOnEnd = True
     if "w" in action:
         state.removeSwingOnEnd = False
@@ -154,15 +171,17 @@ def addAction(state=State(), action="", nextAction="", warnings=[]):
         if ACTIONS[action].chargeActivations[charge] == 0:
             state.charges[charge].currentCharge -= state.charges[charge].RECHARGE_TIME
         else:
-            state.charges[charge].activeTimer = ACTIONS[action].chargeActivations[charge]
+            state.charges[charge].activeTimer = ACTIONS[action].chargeActivations[charge] + travelTime
         
     # adding tracer tags
-    if action in ["t", "b"] and state.tracerActiveTimer == 0 and state.burnTracerActiveTimer == 0:
-        state.gohtWaitTime = ACTIONS[action].damageTime
     if action == "t":
-        state.tracerActiveTimer = TRACER_ACTIVE_TIME + ACTIONS["t"].damageTime
+        state.tracerActiveTimer = TRACER_ACTIVE_TIME + ACTIONS["t"].damageTime + travelTime
+        if state.tracerActiveTimer == 0 and state.burnTracerActiveTimer == 0:
+            state.gohtWaitTime = ACTIONS[action].damageTime + (0 if not maxTravelTimes else TRACER_MAX_TRAVEL_TIME)
     if action == "b":
-        state.burnTracerActiveTimer = BURN_TRACER_ACTIVE_TIME + ACTIONS["b"].damageTime       
+        state.burnTracerActiveTimer = BURN_TRACER_ACTIVE_TIME + ACTIONS["b"].damageTime + travelTime  
+        if state.tracerActiveTimer == 0 and state.burnTracerActiveTimer == 0:
+            state.gohtWaitTime = ACTIONS[action].damageTime + (0 if not maxTravelTimes else BURN_TRACER_MAX_TRAVEL_TIME)
 
     # proccing tracers
     if ACTIONS[action].procsTracer and state.tracerActiveTimer >= ACTIONS[action].procTime or action in ["p+t", "k+t", "o+t"]:
@@ -173,9 +192,9 @@ def addAction(state=State(), action="", nextAction="", warnings=[]):
         state.burnTracerActiveTimer = 0
 
     if state.firstDamageTime == 0 and ACTIONS[action].damage > 0:
-        state.firstDamageTime = state.timeTaken + ACTIONS[action].firstDamageTime
+        state.firstDamageTime = state.timeTaken + ACTIONS[action].firstDamageTime + (travelTime if not "+G" in action else 0)
 
     state.damageDealt += ACTIONS[action].damage
-    state.incrementTime(ACTIONS[action].damageTime if nextAction == "" else ACTIONS[action].cancelTimes[nextAction], warnings)
+    state.incrementTime((ACTIONS[action].damageTime if nextAction == "" else ACTIONS[action].cancelTimes[nextAction]) + travelTime, warnings)
 
     state.sequence += ("" if state.sequence == "" else " > ") + ACTIONS[action].name

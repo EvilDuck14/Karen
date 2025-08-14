@@ -1,10 +1,15 @@
+import copy
+
 PUNCH_SEQUENCE_MAX_DELAY = 90 # punch/kick must start <90 frames after last punch to advance the sequence
 TRACER_ACTIVE_TIME = 4 * 60
 TRACER_PROC_DAMAGE = 45
+TRACER_MAX_TRAVEL_TIME = 10
 
 BURN_TRACER_ACTIVE_TIME = 3 * 60
 BURN_TRACER_DPS = 15
 BURN_TRACER_BURN_TIME = 240
+BURN_TRACER_MAX_TRAVEL_TIME = 3
+BURN_TRACER_BACKFLIP_DISTANCE = 7
 
 
 ACTION_NAMES = {
@@ -54,22 +59,24 @@ class Action:
 
     damageTime = 0 # number of frames between activation and all damage registering
     firstDamageTime = 0 # for movestacks with multiple hits
+    maxTravelTime = 0 # max number of added frames that projectile actions can take to travel
+    range = 0 # purely for travel time calculations
     cancelTimes = {} # dict maps action to how many frames into this actions' animation the given action can be used
-    moveStacks = {} # dict maps action which stacks over this move with the time taken to initiate the second move of the stack
     
     chargeActivations = {} # the cooldown charges used and how long before the recharge starts from the action start time (for activeTimer)
     endActivations = {} # some abilities cause others to start recharging immediately
     awaitCharges = {} # which cooldown charges have to be ready to use during the action, and how long into the action they're used (useful for stacks)
 
-    def __init__(self, name, damage = 0, procsTracer=False, procTime = 0, damageTime = 0, firstDamageTime = 0, cancelTimes={}, moveStacks={}, chargeActivations={}, endActivations={}, awaitCharges={}):
+    def __init__(self, name, damage = 0, procsTracer=False, procTime = 0, damageTime = 0, firstDamageTime = 0, maxTravelTime = 0, range = 0, cancelTimes={}, chargeActivations={}, endActivations={}, awaitCharges={}):
         self.name = name
         self.damage = damage
         self.procsTracer = procsTracer
         self.procTime = damageTime if procTime == 0 else procTime
         self.damageTime = damageTime
         self.firstDamageTime = firstDamageTime if firstDamageTime != 0 else damageTime
+        self.maxTravelTime = maxTravelTime
+        self.range = range
         self.cancelTimes = cancelTimes
-        self.moveStacks = moveStacks
         self.chargeActivations = chargeActivations
         self.cancelTimes[""] = damageTime # time to transition to the end of the combo is damageTime
         self.endActivations = endActivations
@@ -84,6 +91,7 @@ ACTIONS = {
         procsTracer = True, 
         
         damageTime = 14,
+        range = 3,
         cancelTimes = {
             "p" : 23,
             "k" : 23,
@@ -104,6 +112,7 @@ ACTIONS = {
         procsTracer = True,
         
         damageTime = 24,
+        range = 4,
         cancelTimes = {
             "p" : 49,
             "k" : 49,
@@ -124,6 +133,7 @@ ACTIONS = {
         procsTracer = True, 
         
         damageTime = 38,
+        range = 4,
         cancelTimes = {
             "p" : 53,
             "k" : 53,
@@ -143,6 +153,7 @@ ACTIONS = {
         damage = 30, 
         
         damageTime = 12,
+        range = 20,
         cancelTimes = {
             "p" : 30,
             "k" : 30,
@@ -164,6 +175,8 @@ ACTIONS = {
     "s" : Action (
         name = "Swing",
         
+        maxTravelTime = 7,
+        range = 30,
         cancelTimes = {
             "p" : 10,
             "k" : 10,
@@ -208,6 +221,8 @@ ACTIONS = {
         damage = 25,
         
         damageTime = 17,
+        maxTravelTime = 15,
+        range = 20,
         cancelTimes = {
             "p" : 50,
             "k" : 50,
@@ -230,6 +245,8 @@ ACTIONS = {
         damage = 55,
 
         damageTime = 37,
+        maxTravelTime = 12,
+        range = 24,
         cancelTimes = {
             "p" : 61,
             "k" : 61,
@@ -253,6 +270,7 @@ ACTIONS = {
         procsTracer = True,
         
         damageTime = 23,
+        range = 4,
         cancelTimes = {
             "p" : 48,
             "k" : 48,
@@ -275,6 +293,7 @@ ACTIONS = {
         damage = 30,
         
         damageTime = 17,
+        range = 8,
         cancelTimes = {
             "p" : 30,
             "k" : 30,
@@ -311,6 +330,8 @@ def loadMoveStacks():
         procsTracer = True,
         procTime = ACTIONS["u"].procTime + 1,
         damageTime = ACTIONS["G"].damageTime,
+        firstDamageTime = ACTIONS["u"].firstDamageTime + 1,
+        maxTravelTime = int(ACTIONS["G"].maxTravelTime * 4 / 20),
         cancelTimes = ffamestackCancelTimes,
         chargeActivations = {
             "g" : ACTIONS["G"].chargeActivations["g"],
@@ -343,6 +364,7 @@ def loadMoveStacks():
         procTime = ACTIONS["p"].procTime,
         damageTime = ACTIONS["p"].cancelTimes["G"] + ACTIONS["G"].damageTime - 1,
         firstDamageTime = ACTIONS["p"].damageTime,
+        maxTravelTime = int(ACTIONS["G"].maxTravelTime * ACTIONS["p"].range / ACTIONS["G"].range),
         cancelTimes = punchSaporenCancelTimes,
         chargeActivations = {
             "g" : ACTIONS["p"].cancelTimes["G"] + ACTIONS["G"].chargeActivations["g"] - 1
@@ -359,6 +381,7 @@ def loadMoveStacks():
         procTime = ACTIONS["k"].procTime,
         damageTime = ACTIONS["k"].cancelTimes["G"] + ACTIONS["G"].damageTime - 1,
         firstDamageTime = ACTIONS["k"].damageTime,
+        maxTravelTime = int(ACTIONS["G"].maxTravelTime * ACTIONS["k"].range / ACTIONS["G"].range),
         cancelTimes = kickSaporenCancelTimes,
         chargeActivations = {
             "g" : ACTIONS["k"].cancelTimes["G"] + ACTIONS["G"].chargeActivations["g"] - 1
@@ -375,6 +398,7 @@ def loadMoveStacks():
         procTime = ACTIONS["o"].procTime,
         damageTime = ACTIONS["o"].cancelTimes["G"] + ACTIONS["G"].damageTime - 1,
         firstDamageTime = ACTIONS["o"].damageTime,
+        maxTravelTime = int(ACTIONS["G"].maxTravelTime * ACTIONS["o"].range / ACTIONS["G"].range),
         cancelTimes = overheadSaporenCancelTimes,
         chargeActivations = {
             "g" : ACTIONS["o"].cancelTimes["G"] + ACTIONS["G"].chargeActivations["g"] - 1
@@ -405,6 +429,7 @@ def loadMoveStacks():
         procTime = ACTIONS["p"].procTime,
         damageTime = ACTIONS["p"].cancelTimes["G"] + ACTIONS["G+u"].damageTime -1,
         firstDamageTime = ACTIONS["p"].damageTime,
+        maxTravelTime = int(ACTIONS["G"].maxTravelTime * ACTIONS["p"].range / ACTIONS["G"].range),
         cancelTimes = punchSaporenFfamestackCancelTimes,
         chargeActivations = {
             "g" : ACTIONS["p"].cancelTimes["G"] + ACTIONS["G"].chargeActivations["g"] - 1,
@@ -423,6 +448,7 @@ def loadMoveStacks():
         procTime = ACTIONS["k"].procTime,
         damageTime = ACTIONS["k"].cancelTimes["G"] + ACTIONS["G+u"].damageTime - 1,
         firstDamageTime = ACTIONS["k"].damageTime,
+        maxTravelTime = int(ACTIONS["G"].maxTravelTime * ACTIONS["k"].range / ACTIONS["G"].range),
         cancelTimes = kickSaporenFfamestackCancelTimes,
         chargeActivations = {
             "g" : ACTIONS["k"].cancelTimes["G"] + ACTIONS["G"].chargeActivations["g"] - 1,
@@ -441,6 +467,7 @@ def loadMoveStacks():
         procTime = ACTIONS["o"].procTime,
         damageTime = ACTIONS["o"].cancelTimes["G"] + ACTIONS["G+u"].damageTime - 1,
         firstDamageTime = ACTIONS["o"].damageTime,
+        maxTravelTime = int(ACTIONS["G"].maxTravelTime * ACTIONS["o"].range / ACTIONS["G"].range),
         cancelTimes = overheadSaporenFfamestackCancelTimes,
         chargeActivations = {
             "g" : ACTIONS["o"].cancelTimes["G"] + ACTIONS["G"].chargeActivations["g"] - 1,
@@ -467,6 +494,7 @@ def loadMoveStacks():
         procTime = ACTIONS["u"].procTime,
         damageTime =  ACTIONS["u"].cancelTimes["s"] + ACTIONS["s"].cancelTimes["G"] + ACTIONS["G"].damageTime,
         firstDamageTime = ACTIONS["u"].damageTime,
+        maxTravelTime = int(ACTIONS["G"].maxTravelTime * ACTIONS["u"].range / ACTIONS["G"].range),
         cancelTimes = spacejamCancelTimes,
         chargeActivations = {
             "u" : ACTIONS["u"].cancelTimes["u"],
