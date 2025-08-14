@@ -10,6 +10,7 @@ setup (
 
     packages = find_packages(),
     install_requires = [],
+    setup_requires=['setuptools-git'],
 
     description = "Evaluates & categorises Spider-Man's combos in Marvel Rivals.",
     long_description = (pathlib.Path(__file__).parent.resolve() / "README.md").read_text(encoding="utf-8"),

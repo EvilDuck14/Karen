@@ -9,3 +9,4 @@ build methods.txt
 build
 karen.egg-info
 .pypirc
+.env

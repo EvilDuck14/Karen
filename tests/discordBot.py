@@ -4,8 +4,11 @@ from discord.ext import commands
 from karen.evaluate import evaluate
 from karen.getCombo import *
 
-from karen import hiddenData # delete - used for environment variables
-BOT_TOKEN = hiddenData.BOT_TOKEN # your token here
+import os
+from dotenv import load_dotenv
+load_dotenv()
+BOT_TOKEN = os.getenv("BOT_TOKEN") # save your bot token as an environment variable or paste it here
+print(BOT_TOKEN)
 
 intents = discord.Intents.default()
 intents.guild_messages = True
