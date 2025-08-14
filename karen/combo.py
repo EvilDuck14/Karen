@@ -98,6 +98,10 @@ def addAction(state=State(), action="", nextAction="", warnings=[], maxTravelTim
     if "p" in action or "k" in action:
         state.incrementTime(state.punchWaitTimer, warnings)
 
+    # awaits swing timer for swing/whiff
+    if "s" in action or "w" in action:
+        state.incrementTime(state.swingWaitTimer - ACTIONS[action].awaitCharges["s"], warnings)
+
     # precomputes max travel time, factoring in the known max range
     travelTime = 0 if not maxTravelTimes else ACTIONS[action].maxTravelTime
     if action != "s" and ACTIONS[action].range > state.maxPossibleRange:
@@ -201,6 +205,10 @@ def addAction(state=State(), action="", nextAction="", warnings=[], maxTravelTim
 
     if state.firstDamageTime == 0 and ACTIONS[action].damage > 0:
         state.firstDamageTime = state.timeTaken + ACTIONS[action].firstDamageTime + (travelTime if not "+G" in action else 0)
+
+    # autoswing delays next swing/whiff
+    if action == "a":
+        state.swingWaitTimer = ACTIONS["a"].cancelTimes["s"]
 
     state.damageDealt += ACTIONS[action].damage
     state.minTimeTaken = max(state.minTimeTaken, state.timeTaken + ACTIONS[action].damageTime + travelTime)

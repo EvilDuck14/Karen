@@ -21,7 +21,7 @@ ACTION_NAMES = {
     "o" : "o", "overheadslam" : "o",  "overhead" : "o", "over" : "o", "oh" : "o",  "meleeoverhead" : "o",  "slam" : "o",
     "t" : "t", "tracer" : "t",  "webtracer" : "t",  "cluster" : "t",  "webcluster" : "t",
     "s" : "s", "swing" : "s", "webswing" : "s",  "highswing" : "s",  "lowswing" : "s", "z" : "s", "zip" : "s", "webzip" : "s",
-    "a" : "a", "automatic swing" : "a", "autoswing" : "a", "automatic" : "a", "auto" : "a", "easyswing" : "a", "easy" : "a",
+    "a" : "a", "automatic swing" : "a", "autoswing" : "a", "automatic" : "a", "auto" : "a", "easyswing" : "a", "easy" : "a", "simple swing" : "a", "simple" : "a",
     "w" : "w", "whiff" : "w", "webwhiff" : "w", "swingwhiff" : "w", "wiff" : "w", "web wiff" : "w", "swing wiff" : "w",
     "g" : "g", "getoverhere" : "g", "goh" : "g", "webpull" : "g", "pull" : "g",
     "G" : "G", "getoverheretargeting" : "G", "getoverheretargetting" : "G", "goht" : "G",
@@ -40,8 +40,8 @@ ACTION_NAMES = {
     "p+t" : "p+t", "r" : "p+t", "reversetrigger" : "p+t", "rt" : "p+t", "backflash" : "p+t", "punchreversetrigger" : "p+t", "punchbackflash" : "p+t", "punchrt" : "p+t", "punchblackflash" : "p+t", "blackflash" : "p+t",
     "k+t" : "k+t", "kickreversetrigger" : "k+t", "kickbackflash" : "k+t", "kickrt" : "k+t", "jashflash" : "k+t", "kickblackflash" : "k+t",
     "o+t" : "o+t", "overheadreversetrigger" : "o+t", "overheadbackflash" : "o+t", "overheadrt" : "o+t", "ohreversetrigger" : "o+t", "ohbackflash" : "o+t", "ohrt" : "o+t", "overheadblackflash" : "o+t", "ohblackflash" : "o+t",
-    "p+o" : "p+o", "unique3hitpunchstack" : "p+o", "uniquethreehitpunchstack" : "p+o","unique3hitpunch" : "p+o", "uniquethreehitpunch" : "p+o", "u3hpunchstack" : "p+o", "u3hpunch" : "p+o",
-    "k+o" : "k+o", "unique3hitkickstack" : "k+o", "uniquethreehitkickstack" : "k+o","unique3hitkick" : "k+o", "uniquethreehitkick" : "k+o", "u3hkickstack" : "k+o", "u3hkick" : "k+o",
+    "p+o" : "p+o", "punchoverheadstack" : "p+o", "punchohstack" : "p+o", "unique3hitpunchstack" : "p+o", "uniquethreehitpunchstack" : "p+o","unique3hitpunch" : "p+o", "uniquethreehitpunch" : "p+o", "u3hpunchstack" : "p+o", "u3hpunch" : "p+o",
+    "k+o" : "k+o", "kickoverheadstack" : "k+o", "kickohstack" : "k+o", "unique3hitkickstack" : "k+o", "uniquethreehitkickstack" : "k+o","unique3hitkick" : "k+o", "uniquethreehitkick" : "k+o", "u3hkickstack" : "k+o", "u3hkick" : "k+o",
 
     "shortplink" : "so",
     "longplink" : "wto", "plink" : "wto",
@@ -188,7 +188,7 @@ ACTIONS = {
             "o" : 10,
             "t" : 10,
             "s" : 10,
-            "a" : 10, # TO DO
+            "a" : 10,
             "w" : 10,
             "g" : 1,
             "G" : 1,
@@ -220,7 +220,6 @@ ACTIONS = {
 
         chargeActivations = { "s" : 1 },
         endActivations = ["g", "u", "b"],
-        awaitCharges = { "s" : 0 }
     ),
 
     "w" : Action (
@@ -232,7 +231,7 @@ ACTIONS = {
             "o" : 27,
             "t" : 10,
             "s" : 53,
-            "a" : 53, # TO DO
+            "a" : 25,
             "w" : 53,
             "g" : 1,
             "G" : 1,
@@ -607,7 +606,7 @@ def loadMoveStacks():
         ACTIONS[action].cancelTimes["k+o"] = ACTIONS[action].cancelTimes["k"]
 
     ACTIONS["p+o"] = Action (
-        name = "U3H Punch Stack",
+        name = "Punch OH Stack",
         damage = ACTIONS["p"].damage + ACTIONS["o"].damage,
         procsTracer = True,
         procTime = ACTIONS["p"].procTime,
@@ -617,7 +616,7 @@ def loadMoveStacks():
     )
 
     ACTIONS["k+o"] = Action (
-        name = "U3H Kick Stack",
+        name = "Kick OH Stack",
         damage = ACTIONS["k"].damage + ACTIONS["o"].damage,
         procsTracer = True,
         procTime = ACTIONS["k"].procTime,

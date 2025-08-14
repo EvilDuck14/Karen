@@ -34,6 +34,7 @@ class State:
     hasJumpOverhead = False
     hasSwingOverhead = False
     removeSwingOnEnd = False
+    swingWaitTimer = 0 # frames until swing/whiff can be used after autoswing
 
     # punch sequence
     punchSequence = 0 # 0 & 1 correspond to punches, 2 corresponds to kick
@@ -131,6 +132,8 @@ class State:
         self.gohtWaitTime = max(self.gohtWaitTime - frames, 0)
 
         self.punchWaitTimer = max(0, self.punchWaitTimer - frames)
+        self.swingWaitTimer = max(0, self.swingWaitTimer - frames)
+
 
         self.punchSequenceTimer = max(self.punchSequenceTimer - frames, 0)
         if self.punchSequenceTimer == 0:

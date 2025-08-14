@@ -49,7 +49,7 @@ Note that shortened names are still used; in this format, single letter, shortha
 | Overhead Slam | o | overhead slam <br> overhead <br> over <br> oh <br> melee overhead <br> slam |
 | Tracer | t | tracer <br> web tracer <br> cluster <br> web cluster |
 | Swing | s <br> z | swing <br> web swing <br> high swing <br> low swing <br> web zip <br> zip |
-| Auto Swing | a | automatic swing <br> auto swing <br> auto |
+| Auto Swing | a | automatic swing <br> auto swing <br> auto <br> simple swing <br> easy swing |
 | Whiff | w | whiff <br> web whiff <br> swing whiff |
 | Get Over Here | g | get over here <br> goh <br> web pull <br> pull |
 | Get Over Here Targeting | G | get over here targeting <br> goht |
@@ -111,8 +111,8 @@ All movestacks are listed below:
 | Reverse Trigger (Punch) | p+t <br> r | reverse trigger <br> rt <br> punch reverse trigger <br> punch rt <br>  black flash <br> punch backflash |
 | Reverse Trigger (Kick) | k+t | kick reverse trigger <br> kick rt <br> kick black flash <br> jash flash |
 | Reverse Trigger (Overhead) | o+t |  overhead reverse trigger <br> oh reverse trigger <br> overhead rt <br> oh rt <br> overhead black flash <br> oh black flash |
-| Unique 3-Hit Stack (Punch) | p+o | unique three hit punch stack <br> unique three hit punch <br> unique 3 hit punch stack <br> unique 3 hit punch <br> u3h punch stack <br> u3h punch |
-| Unique 3-Hit Stack (Kick) | p+o | unique three hit kick stack <br> unique three hit kick <br> unique 3 hit kick stack <br> unique 3 hit kick <br> u3h kick stack <br> u3h kick |
+| Punch Overhead Stack | p+o | punch overhead stack <br> punch oh stack <br> unique 3 hit punch stack <br> unique 3 hit punch <br> u3h punch |
+| Kick Overhead Stack | k+o | kick overhead stack <br> kick oh stack <br> unique 3 hit kick stack <br> unique 3 hit kick <br> u3h kick |
 
 ## Roadmap
 

@@ -33,6 +33,7 @@ COMBO_ALIASES = {
     "bald" : "Bald Slam",
     "skypull" : "Yo-Yo",
     "spc" : "Yo-Yo",
+    "skyyoink" : "Yo-Yo",
 
     "burnbnb" : "Burn BnB / Fadeaway",
     "fadeaway" : "Burn BnB / Fadeaway",
