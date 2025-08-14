@@ -204,10 +204,7 @@ class State:
         while i in range(len(temp)):
 
             # space jam
-            if i+2 < len(temp):
-                print("".join(temp[i:i+3]))
             if i+2 < len(temp) and ("".join(temp[i:i+3]) in ["uwG", "usG"]):
-                print("TEST")
                 correctedCombo += ["u+w+G"]
                 i += 3
                 continue

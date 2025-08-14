@@ -24,7 +24,7 @@ ACTION_NAMES = {
     "+" : "+", "/" : "+",
 
     "G+u" : "G+u", "f" : "G+u", "ffame" : "G+u", "ffamestack" : "G+u",
-    "o+G" : "o+G", "n" : "o+G", "saporen" : "o+G", "sap" : "o+G", "overheadsaporen" : "o+G", "ohsap" : "o+G",
+    "o+G" : "o+G", "saporen" : "o+G", "sap" : "o+G", "overheadsaporen" : "o+G", "ohsap" : "o+G",
     "p+G" : "p+G", "punchsaporen" : "p+G", "punchsap" : "p+G",
     "k+G" : "k+G","kicksaporen" : "k+G", "kicksap" : "k+G",
     "o+G+u" : "o+G+u", "F" : "o+G+u", "saporenffamestack" : "o+G+u", "sapffamestack" : "o+G+u", "sapffame" : "o+G+u", "overheadsaporenffamestack" : "o+G+u", "ohsapffamestack" : "o+G+u", "ohsapffame" : "o+G+u",

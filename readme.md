@@ -100,7 +100,7 @@ All movestacks are listed below:
 |Name | Short notation(/s) | Other Names |
 | :---: | :---: | :---: |
 | FFAme Stack | G+u <br> f | ffame stack <br> ffame | 
-| Saporen Tech (Overhead) | o+G <br> n| saporen <br> sap <br> overhead saporen <br> oh sap |
+| Saporen Tech (Overhead) | o+G | saporen <br> sap <br> overhead saporen <br> oh sap |
 | Saporen Tech (Punch) | p+G | punch saporen <br> punch sap |
 | Saporen Tech (Kick) | k+G | kick saporen <br> kick sap |
 | Saporen FFAme Stack (Overhead) | o+G+u <br> F | saporen ffame stack <br> sap ffame stack <br> sap ffame <br> overhead saporen ffame stack <br> oh sap ffame stack <br> oh sap ffame |

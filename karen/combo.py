@@ -6,20 +6,27 @@ def getComboSequence(inputString="", warnings=[]):
     if not ("G+u" in ACTIONS):
         loadMoveStacks()
 
-    # removes whitespace
-    inputString = "".join(inputString.split())
-
     # removes anything in brackets from inputString string
     sequence = inputString
     while "(" in sequence and ")" in sequence[sequence.find("("):]:
         sequence = sequence[:sequence.find("(")] + sequence[sequence[sequence.find("("):].find(")") + sequence.find("(") + 1:]
-
-    # handles long-form by converting to list
-    if ">" in sequence:
-        sequence = sequence.replace("+", ">+>").split(">") # make sure '+' characters are split out as their own entries
-        sequence = [x for x in sequence if x != ""] # removes empty entries caused by double '>' characters
     
-    # unrecognised conditions
+    # uses long form if ">" is in sequence, there are invalid characters, or non-leading/trailing spaces
+    if ">" in sequence or len([x for x in sequence if not x in ACTION_NAMES]) > 0 or len([x for x in sequence.split(" ") if x != ""]) > 1:
+        words = [x for x in sequence.replace("+", " + ").replace(">", " > ").split(" ") if x != ""]
+        sequence = []
+        while len(words) > 0:
+            while words[0] == ">":
+                words = words[1:]
+            for j in range(0, len(words)):
+                if ">" in words[0 : len(words) - j]: # ">" forces separation of actions
+                    continue
+                if ("".join(words[0 : len(words) - j])).lower() in ACTION_NAMES or len(words) - j == 1:
+                    sequence += ["".join(words[0 : len(words) - j])]
+                    words = words[len(words) - j:]
+                    break
+    
+    # unrecognised actions
     warnings += [unknownAction + " is not a recognised action" for unknownAction in sequence if not unknownAction.lower() in ACTION_NAMES]
     
     # converts to a list of correctly formatted keys in ACTION_NAMES
