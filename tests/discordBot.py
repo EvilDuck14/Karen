@@ -18,7 +18,7 @@ bot = commands.Bot(command_prefix="!", intents=intents)
 
 @bot.command()
 async def eval(ctx, *arr):
-    inputString = "".join(str(x) for x in arr)
+    inputString = " ".join(str(x) for x in arr)
     output = evaluate(inputString)
     try:
         await ctx.send(output)
@@ -27,7 +27,7 @@ async def eval(ctx, *arr):
 
 @bot.command()
 async def evaln(ctx, *arr):
-    inputString = "".join(str(x) for x in arr)
+    inputString = " ".join(str(x) for x in arr)
     output = evaluate(inputString, printWarnings=False)
     try:
         await ctx.send(output)
@@ -36,7 +36,7 @@ async def evaln(ctx, *arr):
 
 @bot.command()
 async def combo(ctx, *arr):
-    inputString = "".join(str(x) for x in arr)
+    inputString = " ".join(str(x) for x in arr)
     output = getCombo(inputString)
     try:
         await ctx.send(output)

@@ -106,6 +106,8 @@ def addAction(state=State(), action="", nextAction="", warnings=[], maxTravelTim
     travelTime = 0 if not maxTravelTimes else ACTIONS[action].maxTravelTime
     if action != "s" and ACTIONS[action].range > state.maxPossibleRange:
         travelTime = int(travelTime / ACTIONS[action].range * state.maxPossibleRange)
+    if action == "s" and nextAction == "":
+        travelTime = 0
 
     # handling changes of max possible range
     if action != "s" and ACTIONS[action].range != 0:
