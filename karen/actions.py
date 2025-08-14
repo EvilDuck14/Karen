@@ -21,6 +21,7 @@ ACTION_NAMES = {
     "o" : "o", "overheadslam" : "o",  "overhead" : "o", "over" : "o", "oh" : "o",  "meleeoverhead" : "o",  "slam" : "o",
     "t" : "t", "tracer" : "t",  "webtracer" : "t",  "cluster" : "t",  "webcluster" : "t",
     "s" : "s", "swing" : "s", "webswing" : "s",  "highswing" : "s",  "lowswing" : "s", "z" : "s", "zip" : "s", "webzip" : "s",
+    "a" : "a", "automatic swing" : "a", "autoswing" : "a", "automatic" : "a", "auto" : "a", "easyswing" : "a", "easy" : "a",
     "w" : "w", "whiff" : "w", "webwhiff" : "w", "swingwhiff" : "w", "wiff" : "w", "web wiff" : "w", "swing wiff" : "w",
     "g" : "g", "getoverhere" : "g", "goh" : "g", "webpull" : "g", "pull" : "g",
     "G" : "G", "getoverheretargeting" : "G", "getoverheretargetting" : "G", "goht" : "G",
@@ -98,6 +99,7 @@ ACTIONS = {
             "o" : 23,
             "t" : 11,
             "s" : 11,
+            "a" : 11,
             "w" : 11,
             "g" : 11,
             "G" : 11,
@@ -119,6 +121,7 @@ ACTIONS = {
             "o" : 49,
             "t" : 22,
             "s" : 22,
+            "a" : 22,
             "w" : 22,
             "g" : 22,
             "G" : 22,
@@ -140,6 +143,7 @@ ACTIONS = {
             "o" : 53,
             "t" : 33,
             "s" : 33,
+            "a" : 33,
             "w" : 33,
             "g" : 33,
             "G" : 33,
@@ -160,6 +164,7 @@ ACTIONS = {
             "o" : 30,
             "t" : 30,
             "s" : 6,
+            "a" : 6,
             "w" : 6,
             "g" : 6,
             "G" : 6,
@@ -183,6 +188,7 @@ ACTIONS = {
             "o" : 10,
             "t" : 10,
             "s" : 10,
+            "a" : 10, # TO DO
             "w" : 10,
             "g" : 1,
             "G" : 1,
@@ -191,6 +197,28 @@ ACTIONS = {
         },
 
         chargeActivations = { "s" : 10 },
+        endActivations = ["g", "u", "b"],
+        awaitCharges = { "s" : 0 }
+    ),
+
+    "a" : Action (
+        name = "Auto Swing",
+        
+        cancelTimes = {
+            "p" : 1,
+            "k" : 1,
+            "o" : 1,
+            "t" : 1,
+            "s" : 19,
+            "a" : 19,
+            "w" : 19,
+            "g" : 1,
+            "G" : 1,
+            "u" : 1,
+            "b" : 1
+        },
+
+        chargeActivations = { "s" : 1 },
         endActivations = ["g", "u", "b"],
         awaitCharges = { "s" : 0 }
     ),
@@ -204,6 +232,7 @@ ACTIONS = {
             "o" : 27,
             "t" : 10,
             "s" : 53,
+            "a" : 53, # TO DO
             "w" : 53,
             "g" : 1,
             "G" : 1,
@@ -221,7 +250,7 @@ ACTIONS = {
         damage = 25,
         
         damageTime = 17,
-        maxTravelTime = 15,
+        maxTravelTime = 12,
         range = 20,
         cancelTimes = {
             "p" : 50,
@@ -229,6 +258,7 @@ ACTIONS = {
             "o" : 50,
             "t" : 46,
             "s" : 14,
+            "a" : 14,
             "w" : 14,
             "g" : 102,
             "G" : 50,
@@ -245,7 +275,7 @@ ACTIONS = {
         damage = 55,
 
         damageTime = 37,
-        maxTravelTime = 12,
+        maxTravelTime = 13,
         range = 24,
         cancelTimes = {
             "p" : 61,
@@ -253,6 +283,7 @@ ACTIONS = {
             "o" : 61,
             "t" : 61,
             "s" : 28,
+            "a" : 28,
             "w" : 28,
             "g" : 61,
             "G" : 61,
@@ -277,6 +308,7 @@ ACTIONS = {
             "o" : 48,
             "t" : 56,
             "s" : 19,
+            "a" : 19,
             "w" : 19,
             "g" : 48,
             "G" : 48,
@@ -300,6 +332,7 @@ ACTIONS = {
             "o" : 30,
             "t" : 10,
             "s" : 10,
+            "a" : 10,
             "w" : 10,
             "g" : 10,
             "G" : 10,

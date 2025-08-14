@@ -5,18 +5,20 @@ def getComboSequence(inputString="", warnings=[]):
 
     if not ("G+u" in ACTIONS):
         loadMoveStacks()
-
+    
     # removes anything in brackets from inputString string
     sequence = inputString
     while "(" in sequence and ")" in sequence[sequence.find("("):]:
         sequence = sequence[:sequence.find("(")] + sequence[sequence[sequence.find("("):].find(")") + sequence.find("(") + 1:]
     
-    # uses long form if ">" is in sequence, there are invalid characters, or non-leading/trailing spaces
-    if len([x for x in sequence if not (x.lower() in ACTION_NAMES or x in ["", " "])]) > 0:
-        print([x for x in sequence if not (x.lower() in ACTION_NAMES or x in ["", " "])])
-    if len([x for x in sequence.split(" ") if x != ""]) > 1:
-        print("B")
-    if ">" in sequence or len([x for x in sequence if not (x.lower() in ACTION_NAMES or x in ["", " "])]) > 0 or len([x for x in sequence.split(" ") if x != ""]) > 1:
+    # removes leading/trailing spaces
+    while sequence[0] == " ":
+        sequence = sequence[1:]
+    while sequence[-1] == " ":
+        sequence = sequence[:-1]
+    
+    # uses long form if ">" is in sequence, there are invalid characters, or spaces
+    if ">" in sequence or len([x for x in sequence if not (x.lower() in ACTION_NAMES or x in ["", " "])]) > 0 or len([x for x in sequence.split(" ")]) > 1:
         words = [x for x in sequence.replace("+", " + ").replace(">", " > ").split(" ") if x != ""]
         sequence = []
         while len(words) > 0:
@@ -88,7 +90,13 @@ def addAction(state=State(), action="", nextAction="", warnings=[], maxTravelTim
 
     # awaits whiff end for overhead
     if "o" in action and (not state.hasJumpOverhead) and (not state.hasSwingOverhead) and state.charges["s"].activeTimer > 0:
+        print(f"TIME ELAPSED: {state.timeTaken}")
+        print(f"ACTIVE TIMER: {state.charges["s"].activeTimer}")
         state.incrementTime(state.charges["s"].activeTimer, warnings)
+
+    # awaits punch timer for punch
+    if "p" in action or "k" in action:
+        state.incrementTime(state.punchWaitTimer, warnings)
 
     # precomputes max travel time, factoring in the known max range
     travelTime = 0 if not maxTravelTimes else ACTIONS[action].maxTravelTime
@@ -195,6 +203,7 @@ def addAction(state=State(), action="", nextAction="", warnings=[], maxTravelTim
         state.firstDamageTime = state.timeTaken + ACTIONS[action].firstDamageTime + (travelTime if not "+G" in action else 0)
 
     state.damageDealt += ACTIONS[action].damage
+    state.minTimeTaken = max(state.minTimeTaken, state.timeTaken + ACTIONS[action].damageTime + travelTime)
     state.incrementTime((ACTIONS[action].damageTime if nextAction == "" else ACTIONS[action].cancelTimes[nextAction]) + travelTime, warnings)
 
     state.sequence += ("" if state.sequence == "" else " > ") + ACTIONS[action].name

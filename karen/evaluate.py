@@ -22,6 +22,8 @@ def evaluate(inputString, printWarnings = True):
         nextAction = [j for j in comboSequence[i+1:] if not j in ["j", "d", "l"]][0]
         addAction(state, comboSequence[i], nextAction, warnings)
         addAction(maxTravelTimeState, comboSequence[i], nextAction, maxTravelTimes=True)
+    state.resolve(warnings)
+    maxTravelTimeState.resolve()
 
     # checks for continued burn tracer damage after final action
     burnTracerBonusDamage = ""
@@ -33,7 +35,7 @@ def evaluate(inputString, printWarnings = True):
     output = ( f"**{comboName}**"
     f"\n> {state.sequence}"
     f"\n**Time:** {round(state.timeTaken / 60, 2)}{f"-{round(maxTravelTimeState.timeTaken / 60, 2)}" if maxTravelTimeState.timeTaken != state.timeTaken else ""} seconds ({state.timeTaken}{f"-{maxTravelTimeState.timeTaken}" if maxTravelTimeState.timeTaken != state.timeTaken else ""} frames)"
-    f"\n**Time From Damage:** {round((state.timeTaken - state.firstDamageTime) / 60, 2)}{f"-{round((maxTravelTimeState.timeTaken - maxTravelTimeState.firstDamageTime) / 60, 2)}" if maxTravelTimeState.timeTaken - maxTravelTimeState.firstDamageTime != state.timeTaken - state.firstDamageTime else ""} seconds ({state.timeTaken - state.firstDamageTime} frames)"
+    f"{f"\n**Time From Damage:** {round(state.timeFromDamage / 60, 2)}{f"-{round(maxTravelTimeState.timeFromDamage / 60, 2)}" if maxTravelTimeState.timeFromDamage != state.timeFromDamage else ""} seconds ({state.timeFromDamage}{f"-{maxTravelTimeState.timeFromDamage}" if maxTravelTimeState.timeFromDamage != state.timeFromDamage else ""} frames)" if state.damageDealt > 0 else ""}"
     f"\n**Damage:** {int(state.damageDealt)} {burnTracerBonusDamage}" )
 
     

@@ -49,6 +49,7 @@ Note that shortened names are still used; in this format, single letter, shortha
 | Overhead Slam | o | overhead slam <br> overhead <br> over <br> oh <br> melee overhead <br> slam |
 | Tracer | t | tracer <br> web tracer <br> cluster <br> web cluster |
 | Swing | s <br> z | swing <br> web swing <br> high swing <br> low swing <br> web zip <br> zip |
+| Auto Swing | a | automatic swing <br> auto swing <br> auto |
 | Whiff | w | whiff <br> web whiff <br> swing whiff |
 | Get Over Here | g | get over here <br> goh <br> web pull <br> pull |
 | Get Over Here Targeting | G | get over here targeting <br> goht |
@@ -129,7 +130,7 @@ More detailed/frequent progress updates are given on the [testing discord server
 
 Special thanks to NonJohns for feedback on the design/featureset and for help with quality assurance.
 
-Additional thanks to Venom, Fancy_Spider, and Mrpoolman, and all other testers who helped find bugs.
+Additional thanks to Venom, Fancy_Spider, and Mrpoolman, Katapult, and all other testers who helped find bugs.
 
 ## License
 

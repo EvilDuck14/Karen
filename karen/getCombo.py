@@ -14,7 +14,7 @@ OVERRIDE_COMBO_SEQUENCES = {
     "Bald Slam" : "twGuot",
     "Vortex" : "uwtdGo",
     "In And Out" : "tbuwtg",
-    "Hydro Combo" : "tgptslptu" # TO DO: change to autoswing when implemented
+    "Hydro Combo" : "tgptalptu"
 }
 
 COMBO_ALIASES = {
@@ -31,6 +31,8 @@ COMBO_ALIASES = {
     "sapstack" : "Saporen FFAmestack",
     "agnikai" : "Agni-Kai Yo-Yo",
     "bald" : "Bald Slam",
+    "skypull" : "Yo-Yo",
+    "spc" : "Yo-Yo",
 
     "burnbnb" : "Burn BnB / Fadeaway",
     "fadeaway" : "Burn BnB / Fadeaway",

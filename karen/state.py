@@ -38,6 +38,7 @@ class State:
     # punch sequence
     punchSequence = 0 # 0 & 1 correspond to punches, 2 corresponds to kick
     punchSequenceTimer = 0 # frames remaining until punch sequence resets
+    punchWaitTimer = 0 # frames until a punch can be used
 
     # seasonal boost
     damageMultiplier = 1
@@ -46,6 +47,8 @@ class State:
     damageDealt = 0
     timeTaken = 0
     firstDamageTime = 0
+    timeFromDamage = 0 # only computed when resolve() is called
+    minTimeTaken = 0 # makes sure swing cancels at the end don't cut the timer short
 
     # sequence output
     sequence = ""
@@ -92,6 +95,9 @@ class State:
                 excessTime = frames - self.charges[chargeType].activeTimer
                 self.endAction(chargeType)
                 self.charges[chargeType].currentCharge += excessTime
+            
+            elif self.charges[chargeType].activeTimer > 0:
+                self.charges[chargeType].activeTimer -= frames
 
         if self.tracerActiveTimer > 0 and self.tracerActiveTimer <= frames:
            warnings += ["tracer expired without proc after " + self.sequence]
@@ -124,9 +130,16 @@ class State:
         self.burnTracerActiveTimer = max(self.burnTracerActiveTimer - frames, 0)
         self.gohtWaitTime = max(self.gohtWaitTime - frames, 0)
 
+        self.punchWaitTimer = max(0, self.punchWaitTimer - frames)
+
         self.punchSequenceTimer = max(self.punchSequenceTimer - frames, 0)
         if self.punchSequenceTimer == 0:
             self.punchSequence = 0
+
+    # if not all damage has actually taken place, await the final damage ticks
+    def resolve(self, warnings=[]):
+        self.incrementTime(self.minTimeTaken - self.timeTaken, warnings)
+        self.timeFromDamage = self.timeTaken - self.firstDamageTime
 
     def endAction(self, action): # ends current action and takes away the associated cooldown charge
         self.charges[action].activeTimer = 0
