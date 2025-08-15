@@ -244,6 +244,10 @@ class State:
                     correctedCombo += ["d"]
                     i += 2
                     continue
+                
+                if i > 0 and temp[i] == "d" and temp[i - 1] in "jd":
+                    i += 1
+                    continue
 
                 # saporens
                 if sequence in ["pG", "kG", "oG"]:

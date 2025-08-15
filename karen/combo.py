@@ -61,16 +61,12 @@ def getComboSequence(inputString="", warnings=[]):
 def simplify(sequence):
     newSequence = []
 
-    for i in range(len(sequence)):
+    for i in range(len(sequence) - 1):
 
         current = sequence[i]
-        if len(sequence) == i + 1:
+        next = [j for j in sequence[i+1:] if not j in ["j", "d", "l"]][0]
+        if next == "":
             newSequence += [current]
-            break
-        next = sequence[i + 1]
-
-        # replace "dj" with "d"
-        if current == "d" and i > 0 and sequence[i - 1] == "d":
             continue
 
         # replace swing cancels with whiff cancels
@@ -84,7 +80,7 @@ def simplify(sequence):
         else:
             newSequence += [current]
     
-    return newSequence
+    return newSequence + [""]
         
 
 def addAction(state=State(), action="", nextAction="", warnings=[], maxTravelTimes=False, simpleMode=False):
