@@ -1,10 +1,10 @@
 from karen.state import State
-from karen.combo import getComboSequence, addAction
+from karen.combo import *
 from karen.classify import classify
 from math import floor
 from karen.actions import *
 
-def evaluate(inputString, printWarnings = True):
+def evaluate(inputString, printWarnings = True, simpleMode = False):
     warnings = []
 
     state = State()
@@ -18,9 +18,12 @@ def evaluate(inputString, printWarnings = True):
     state.inferInitialState(comboSequence, warnings)
     comboSequence = state.correctSequence(comboSequence)
 
+    if simpleMode:
+        comboSequence = simplify(comboSequence)
+
     for i in range(len(comboSequence) - 1):
         nextAction = [j for j in comboSequence[i+1:] if not j in ["j", "d", "l"]][0]
-        addAction(state, comboSequence[i], nextAction, warnings)
+        addAction(state, comboSequence[i], nextAction, warnings, simpleMode=simpleMode)
         addAction(maxTravelTimeState, comboSequence[i], nextAction, maxTravelTimes=True)
     state.resolve(warnings)
     maxTravelTimeState.resolve()
@@ -32,13 +35,23 @@ def evaluate(inputString, printWarnings = True):
 
     comboName = classify("".join(comboSequence))
 
-    output = ( f"**{comboName}**"
-    f"\n> {state.sequence}"
-    f"\n**Time:** {round(state.timeTaken / 60, 2)}{f"-{round(maxTravelTimeState.timeTaken / 60, 2)}" if maxTravelTimeState.timeTaken != state.timeTaken else ""} seconds ({state.timeTaken}{f"-{maxTravelTimeState.timeTaken}" if maxTravelTimeState.timeTaken != state.timeTaken else ""} frames)"
-    f"{f"\n**Time From Damage:** {round(state.timeFromDamage / 60, 2)}{f"-{round(maxTravelTimeState.timeFromDamage / 60, 2)}" if maxTravelTimeState.timeFromDamage != state.timeFromDamage else ""} seconds ({state.timeFromDamage}{f"-{maxTravelTimeState.timeFromDamage}" if maxTravelTimeState.timeFromDamage != state.timeFromDamage else ""} frames)" if state.damageDealt > 0 else ""}"
-    f"\n**Damage:** {int(state.damageDealt)} {burnTracerBonusDamage}" )
+    timeSecondsMin = round(state.timeTaken / 60, 2)
+    timeSecondsMax = round(maxTravelTimeState.timeTaken / 60, 2)
+    showTimeRange = maxTravelTimeState.timeTaken != state.timeTaken and not simpleMode
+    timeSeconds = str(timeSecondsMin) + (f"-{timeSecondsMax}" if showTimeRange else "")
+    timeFrames = str(state.timeTaken) + (f"-{maxTravelTimeState.timeTaken}" if showTimeRange else "")
 
-    
+    timeFromDamageSecondsMin = round(state.timeFromDamage / 60, 2)
+    timeFromDamageSecondsMax = round(maxTravelTimeState.timeFromDamage / 60, 2)
+    showTimeFromDamageRange = maxTravelTimeState.timeFromDamage != state.timeFromDamage and not simpleMode
+    timeFromDamageSeconds = str(timeFromDamageSecondsMin) + (f"-{timeFromDamageSecondsMax}" if showTimeFromDamageRange else "")
+    timeFromDamageFrames = str(state.timeFromDamage) + (f"-{maxTravelTimeState.timeFromDamage}" if showTimeFromDamageRange else "")
+
+    output = ( f"### {comboName}"
+    f"\n> {state.sequence}"
+    f"\n**Time:** {timeSeconds} seconds ({timeFrames} frames)"
+    f"{f"\n**Time From Damage:** {timeFromDamageSeconds} seconds ({timeFromDamageFrames} frames)" if state.damageDealt > 0 else ""}"
+    f"\n**Damage:** {int(state.damageDealt)} {burnTracerBonusDamage}" )
 
     if len(warnings) > 0 and printWarnings:
         warninglist = ["\nWARNING: " + x for x in warnings]

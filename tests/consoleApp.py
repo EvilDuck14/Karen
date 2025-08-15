@@ -12,7 +12,10 @@ while True:
         print("!exit : closes the terminal")
 
     elif len(inputString) > 4 and inputString[:5] == "eval ":
-        print(evaluate(inputString[5:]))
+        print(evaluate(inputString[5:], simpleMode=True))
+
+    elif len(inputString) > 5 and inputString[:6] == "evala ":
+        print(evaluate(inputString[6:]))
 
     elif len(inputString) > 5 and inputString[:6] == "evaln ":
         print(evaluate(inputString[6:], printWarnings=False))

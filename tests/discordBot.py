@@ -19,6 +19,15 @@ bot = commands.Bot(command_prefix="!", intents=intents)
 @bot.command()
 async def eval(ctx, *arr):
     inputString = " ".join(str(x) for x in arr)
+    output = evaluate(inputString, simpleMode=True)
+    try:
+        await ctx.send(output)
+    except Exception as e:
+        print(e)
+
+@bot.command()
+async def evala(ctx, *arr):
+    inputString = " ".join(str(x) for x in arr)
     output = evaluate(inputString)
     try:
         await ctx.send(output)

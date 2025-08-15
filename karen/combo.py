@@ -58,7 +58,32 @@ def getComboSequence(inputString="", warnings=[]):
 
     return verifySequence
 
-def addAction(state=State(), action="", nextAction="", warnings=[], maxTravelTimes=False):
+def simplify(sequence):
+    newSequence = []
+
+    for i in range(len(sequence)):
+
+        current = sequence[i]
+        if len(sequence) == i + 1:
+            newSequence += [current]
+            break
+        next = sequence[i + 1]
+
+        # replace swing cancels with whiff cancels
+        if current == "s" and ACTIONS["w"].cancelTimes[next] <= ACTIONS["s"].cancelTimes[next]:
+            newSequence += ["w"]
+
+        # insert whiffs after actions with uppercuts where speed is increased
+        elif "u" in current and ACTIONS[current].cancelTimes["w"] + ACTIONS["w"].cancelTimes[next] < ACTIONS[current].cancelTimes[next] and next != "":
+            newSequence += [current, "w"]
+        
+        else:
+            newSequence += [current]
+    
+    return newSequence
+        
+
+def addAction(state=State(), action="", nextAction="", warnings=[], maxTravelTimes=False, simpleMode=False):
 
     if not ("G+u" in ACTIONS):
         loadMoveStacks()
@@ -83,9 +108,9 @@ def addAction(state=State(), action="", nextAction="", warnings=[], maxTravelTim
     if "G" in action and (state.tracerActiveTimer == 0 or state.tracerActiveTimer < ACTIONS[action].awaitCharges["g"]) and (state.burnTracerActiveTimer == 0 or state.burnTracerActiveTimer < ACTIONS[action].awaitCharges["g"]):
         warnings += ["uses GOHT on nonxistent or expired tracer after " + state.sequence]
 
-    if "p" in action and (state.hasSwingOverhead or state.hasJumpOverhead):
+    if "p" in action and (state.hasSwingOverhead or state.hasJumpOverhead) and not simpleMode:
         warnings += ["uses punch when overhead was expected after " + state.sequence]
-    if "k" in action and (state.hasSwingOverhead or state.hasJumpOverhead):
+    if "k" in action and (state.hasSwingOverhead or state.hasJumpOverhead and not simpleMode):
         warnings += ["uses kick when overhead was expected after " + state.sequence]
 
     # awaits whiff end for overhead
@@ -125,7 +150,7 @@ def addAction(state=State(), action="", nextAction="", warnings=[], maxTravelTim
         state.punchSequence = 0
     
     # processes overhead logic
-    if "o" in action and (not state.hasSwingOverhead) and (not state.hasJumpOverhead):
+    if "o" in action and (not state.hasSwingOverhead) and (not state.hasJumpOverhead) and not simpleMode:
         warnings += ["uses impossible overhead after " + state.sequence]
 
     if action == "l":
@@ -135,7 +160,7 @@ def addAction(state=State(), action="", nextAction="", warnings=[], maxTravelTim
         state.hasJumpOverhead = False
    
     if action == "j" and state.isAirborn:
-        if not state.hasDoubleJump: 
+        if not state.hasDoubleJump and not simpleMode: 
             warnings += ["uses impossible double jump after " + state.sequence]
         state.hasDoubleJump = False
         state.hasJumpOverhead = True
@@ -144,7 +169,7 @@ def addAction(state=State(), action="", nextAction="", warnings=[], maxTravelTim
         state.isAirborn = True
 
     if action == "d":
-        if not state.hasDoubleJump: 
+        if not state.hasDoubleJump and not simpleMode: 
             warnings += ["uses impossible double jump after " + state.sequence]
         state.isAirborn = True
         state.hasDoubleJump = False
