@@ -69,8 +69,12 @@ def simplify(sequence):
             break
         next = sequence[i + 1]
 
+        # replace "dj" with "d"
+        if current == "d" and i > 0 and sequence[i - 1] == "d":
+            continue
+
         # replace swing cancels with whiff cancels
-        if current == "s" and ACTIONS["w"].cancelTimes[next] <= ACTIONS["s"].cancelTimes[next]:
+        elif current == "s" and ACTIONS["w"].cancelTimes[next] <= ACTIONS["s"].cancelTimes[next]:
             newSequence += ["w"]
 
         # insert whiffs after actions with uppercuts where speed is increased

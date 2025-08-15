@@ -240,7 +240,7 @@ class State:
                     continue
 
                 # double jump
-                if sequence == "dj":
+                if sequence == "jd":
                     correctedCombo += ["d"]
                     i += 2
                     continue

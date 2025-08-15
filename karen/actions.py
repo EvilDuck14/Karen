@@ -534,6 +534,7 @@ def loadMoveStacks():
         },
         awaitCharges = { 
             "u" :  0,
+            "s" : ACTIONS["u"].cancelTimes["s"],
             "g" : ACTIONS["u"].cancelTimes["s"]
         }
     )
