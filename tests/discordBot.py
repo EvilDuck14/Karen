@@ -50,28 +50,28 @@ async def sendEval(ctx, output, color):
 async def eval(ctx, *arr):
     inputString = " ".join(str(x) for x in arr)
     output = evaluate(inputString, simpleMode=True)
-    sendEval(ctx, output, 0x8C7FFF)
+    await sendEval(ctx, output, 0x8C7FFF)
     log("!eval", ctx, inputString)
 
 @bot.command()
 async def evala(ctx, *arr):
     inputString = " ".join(str(x) for x in arr)
     output = evaluate(inputString)
-    sendEval(ctx, output, 0x604FFF)
+    await sendEval(ctx, output, 0x604FFF)
     log("!evala", ctx, inputString)
 
 @bot.command()
 async def evaln(ctx, *arr):
     inputString = " ".join(str(x) for x in arr)
     output = evaluate(inputString, printWarnings=False)
-    sendEval(ctx, output, 0x604FFF)
+    await sendEval(ctx, output, 0x604FFF)
     log("!evaln", ctx, inputString)
 
 @bot.command()
 async def combo(ctx, *arr):
     inputString = " ".join(str(x) for x in arr)
     output = getCombo(inputString)
-    sendEval(ctx, output, 0x0094FF)
+    await sendEval(ctx, output, 0x0094FF)
     log("!combo", ctx, inputString)
 
 @bot.command()
