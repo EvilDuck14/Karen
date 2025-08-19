@@ -32,20 +32,31 @@ def getComboSequence(inputString="", warnings=[]):
                     words = words[len(words) - j:]
                     break
     
-    # unrecognised actions
-    warnings += [unknownAction + " is not a recognised action" for unknownAction in sequence if not unknownAction.lower() in ACTION_NAMES]
-    
     # converts to a list of correctly formatted keys in ACTION_NAMES
-    sequence = [(ACTION_NAMES[x] if x in ACTION_NAMES else x.lower()) for x in sequence if (x.lower() in ACTION_NAMES)] 
-    sequence = list("".join(sequence))
+    filterSequence = ""
+    for action in sequence:
+
+        # handling unrecognised actions
+        if not action.lower() in ACTION_NAMES:
+            warnings += [action + " is not a recognised action"]
+            shortForm = "".join([(a if a in ACTION_NAMES else a.lower()) for a in action if a.lower() in ACTION_NAMES])
+            if shortForm != "":
+                warnings[-1] += ", parsing as short form: " + shortForm
+            filterSequence += shortForm
+        
+        elif action in ACTION_NAMES:
+            filterSequence += ACTION_NAMES[action]
+        
+        else:
+            filterSequence += ACTION_NAMES[action.lower()]
 
     # folds movestack indicators into actions
     foldSequence = []
-    for i in range(len(sequence)):
-        if len(foldSequence) > 0 and sequence[i-1] == "+":
-            foldSequence[-1] += "+" + sequence[i]
-        elif sequence[i] != "+":
-            foldSequence.append(sequence[i])
+    for i in range(len(filterSequence)):
+        if len(foldSequence) > 0 and filterSequence[i-1] == "+":
+            foldSequence[-1] += "+" + filterSequence[i]
+        elif filterSequence[i] != "+":
+            foldSequence.append(filterSequence[i])
     
     # verify movestacks
     verifySequence = []
@@ -74,7 +85,7 @@ def simplify(sequence):
             newSequence += ["w"]
 
         # insert whiffs after actions with uppercuts where speed is increased
-        elif "u" in current and ACTIONS[current].cancelTimes["w"] + ACTIONS["w"].cancelTimes[next] < ACTIONS[current].cancelTimes[next] and next != "":
+        elif "u" in current and (not "u" in next) and ACTIONS[current].cancelTimes["w"] + ACTIONS["w"].cancelTimes[next] < ACTIONS[current].cancelTimes[next] and next != "":
             newSequence += [current, "w"]
         
         else:
