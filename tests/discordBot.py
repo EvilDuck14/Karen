@@ -30,60 +30,48 @@ def log(command, ctx, inputString):
     if len(COMMAND_LOG[ctx.guild][ctx.channel]) > 5:
         COMMAND_LOG[ctx.guild][ctx.channel] = COMMAND_LOG[ctx.guild][ctx.channel][-5:]
 
+async def sendEval(ctx, output, color):
+    warnings = "" if not "```" in output else output[output.find("```")+3:-3].replace("WARNING:", "**WARNING:**")
+    if warnings != "":
+        output = output[:output.find("```")-1]
+
+    embed = discord.Embed(title="", description=output, color=discord.Color(color))
+    embed.set_footer(text=f"requested by {ctx.author}", icon_url=ctx.author.avatar)
+
+    try:
+        await ctx.send(embed=embed)
+        if warnings != "":
+            warningsEmbed = discord.Embed(title="", description=warnings, color=discord.Color(0xB73A00))
+            await ctx.send(embed=warningsEmbed)
+    except Exception as e:
+        print(e)
+
 @bot.command()
 async def eval(ctx, *arr):
     inputString = " ".join(str(x) for x in arr)
     output = evaluate(inputString, simpleMode=True)
-    embed = discord.Embed(title="", description="\n".join(output.split("\n")[0:5]), color=discord.Color(0x8C7FFF))
-    embed.set_footer(text=f"requested by {ctx.author}", icon_url=ctx.author.avatar)
-    try:
-        await ctx.send(embed=embed)
-        if "```" in output:
-            warningsEmbed = discord.Embed(title="", description="\n".join(output.split("\n")[5:])[3:-3].replace("WARNING:", "**WARNING:**"), color=discord.Color(0xB73A00))
-            await ctx.send(embed=warningsEmbed)
-    except Exception as e:
-        print(e)
+    sendEval(ctx, output, 0x8C7FFF)
     log("!eval", ctx, inputString)
 
 @bot.command()
 async def evala(ctx, *arr):
     inputString = " ".join(str(x) for x in arr)
     output = evaluate(inputString)
-    embed = discord.Embed(title="", description="\n".join(output.split("\n")[0:5]), color=discord.Color(0x604FFF))
-    embed.set_footer(text=f"requested by {ctx.author}", icon_url=ctx.author.avatar)
-    try:
-        await ctx.send(embed=embed)
-        if "```" in output:
-            warningsEmbed = discord.Embed(title="", description="\n".join(output.split("\n")[5:])[3:-3].replace("WARNING:", "**WARNING:**"), color=discord.Color(0xB73A00))
-            await ctx.send(embed=warningsEmbed)
-    except Exception as e:
-        print(e)
+    sendEval(ctx, output, 0x604FFF)
     log("!evala", ctx, inputString)
 
 @bot.command()
 async def evaln(ctx, *arr):
     inputString = " ".join(str(x) for x in arr)
     output = evaluate(inputString, printWarnings=False)
-    embed = discord.Embed(title="", description="\n".join(output.split("\n")[0:5]), color=discord.Color(0x604FFF))
-    embed.set_footer(text=f"requested by {ctx.author}", icon_url=ctx.author.avatar)
-    try:
-        await ctx.send(embed=embed)
-    except Exception as e:
-        print(e)
+    sendEval(ctx, output, 0x604FFF)
     log("!evaln", ctx, inputString)
 
 @bot.command()
 async def combo(ctx, *arr):
     inputString = " ".join(str(x) for x in arr)
     output = getCombo(inputString)
-    embed = discord.Embed(title="", description="\n".join(output.split("\n")[0:5]), color=discord.Color(0x0094FF))
-    embed.set_footer(text=f"requested by {ctx.author}", icon_url=ctx.author.avatar)
-    if "```" in output:
-        embed = discord.Embed(title="", description=output[3:-3].replace("ERROR:", "**ERROR:**"), color=discord.Color(0xB73A00))
-    try:
-        await ctx.send(embed=embed)
-    except Exception as e:
-        print(e)
+    sendEval(ctx, output, 0x0094FF)
     log("!combo", ctx, inputString)
 
 @bot.command()
@@ -179,7 +167,7 @@ async def on_ready():
     print(f'Logged in as {bot.user} (ID: {bot.user.id})')
     try:
         await bot.tree.sync()
-        print("synced successfully")
+        print(f"successfully connected to {len(bot.guilds)} servers")
     except Exception as e:
         print(e)
     
