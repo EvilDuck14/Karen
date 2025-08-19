@@ -35,7 +35,7 @@ async def eval(ctx, *arr):
     inputString = " ".join(str(x) for x in arr)
     output = evaluate(inputString, simpleMode=True)
     embed = discord.Embed(title="", description="\n".join(output.split("\n")[0:5]), color=discord.Color(0x8C7FFF))
-    embed.set_footer(text=f"requested by {str(ctx.author).replace("\\", "\\\\").replace("_", "\_").replace("*", "\*")}", icon_url=ctx.author.avatar)
+    embed.set_footer(text=f"requested by {ctx.author}", icon_url=ctx.author.avatar)
     try:
         await ctx.send(embed=embed)
         if "```" in output:
@@ -50,7 +50,7 @@ async def evala(ctx, *arr):
     inputString = " ".join(str(x) for x in arr)
     output = evaluate(inputString)
     embed = discord.Embed(title="", description="\n".join(output.split("\n")[0:5]), color=discord.Color(0x604FFF))
-    embed.set_footer(text=f"requested by {str(ctx.author).replace("\\", "\\\\").replace("_", "\_").replace("*", "\*")}", icon_url=ctx.author.avatar)
+    embed.set_footer(text=f"requested by {ctx.author}", icon_url=ctx.author.avatar)
     try:
         await ctx.send(embed=embed)
         if "```" in output:
@@ -65,7 +65,7 @@ async def evaln(ctx, *arr):
     inputString = " ".join(str(x) for x in arr)
     output = evaluate(inputString, printWarnings=False)
     embed = discord.Embed(title="", description="\n".join(output.split("\n")[0:5]), color=discord.Color(0x604FFF))
-    embed.set_footer(text=f"requested by {str(ctx.author).replace("\\", "\\\\").replace("_", "\_").replace("*", "\*")}", icon_url=ctx.author.avatar)
+    embed.set_footer(text=f"requested by {ctx.author}", icon_url=ctx.author.avatar)
     try:
         await ctx.send(embed=embed)
     except Exception as e:
@@ -77,7 +77,7 @@ async def combo(ctx, *arr):
     inputString = " ".join(str(x) for x in arr)
     output = getCombo(inputString)
     embed = discord.Embed(title="", description="\n".join(output.split("\n")[0:5]), color=discord.Color(0x0094FF))
-    embed.set_footer(text=f"requested by {str(ctx.author).replace("\\", "\\\\").replace("_", "\_").replace("*", "\*")}", icon_url=ctx.author.avatar)
+    embed.set_footer(text=f"requested by {ctx.author}", icon_url=ctx.author.avatar)
     if "```" in output:
         embed = discord.Embed(title="", description=output[3:-3].replace("ERROR:", "**ERROR:**"), color=discord.Color(0xB73A00))
     try:
@@ -90,7 +90,7 @@ async def combo(ctx, *arr):
 async def combos(ctx, *arr):
     output = listCombos()
     embed = discord.Embed(title="Karen Combo List", description=output, color=discord.Color(0x0094FF))
-    embed.set_footer(text=f"requested by {str(ctx.author).replace("\\", "\\\\").replace("_", "\_").replace("*", "\*")}", icon_url=ctx.author.avatar)
+    embed.set_footer(text=f"requested by {ctx.author}", icon_url=ctx.author.avatar)
     try:
         await ctx.send(embed=embed)
     except Exception as e:
@@ -129,7 +129,7 @@ async def report(ctx, *arr):
 async def help(ctx, *arr):
     command = "none" if len(arr) == 0 else arr[0]
     embed = discord.Embed(title="Karen Help Desk", description="", color=discord.Color(0x77C6FF))
-    embed.set_footer(text=f"requested by {str(ctx.author).replace("\\", "\\\\").replace("_", "\_").replace("*", "\*")}", icon_url=ctx.author.avatar)
+    embed.set_footer(text=f"requested by {ctx.author}", icon_url=ctx.author.avatar)
 
     if command.lower() in ["eval", "!eval"]:
         embed.add_field(name="!eval [combo sequence]", value="The *evaluate* command takes a combo sequence as input, and evaluates the minimum time taken to execute the combo, as well as the damage dealt. This command automatically corrects common input mistakes - for more complete control, use \"!evala\".", inline=False)
