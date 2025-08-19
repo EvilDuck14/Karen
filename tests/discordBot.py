@@ -75,7 +75,7 @@ async def evaln(ctx, *arr):
 @bot.command()
 async def combo(ctx, *arr):
     inputString = " ".join(str(x) for x in arr)
-    output = getCombo(inputString, simpleMode=True)
+    output = getCombo(inputString)
     embed = discord.Embed(title="", description="\n".join(output.split("\n")[0:5]), color=discord.Color(0x0094FF))
     embed.set_footer(text=f"requested by {ctx.author}", icon_url=ctx.author.avatar)
     if "```" in output:

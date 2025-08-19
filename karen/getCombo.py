@@ -81,7 +81,7 @@ def getCombo(name):
     if not filterName in COMBO_ALIASES or not COMBO_ALIASES[filterName] in COMBO_SEQUENCES:
         return "```\nERROR: Combo not found\n```"
     
-    return evaluate(COMBO_SEQUENCES[COMBO_ALIASES[filterName]])
+    return evaluate(COMBO_SEQUENCES[COMBO_ALIASES[filterName]], simpleMode=True)
         
 def listCombos():
     comboList = []
