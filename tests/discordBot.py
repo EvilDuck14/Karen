@@ -18,6 +18,18 @@ intents.message_content = True
 bot = commands.Bot(command_prefix="!", intents=intents)
 bot.remove_command("help")
 
+COMMAND_LOG = {}
+
+def log(command, ctx, inputString):
+    if not ctx.guild in COMMAND_LOG:
+        COMMAND_LOG[ctx.guild] = {}
+    if not ctx.channel in COMMAND_LOG[ctx.guild]:
+        COMMAND_LOG[ctx.guild][ctx.channel] = []
+    
+    COMMAND_LOG[ctx.guild][ctx.channel].append(f"{ctx.author} sent \"{command} {inputString}\"")
+    if len(COMMAND_LOG[ctx.guild][ctx.channel]) > 5:
+        COMMAND_LOG[ctx.guild][ctx.channel] = COMMAND_LOG[ctx.guild][ctx.channel][-5:]
+
 @bot.command()
 async def eval(ctx, *arr):
     inputString = " ".join(str(x) for x in arr)
@@ -31,6 +43,7 @@ async def eval(ctx, *arr):
             await ctx.send(embed=warningsEmbed)
     except Exception as e:
         print(e)
+    log("!eval", ctx, inputString)
 
 @bot.command()
 async def evala(ctx, *arr):
@@ -45,6 +58,7 @@ async def evala(ctx, *arr):
             await ctx.send(embed=warningsEmbed)
     except Exception as e:
         print(e)
+    log("!evala", ctx, inputString)
 
 @bot.command()
 async def evaln(ctx, *arr):
@@ -56,6 +70,7 @@ async def evaln(ctx, *arr):
         await ctx.send(embed=embed)
     except Exception as e:
         print(e)
+    log("!evaln", ctx, inputString)
 
 @bot.command()
 async def combo(ctx, *arr):
@@ -69,12 +84,42 @@ async def combo(ctx, *arr):
         await ctx.send(embed=embed)
     except Exception as e:
         print(e)
+    log("!combo", ctx, inputString)
 
 @bot.command()
 async def combos(ctx, *arr):
     output = listCombos()
     embed = discord.Embed(title="Karen Combo List", description=output, color=discord.Color(0x0094FF))
     embed.set_footer(text=f"requested by {ctx.author}", icon_url=ctx.author.avatar)
+    try:
+        await ctx.send(embed=embed)
+    except Exception as e:
+        print(e)
+
+@bot.command()
+async def report(ctx, *arr):
+    reportMessage = " ".join(str(x) for x in arr)
+    
+    embed = discord.Embed(title="Report Sent", description="Thank you for your help. The report message that was sent can be seen below.", color=discord.Color(0x77C6FF))
+
+    if reportMessage.replace(" ", "") == "":
+        embed = discord.Embed(title="", description="**ERROR:** Please include a report description.", color=discord.Color(0xB73A00))
+
+    elif ctx.guild in COMMAND_LOG and ctx.channel in COMMAND_LOG[ctx.guild]:
+        fullReport = f"## Report from {ctx.author}\n**Server:** {ctx.guild}\n**Channel:** {ctx.channel}\n**Message:** {reportMessage}\n\n**Command log:**\n{"\n".join([f"{x}" for x in COMMAND_LOG[ctx.guild][ctx.channel]])}\n"
+        embed.add_field(name="", value=fullReport, inline=False)
+        embed.set_footer(text=f"requested by {ctx.author}", icon_url=ctx.author.avatar)
+        
+        try:
+            dev = await bot.fetch_user(os.getenv("DEV_ID"))
+            await dev.send(fullReport)
+        except Exception as e:
+            print(e)
+            embed = discord.Embed(title="", description="**ERROR:** Report failed to send. Try again later, or reach out via DM to the developer, @evilduck_", color=discord.Color(0xB73A00))
+
+    else:
+        embed = discord.Embed(title="", description="**ERROR:** No commands have been logged in this channel since Karen last rebooted.", color=discord.Color(0xB73A00))
+    
     try:
         await ctx.send(embed=embed)
     except Exception as e:
@@ -102,6 +147,9 @@ async def help(ctx, *arr):
     elif command.lower() in ["combos", "!combos"]:
         embed.add_field(name="!combos", value="The *combos* command prints a list of all documented combos, as well as their short-form notations. These are the labels added when a known command is evaluated, and these names can be passed into the \"!combo\" command.", inline=False)
 
+    elif command.lower() in ["report", "!report"]:
+        embed.add_field(name="!report [report message]", value="The *report* command sends a message to the bot developer (EvilDuck), along with last 5 commands issued in this channel. This is for reporting bugs/crashes, please don't spam it or use it before checking whether the unexpected output is caused by user error. Reports are not anonymous.", inline=False)
+
     elif command.lower() in ["help", "!help"]:
         descriptions = [ "The *help* command displays a detailed description of a given command. If no command is given, it instead lists all commands, giving brief descriptions." ] * 10 + [
             "Come on... you can figure this one out.",
@@ -118,6 +166,7 @@ async def help(ctx, *arr):
         embed.add_field(name="!evaln [combo sequence]", value="\"No warnings\" version of \"!evala\".", inline=False)
         embed.add_field(name="!combo [combo name]", value="Runs evaluation of a given combo.", inline=False)
         embed.add_field(name="!combos", value="Displays a list of all documented combos.", inline=False)
+        embed.add_field(name="!report [report message]", value="Reports an issue to the bot developer.", inline=False)
         embed.add_field(name="!help [command]", value="Explains the given command in greater detail.", inline=False)
 
     try:
