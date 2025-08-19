@@ -10,3 +10,4 @@ build
 karen.egg-info
 .pypirc
 .env
+$HOME

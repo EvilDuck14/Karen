@@ -64,7 +64,7 @@ def getComboSequence(inputString="", warnings=[]):
         if action in ACTION_NAMES and ACTION_NAMES[action] in ACTIONS:
             verifySequence.append(ACTION_NAMES[action])
         else:
-            warnings += [action + " is not a regocnised movestack"]
+            warnings += [action + " is not a recognised movestack"]
             verifySequence += action.split("+")
 
     return verifySequence
