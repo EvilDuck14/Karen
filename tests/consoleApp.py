@@ -21,10 +21,10 @@ while True:
         print(evaluate(inputString[6:], printWarnings=False))
 
     elif len(inputString) > 5 and inputString[:6] == "combo ":
-        print(getCombo(inputString[6:], simpleMode=True))
+        print(getCombo(inputString[6:]))
 
     elif len(inputString) > 5 and inputString[:7] == "combos ":
-        print(listCombos())
+        print(listCombos(inputString[7:]))
 
     elif len(inputString) > 4 and inputString[:5] == "exit ":
         break

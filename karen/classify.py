@@ -9,6 +9,7 @@ CLASSIFICATIONS = {
     "tGwtuwt" : "Weave Combo",
     "tGptu" : "Panther Combo",
     "tGsptu" : "Fast Panther",
+    "tGsotu" : "Overhead Panther Combo",
     "tptu" : "One Two",
     "totu" : "Overhead One Two",
     "tgptu" : "Fishing Combo / Sekkombo",
@@ -22,12 +23,16 @@ CLASSIFICATIONS = {
     "otuwtotgwtuwtoto" : "Further Beyond",
     "to+G+u" : "Saporen FFAmestack",
     "gwtuwto" : "Yo-Yo",
+    "tguwto" : "Pre-Tag Yo-Yo",
+    "tgwuwto" : "Pre-Tag Yo-Yo",
     "gwtuototu" : "Botched Yo-Yo",
     "gtutp" : "Agni-Kai Yo-Yo",
     "tuwtGu" : "Driveby",
     "twGuot" : "Bald Slam",
     "uwtGo" : "Vortex",
     "tgptsptu" : "Hydro Combo",
+    "tptsptu" : "Alternate Hydro Combo",
+    "o+tgstu" : "Evil Combo",
 
     "tGbu" : "Burn BnB / Fadeaway",
     "otbu" : "Burn Overhead Burst",
@@ -35,7 +40,7 @@ CLASSIFICATIONS = {
     "tbuwtg" : "In And Out",
     "tptbu" : "Burn One Two",
     "tGbtu" : "Burn Weave",
-    "tGwtbu" : "Burn Weave"
+    "tGwtbu" : "Burn Weave",
 }
 
 def classify(comboString):

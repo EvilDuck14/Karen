@@ -6,6 +6,9 @@ def getComboSequence(inputString="", warnings=[]):
     if not ("G+u" in ACTIONS):
         loadMoveStacks()
     
+    if inputString == "":
+        return []
+
     # removes anything in brackets from inputString string
     sequence = inputString
     while "(" in sequence and ")" in sequence[sequence.find("("):]:

@@ -20,6 +20,13 @@ bot.remove_command("help")
 
 COMMAND_LOG = {}
 
+# Dev channel runs commands if and only if the build is run in dev mode
+DEV_SERVER = int(os.getenv("DEV_SERVER"))
+DEV_CHANNEL = int(os.getenv("DEV_CHANNEL"))
+DEV_BUILD = bool(os.getenv("DEV_BUILD"))
+def developmentFilter(ctx):
+    return bool(ctx.guild.id == DEV_SERVER and ctx.channel.id == DEV_CHANNEL) ^ bool(DEV_BUILD)
+
 def log(command, ctx, inputString):
     if not ctx.guild in COMMAND_LOG:
         COMMAND_LOG[ctx.guild] = {}
@@ -39,7 +46,8 @@ async def sendEval(ctx, output, color):
     embed.set_footer(text=f"requested by {ctx.author}", icon_url=ctx.author.avatar)
 
     try:
-        await ctx.send(embed=embed)
+        if not "ERROR: Combo not found" in warnings:
+            await ctx.send(embed=embed)
         if warnings != "":
             warningsEmbed = discord.Embed(title="", description=warnings, color=discord.Color(0xB73A00))
             await ctx.send(embed=warningsEmbed)
@@ -48,6 +56,8 @@ async def sendEval(ctx, output, color):
 
 @bot.command()
 async def eval(ctx, *arr):
+    if developmentFilter(ctx):
+        return
     inputString = " ".join(str(x) for x in arr)
     output = evaluate(inputString, simpleMode=True)
     await sendEval(ctx, output, 0x8C7FFF)
@@ -55,6 +65,8 @@ async def eval(ctx, *arr):
 
 @bot.command()
 async def evala(ctx, *arr):
+    if developmentFilter(ctx):
+        return
     inputString = " ".join(str(x) for x in arr)
     output = evaluate(inputString)
     await sendEval(ctx, output, 0x604FFF)
@@ -62,6 +74,8 @@ async def evala(ctx, *arr):
 
 @bot.command()
 async def evaln(ctx, *arr):
+    if developmentFilter(ctx):
+        return
     inputString = " ".join(str(x) for x in arr)
     output = evaluate(inputString, printWarnings=False)
     await sendEval(ctx, output, 0x604FFF)
@@ -69,6 +83,8 @@ async def evaln(ctx, *arr):
 
 @bot.command()
 async def combo(ctx, *arr):
+    if developmentFilter(ctx):
+        return
     inputString = " ".join(str(x) for x in arr)
     output = getCombo(inputString)
     await sendEval(ctx, output, 0x0094FF)
@@ -76,8 +92,11 @@ async def combo(ctx, *arr):
 
 @bot.command()
 async def combos(ctx, *arr):
-    output = listCombos()
-    embed = discord.Embed(title="Karen Combo List", description=output, color=discord.Color(0x0094FF))
+    if developmentFilter(ctx):
+        return
+    inputString = " ".join(str(x) for x in arr)
+    output = listCombos(inputString)
+    embed = discord.Embed(title="", description=output, color=discord.Color(0x0094FF))
     embed.set_footer(text=f"requested by {ctx.author}", icon_url=ctx.author.avatar)
     try:
         await ctx.send(embed=embed)
@@ -86,6 +105,8 @@ async def combos(ctx, *arr):
 
 @bot.command()
 async def report(ctx, *arr):
+    if developmentFilter(ctx):
+        return
     reportMessage = " ".join(str(x) for x in arr)
     
     embed = discord.Embed(title="Report Sent", description="Thank you for your help. The report message that was sent can be seen below.", color=discord.Color(0x77C6FF))
@@ -115,6 +136,8 @@ async def report(ctx, *arr):
 
 @bot.command()
 async def help(ctx, *arr):
+    if developmentFilter(ctx):
+        return
     command = "none" if len(arr) == 0 else arr[0]
     embed = discord.Embed(title="Karen Help Desk", description="", color=discord.Color(0x77C6FF))
     embed.set_footer(text=f"requested by {ctx.author}", icon_url=ctx.author.avatar)
@@ -161,6 +184,12 @@ async def help(ctx, *arr):
         await ctx.send(embed=embed)
     except Exception as e:
         print(e)
+
+
+@bot.command()
+async def test(ctx, *arr):
+    print(ctx.guild)
+    print(ctx.channel)
 
 @bot.event
 async def on_ready():

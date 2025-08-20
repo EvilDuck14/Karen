@@ -40,17 +40,26 @@ def evaluate(inputString, printWarnings = True, simpleMode = False):
     showTimeRange = maxTravelTimeState.timeTaken != state.timeTaken and not simpleMode
     timeSeconds = str(timeSecondsMin) + (f"-{timeSecondsMax}" if showTimeRange else "")
     timeFrames = str(state.timeTaken) + (f"-{maxTravelTimeState.timeTaken}" if showTimeRange else "")
+    dpsMin = "NaN" if timeSecondsMax == 0 else str(int(round(state.damageDealt / timeSecondsMax, 0)))
+    dpsMax = "NaN" if timeSecondsMin == 0 else str(int(round(state.damageDealt / timeSecondsMin, 0)))
+    showDPS = simpleMode == False and dpsMax != "NaN"
+    dps = "" if not showDPS else f", {dpsMin}{f"-{dpsMax}" if dpsMin != dpsMax else ""}dps"
+
 
     timeFromDamageSecondsMin = round(state.timeFromDamage / 60, 2)
     timeFromDamageSecondsMax = round(maxTravelTimeState.timeFromDamage / 60, 2)
     showTimeFromDamageRange = maxTravelTimeState.timeFromDamage != state.timeFromDamage and not simpleMode
     timeFromDamageSeconds = str(timeFromDamageSecondsMin) + (f"-{timeFromDamageSecondsMax}" if showTimeFromDamageRange else "")
     timeFromDamageFrames = str(state.timeFromDamage) + (f"-{maxTravelTimeState.timeFromDamage}" if showTimeFromDamageRange else "")
+    dpsFromDamageMin = "NaN" if timeFromDamageSecondsMax == 0 else str(int(round(state.damageDealt / timeFromDamageSecondsMax, 0)))
+    dpsFromDamageMax = "NaN" if timeFromDamageSecondsMin == 0 else str(int(round(state.damageDealt / timeFromDamageSecondsMin, 0)))
+    showDPSFromDamage = simpleMode == False and dpsFromDamageMax != "NaN"
+    dpsFromDamage = "" if not showDPSFromDamage else f", {dpsFromDamageMin}{f"-{dpsFromDamageMax}" if dpsFromDamageMin != dpsFromDamageMax else ""}dps"
 
     output = ( f"### {comboName}"
     f"\n> {state.sequence}"
-    f"\n**Time:** {timeSeconds} seconds ({timeFrames} frames)"
-    f"{f"\n**Time From Damage:** {timeFromDamageSeconds} seconds ({timeFromDamageFrames} frames)" if state.damageDealt > 0 else ""}"
+    f"\n**Time:** {timeSeconds} seconds ({timeFrames} frames{dps})"
+    f"{f"\n**Time From Damage:** {timeFromDamageSeconds} seconds ({timeFromDamageFrames} frames{dpsFromDamage})" if state.damageDealt > 0 else ""}"
     f"\n**Damage:** {int(state.damageDealt)} {burnTracerBonusDamage}" )
 
     if len(warnings) > 0 and printWarnings:

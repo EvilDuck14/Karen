@@ -1,20 +1,21 @@
 from karen.evaluate import evaluate
 from karen.classify import CLASSIFICATIONS
+from karen.combo import getComboSequence, simplify
 
 COMBO_SEQUENCES = {}
 
 OVERRIDE_COMBO_SEQUENCES = {
-    "Fast Panther" : "tGslptu",
     "Reverse Yo-Yo" : "tgdotu",
-    "Master Manipulator" : "otslptu",
     "Further Beyond" : "otuwtotgwtuwtodto",
     "Yo-Yo" : "gdwtuwto",
+    "Pre-Tag Yo-Yo" : "tgduwto",
     "Botched Yo-Yo" : "gdwtuototu",
     "Agni-Kai Yo-Yo" : "gdtutp",
-    "Bald Slam" : "twGuot",
     "Vortex" : "uwtdGo",
-    "In And Out" : "tbuwtg",
-    "Hydro Combo" : "tgptalptu"
+    "Hydro Combo" : "tgptaptu",
+    "Alternate Hydro Combo" : "tptaptu",
+    "Burn Weave" : "tGwtbu",
+    "Evil Combo" : "o+tgatu",
 }
 
 COMBO_ALIASES = {
@@ -34,6 +35,9 @@ COMBO_ALIASES = {
     "skypull" : "Yo-Yo",
     "spc" : "Yo-Yo",
     "skyyoink" : "Yo-Yo",
+    "preyoyo" : "Pre-Tag Yo-Yo",
+    "tagyoyo" : "Pre-Tag Yo-Yo",
+    "althydro" : "Alternate Hydro Combo",
 
     "burnbnb" : "Burn BnB / Fadeaway",
     "fadeaway" : "Burn BnB / Fadeaway",
@@ -46,7 +50,7 @@ COMBO_ALIASES = {
     "burnsekombo" : "Fried Fish / Firehook",
     "firehook" : "Fried Fish / Firehook",
     "innout" : "In And Out",
-    "in&out" : "In And Out"
+    "in&out" : "In And Out",
 }
 
 def loadComboSequences():
@@ -83,15 +87,29 @@ def getCombo(name):
     
     return evaluate(COMBO_SEQUENCES[COMBO_ALIASES[filterName]], simpleMode=True)
         
-def listCombos():
+def listCombos(inputString=""):
+
+    # resolve the initial sequence
+    comboSequence = getComboSequence(inputString) + [""]
+    initialSequence = "".join(comboSequence)
+    reducedSequence = initialSequence.replace("j", "").replace("d", "").replace("l", "").replace("a", "s")
+    simpleSequence = "".join(simplify(comboSequence))
+    reducedSimpleSequence = simpleSequence.replace("j", "").replace("d", "").replace("l", "").replace("a", "s")
+
+    if len(COMBO_SEQUENCES) == 0:
+        loadComboSequences()
     comboList = []
     sequenceList = []
     maxLength = 0
 
-    for sequence in CLASSIFICATIONS:
-        if not CLASSIFICATIONS[sequence] in comboList:
-            comboList += [CLASSIFICATIONS[sequence]]
-            sequenceList += [sequence]
+    for combo in COMBO_SEQUENCES:
+        if len(COMBO_SEQUENCES[combo]) >= len(reducedSequence) and COMBO_SEQUENCES[combo][:len(reducedSequence)] == reducedSequence:
+            comboList += [combo]
+            sequenceList += [initialSequence + COMBO_SEQUENCES[combo][len(reducedSequence):]]
+            maxLength = max(maxLength, len(comboList[-1]))
+        elif len(COMBO_SEQUENCES[combo]) >= len(reducedSimpleSequence) and COMBO_SEQUENCES[combo][:len(reducedSimpleSequence)] == reducedSimpleSequence:
+            comboList += [combo]
+            sequenceList += [simpleSequence + COMBO_SEQUENCES[combo][len(reducedSimpleSequence):]]
             maxLength = max(maxLength, len(comboList[-1]))
 
-    return "```\n" + "\n".join([comboList[i] + " " * (maxLength - len(comboList[i])) + " | " + sequenceList[i] for i in range(len(comboList))]) + "\n```"
+    return "### Karen Combo List\n" + ("" if reducedSequence == "" else f"Requirement: starts with \"{initialSequence}\"\n") + "```\n" + "\n".join([comboList[i] + " " * (maxLength - len(comboList[i])) + " | " + sequenceList[i] for i in range(len(comboList))]) + "\n```"
