@@ -3,6 +3,7 @@ from karen.combo import *
 from karen.classify import classify
 from math import floor
 from karen.actions import *
+from karen.output import Output
 
 def evaluate(inputString, printWarnings = True, simpleMode = False):
     warnings = []
@@ -56,24 +57,10 @@ def evaluate(inputString, printWarnings = True, simpleMode = False):
     showDPSFromDamage = simpleMode == False and dpsFromDamageMax != "NaN"
     dpsFromDamage = "" if not showDPSFromDamage else f", {dpsFromDamageMin}{f"-{dpsFromDamageMax}" if dpsFromDamageMin != dpsFromDamageMax else ""}dps"
 
-    output = ( f"### {comboName}"
-    f"\n> {state.sequence}"
-    f"\n**Time:** {timeSeconds} seconds ({timeFrames} frames{dps})"
+    description = ( 
+    f"**Time:** {timeSeconds} seconds ({timeFrames} frames{dps})"
     f"{f"\n**Time From Damage:** {timeFromDamageSeconds} seconds ({timeFromDamageFrames} frames{dpsFromDamage})" if state.damageDealt > 0 else ""}"
-    f"\n**Damage:** {int(state.damageDealt)} {burnTracerBonusDamage}" )
+    f"\n**Damage:** {int(state.damageDealt)} {burnTracerBonusDamage}" 
+    )
 
-    if len(warnings) > 0 and printWarnings:
-        warninglist = ["\nWARNING: " + x for x in warnings]
-
-        output += "\n```"
-        while len(warninglist) > 0 and len(output) + len(warninglist[0]) + len(f"\n...({len(warninglist)} warnings)\n```") < 2000:
-            output += warninglist[0]
-            warninglist = warninglist[1:]
-        if len(warninglist) > 0:
-            output += f"\n...({len(warninglist)} warnings)"
-        output += "\n```"
-
-    if len(output) >= 2000:
-        return "```\nERROR: Combo too long for Discord API\n```"  
-    
-    return output
+    return Output(title=comboName, combo=state.sequence, description=description, warnings=warnings)

@@ -1,6 +1,7 @@
 from karen.evaluate import evaluate
 from karen.classify import CLASSIFICATIONS
 from karen.combo import getComboSequence, simplify
+from karen.output import Output
 
 COMBO_SEQUENCES = {}
 
@@ -83,14 +84,15 @@ def getCombo(name):
             filterName = filterName[:-5]
 
     if not filterName in COMBO_ALIASES or not COMBO_ALIASES[filterName] in COMBO_SEQUENCES:
-        return "```\nERROR: Combo not found\n```"
+        return Output(error="Combo not found")
     
     return evaluate(COMBO_SEQUENCES[COMBO_ALIASES[filterName]], simpleMode=True)
         
 def listCombos(inputString=""):
 
     # resolve the initial sequence
-    comboSequence = getComboSequence(inputString) + [""]
+    warnings = []
+    comboSequence = getComboSequence(inputString, warnings) + [""]
     initialSequence = "".join(comboSequence)
     reducedSequence = initialSequence.replace("j", "").replace("d", "").replace("l", "").replace("a", "s")
     simpleSequence = "".join(simplify(comboSequence))
@@ -112,4 +114,11 @@ def listCombos(inputString=""):
             sequenceList += [simpleSequence + COMBO_SEQUENCES[combo][len(reducedSimpleSequence):]]
             maxLength = max(maxLength, len(comboList[-1]))
 
-    return "### Karen Combo List\n" + ("" if reducedSequence == "" else f"Requirement: starts with \"{initialSequence}\"\n") + "```\n" + "\n".join([comboList[i] + " " * (maxLength - len(comboList[i])) + " | " + sequenceList[i] for i in range(len(comboList))]) + "\n```"
+    title = "Karen Combo List"
+    description = "" if reducedSequence == "" else f"Requirement: starts with \"{initialSequence}\""
+    block = "\n".join([comboList[i] + " " * (maxLength - len(comboList[i])) + " | " + sequenceList[i] for i in range(len(comboList))])
+
+    if block == "":
+        return Output(error=f"No documented combos begin with {initialSequence}")
+
+    return Output(title=title, description=description, block=block, warnings=warnings)
