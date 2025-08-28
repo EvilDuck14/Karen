@@ -24,7 +24,7 @@ ACTION_NAMES = {
     "a" : "a", "automatic swing" : "a", "autoswing" : "a", "automatic" : "a", "auto" : "a", "easyswing" : "a", "easy" : "a", "simple swing" : "a", "simple" : "a", "as" : "a",
     "w" : "w", "whiff" : "w", "webwhiff" : "w", "swingwhiff" : "w", "wiff" : "w", "web wiff" : "w", "swing wiff" : "w",
     "g" : "g", "getoverhere" : "g", "goh" : "g", "webpull" : "g", "pull" : "g",
-    "G" : "G", "getoverheretargeting" : "G", "getoverheretargetting" : "G", "goht" : "G",
+    "G" : "G", "getoverheretargeting" : "G", "getoverheretargetting" : "G", "goht" : "G", "goh.t" : "G",
     "u" : "u", "uppercut" : "u", "upper" : "u", "amazingcombo" : "u",
     "b" : "b", "burn" : "b", "burntracer" : "b", "burncluster" : "b", "fire" : "b", "firetracer" : "b", "firecluster" : "b", "flame" : "b", "flametracer" : "b", "flamecluster" : "b",
     "+" : "+", "/" : "+",

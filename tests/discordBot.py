@@ -4,6 +4,7 @@ from discord.ext import commands
 from karen.evaluate import evaluate
 from karen.getCombo import *
 from karen.output import Output
+from karen.parameters import *
 
 import random
 
@@ -43,34 +44,20 @@ async def eval(ctx, *arr):
     if developmentFilter(ctx):
         return
     inputString = " ".join(str(x) for x in arr)
-    output = evaluate(inputString, simpleMode=True)
+    warnings = []
+    inputString, params = splitParameters(inputString, warnings)
+    output = evaluate(inputString, params, warnings)
     await output.printToDiscord(ctx=ctx, color=0x8C7FFF)
     log("!eval", ctx, inputString)
-
-@bot.command()
-async def evala(ctx, *arr):
-    if developmentFilter(ctx):
-        return
-    inputString = " ".join(str(x) for x in arr)
-    output = evaluate(inputString)
-    await output.printToDiscord(ctx=ctx, color=0x604FFF)
-    log("!evala", ctx, inputString)
-
-@bot.command()
-async def evaln(ctx, *arr):
-    if developmentFilter(ctx):
-        return
-    inputString = " ".join(str(x) for x in arr)
-    output = evaluate(inputString, printWarnings=False)
-    await output.printToDiscord(ctx=ctx, color=0x604FFF)
-    log("!evaln", ctx, inputString)
 
 @bot.command()
 async def combo(ctx, *arr):
     if developmentFilter(ctx):
         return
     inputString = " ".join(str(x) for x in arr)
-    output = getCombo(inputString)
+    warnings = []
+    inputString, params = splitParameters(inputString, warnings)
+    output = getCombo(inputString, params, warnings)
     await output.printToDiscord(ctx=ctx, color=0x0094FF)
     log("!combo", ctx, inputString)
 
@@ -79,7 +66,9 @@ async def combos(ctx, *arr):
     if developmentFilter(ctx):
         return
     inputString = " ".join(str(x) for x in arr)
-    output = listCombos(inputString)
+    warnings = []
+    inputString, params = splitParameters(inputString, warnings)
+    output = listCombos(inputString, params, warnings)
     await output.printToDiscord(ctx=ctx, color=0x0094FF)
     log("!combos", ctx, inputString)
 
@@ -110,7 +99,7 @@ async def report(ctx, *arr):
             error = "Report failed to send. Try again later, or reach out via DM to the developer, @evilduck_"
 
     else:
-        embed = discord.Embed(title="", description="**ERROR:** No commands have been logged in this channel since Karen last rebooted", color=discord.Color(0xB73A00))
+        error="No commands have been logged in this channel since Karen last rebooted"
     
     output = Output(title=title, description=description, block=block, error=error)
     output.printToDiscord(ctx=ctx, color=0x77C6FF)
@@ -128,13 +117,7 @@ async def help(ctx, *arr):
     embed.set_footer(text=f"requested by {ctx.author}", icon_url=ctx.author.avatar)
 
     if command.lower() in ["eval", "!eval"]:
-        description = "**!eval [combo sequence]**\nThe *evaluate* command takes a combo sequence as input, and evaluates the minimum time taken to execute the combo, as well as the damage dealt. This command automatically corrects common input mistakes - for more complete control, use \"!evala\".\n\nExamples of combo sequences include \"tGu\", \"t goht upper\", or \"tracer > get over here targeting > uppercut\" (these are all equivalent). For a more complete description of combo notation, [see the documentation](https://github.com/EvilDuck14/Karen/)."
-
-    elif command.lower() in ["evala", "!evala"]:
-        description = "**!evala [combo sequence]**\nThe *evaluate (advanced)* command takes a combo sequence as input, and evaluates the minimum range of times taken to execute the combo (accounting for projectile travel times), as well as the damage dealt. Unlike \"!eval\", this command doesn't correct common mistakes if the sequence is possible in-game (such as \"usG\" being input instead of \"uwG\")."
-
-    elif command.lower() in ["evaln", "!evaln"]:
-        description = "**!evaln [combo sequence]**\nThe *evaluate (no warnings)* command is equivalent to \"!evala\", but doesn't output any warnings."
+        description = "**!eval [combo sequence]**\nThe *evaluate* command takes a combo sequence as input, and evaluates the minimum time taken to execute the combo, as well as the damage dealt. This command automatically corrects common input mistakes - for more complete control, use \"--a\".\n\nExamples of combo sequences include \"tGu\", \"t goht upper\", or \"tracer > get over here targeting > uppercut\" (these are all equivalent). For a more complete description of combo notation, [see the documentation](https://github.com/EvilDuck14/Karen/)."
     
     elif command.lower() in ["combo", "!combo"]:
         description = "**!combo [combo name]**\nThe *combo* command runs \"!evala\" on a combo given its name. For a list of all documented combo names, use \"!combos\"."

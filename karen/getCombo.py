@@ -2,6 +2,7 @@ from karen.evaluate import evaluate
 from karen.classify import CLASSIFICATIONS
 from karen.combo import getComboSequence, simplify
 from karen.output import Output
+from karen.parameters import Parameters
 
 COMBO_SEQUENCES = {}
 
@@ -75,7 +76,7 @@ def loadComboSequences():
             COMBO_ALIASES[name.replace("bnb", "breadandbutter")] = COMBO_ALIASES[name]
 
 
-def getCombo(name):
+def getCombo(name, params=Parameters(), warnings=[]):
     if len(COMBO_SEQUENCES) == 0:
         loadComboSequences()
 
@@ -86,12 +87,11 @@ def getCombo(name):
     if not filterName in COMBO_ALIASES or not COMBO_ALIASES[filterName] in COMBO_SEQUENCES:
         return Output(error="Combo not found")
     
-    return evaluate(COMBO_SEQUENCES[COMBO_ALIASES[filterName]], simpleMode=True)
+    return evaluate(COMBO_SEQUENCES[COMBO_ALIASES[filterName]], params=params, warnings=warnings)
         
-def listCombos(inputString=""):
+def listCombos(inputString="", params=Parameters(), warnings=[]):
 
     # resolve the initial sequence
-    warnings = []
     comboSequence = getComboSequence(inputString, warnings) + [""]
     initialSequence = "".join(comboSequence)
     reducedSequence = initialSequence.replace("j", "").replace("d", "").replace("l", "").replace("a", "s")

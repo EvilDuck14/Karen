@@ -4,9 +4,9 @@ from karen.classify import classify
 from math import floor
 from karen.actions import *
 from karen.output import Output
+from karen.parameters import Parameters
 
-def evaluate(inputString, printWarnings = True, simpleMode = False):
-    warnings = []
+def evaluate(inputString, params=Parameters(), warnings=[]):
 
     state = State()
     comboSequence = getComboSequence(inputString, warnings) + [""]
@@ -19,13 +19,13 @@ def evaluate(inputString, printWarnings = True, simpleMode = False):
     state.inferInitialState(comboSequence, warnings)
     comboSequence = state.correctSequence(comboSequence)
 
-    if simpleMode:
+    if params.advanced == False:
         comboSequence = simplify(comboSequence)
 
     for i in range(len(comboSequence) - 1):
         nextAction = [j for j in comboSequence[i+1:] if not j in ["j", "d", "l"]][0]
-        addAction(state, comboSequence[i], nextAction, warnings, simpleMode=simpleMode)
-        addAction(maxTravelTimeState, comboSequence[i], nextAction, maxTravelTimes=True)
+        addAction(state, comboSequence[i], nextAction, params, warnings)
+        addAction(maxTravelTimeState, comboSequence[i], nextAction, params, maxTravelTimes=True)
     state.resolve(warnings)
     maxTravelTimeState.resolve()
 
@@ -38,23 +38,23 @@ def evaluate(inputString, printWarnings = True, simpleMode = False):
 
     timeSecondsMin = round(state.timeTaken / 60, 2)
     timeSecondsMax = round(maxTravelTimeState.timeTaken / 60, 2)
-    showTimeRange = maxTravelTimeState.timeTaken != state.timeTaken and not simpleMode
+    showTimeRange = maxTravelTimeState.timeTaken != state.timeTaken and params.advanced
     timeSeconds = str(timeSecondsMin) + (f"-{timeSecondsMax}" if showTimeRange else "")
     timeFrames = str(state.timeTaken) + (f"-{maxTravelTimeState.timeTaken}" if showTimeRange else "")
     dpsMin = "NaN" if timeSecondsMax == 0 else str(int(round(state.damageDealt / timeSecondsMax, 0)))
     dpsMax = "NaN" if timeSecondsMin == 0 else str(int(round(state.damageDealt / timeSecondsMin, 0)))
-    showDPS = simpleMode == False and dpsMax != "NaN"
+    showDPS = params.advanced and dpsMax != "NaN"
     dps = "" if not showDPS else f", {dpsMin}{f"-{dpsMax}" if dpsMin != dpsMax else ""}dps"
 
 
     timeFromDamageSecondsMin = round(state.timeFromDamage / 60, 2)
     timeFromDamageSecondsMax = round(maxTravelTimeState.timeFromDamage / 60, 2)
-    showTimeFromDamageRange = maxTravelTimeState.timeFromDamage != state.timeFromDamage and not simpleMode
+    showTimeFromDamageRange = maxTravelTimeState.timeFromDamage != state.timeFromDamage and params.advanced
     timeFromDamageSeconds = str(timeFromDamageSecondsMin) + (f"-{timeFromDamageSecondsMax}" if showTimeFromDamageRange else "")
     timeFromDamageFrames = str(state.timeFromDamage) + (f"-{maxTravelTimeState.timeFromDamage}" if showTimeFromDamageRange else "")
     dpsFromDamageMin = "NaN" if timeFromDamageSecondsMax == 0 else str(int(round(state.damageDealt / timeFromDamageSecondsMax, 0)))
     dpsFromDamageMax = "NaN" if timeFromDamageSecondsMin == 0 else str(int(round(state.damageDealt / timeFromDamageSecondsMin, 0)))
-    showDPSFromDamage = simpleMode == False and dpsFromDamageMax != "NaN"
+    showDPSFromDamage = params.advanced and dpsFromDamageMax != "NaN"
     dpsFromDamage = "" if not showDPSFromDamage else f", {dpsFromDamageMin}{f"-{dpsFromDamageMax}" if dpsFromDamageMin != dpsFromDamageMax else ""}dps"
 
     description = ( 
@@ -62,5 +62,8 @@ def evaluate(inputString, printWarnings = True, simpleMode = False):
     f"{f"\n**Time From Damage:** {timeFromDamageSeconds} seconds ({timeFromDamageFrames} frames{dpsFromDamage})" if state.damageDealt > 0 else ""}"
     f"\n**Damage:** {int(state.damageDealt)} {burnTracerBonusDamage}" 
     )
+
+    if params.noWarnings:
+        warnings = []
 
     return Output(title=comboName, combo=state.sequence, description=description, warnings=warnings)
