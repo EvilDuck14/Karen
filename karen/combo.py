@@ -90,7 +90,7 @@ def simplify(sequence):
             newSequence += ["w"]
 
         # insert whiffs after actions with uppercuts where speed is increased
-        elif "u" in current and (not "u" in next) and ACTIONS[current].cancelTimes["w"] + ACTIONS["w"].cancelTimes[next] < ACTIONS[current].cancelTimes[next] and next != "":
+        elif "u" in current and (not True in [x in next for x in ["p", "k", "o"]]) and ACTIONS[current].cancelTimes["w"] + ACTIONS["w"].cancelTimes[next] < ACTIONS[current].cancelTimes[next] and next != "":
             newSequence += [current, "w"]
         
         else:

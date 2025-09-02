@@ -176,6 +176,14 @@ class State:
             preOH = foldSequence[:temp.index("o")]
             self.isAirborn = not ("s" in preOH or "w" in preOH or "b" in preOH or preOH.count("j") >= 2)
 
+        # also airborne if whiff awards overhead
+        if "w" in preAirborne and "o" in foldSequence:
+            postAirborne = foldSequence[len(preAirborne):]
+            if "o" in postAirborne:
+                postAirborne = postAirborne[:postAirborne.find("o")]
+            if not True in [x in postAirborne for x in ["s", "a", "w", "j", "d", "b"]]:
+                self.isAirborn = True
+
         # has swing overhead if overhead is used before payout
         temp = foldSequence + "jjdswb"
         if not self.isAirborn: # ignore the first jump for overhead payouts if not airborne
