@@ -29,7 +29,7 @@ DEV_BUILD = bool(os.getenv("DEV_BUILD"))
 def developmentFilter(ctx):
     return bool(ctx.guild.id == DEV_SERVER and ctx.channel.id == DEV_CHANNEL) ^ bool(DEV_BUILD)
 
-def log(command, ctx, inputString):
+def logCommand(command, ctx, inputString):
     if not ctx.guild in COMMAND_LOG:
         COMMAND_LOG[ctx.guild] = {}
     if not ctx.channel in COMMAND_LOG[ctx.guild]:
@@ -48,7 +48,7 @@ async def eval(ctx, *arr):
     inputString, params = splitParameters(inputString, warnings)
     output = evaluate(inputString, params, warnings)
     await output.printToDiscord(ctx=ctx, color=0x8C7FFF)
-    log("!eval", ctx, inputString)
+    logCommand("!eval", ctx, inputString)
 
 @bot.command()
 async def combo(ctx, *arr):
@@ -59,7 +59,7 @@ async def combo(ctx, *arr):
     inputString, params = splitParameters(inputString, warnings)
     output = getCombo(inputString, params, warnings)
     await output.printToDiscord(ctx=ctx, color=0x0094FF)
-    log("!combo", ctx, inputString)
+    logCommand("!combo", ctx, inputString)
 
 @bot.command()
 async def combos(ctx, *arr):
@@ -70,7 +70,7 @@ async def combos(ctx, *arr):
     inputString, params = splitParameters(inputString, warnings)
     output = listCombos(inputString, params, warnings)
     await output.printToDiscord(ctx=ctx, color=0x0094FF)
-    log("!combos", ctx, inputString)
+    logCommand("!combos", ctx, inputString)
 
 @bot.command()
 async def report(ctx, *arr):

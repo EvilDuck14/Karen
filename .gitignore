@@ -11,3 +11,4 @@ karen.egg-info
 .pypirc
 .env
 $HOME
+combo_logs.csv

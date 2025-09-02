@@ -5,6 +5,7 @@ from math import floor
 from karen.actions import *
 from karen.output import Output
 from karen.parameters import Parameters
+from karen.logger import logCombo
 
 def evaluate(inputString, params=Parameters(), warnings=[]):
 
@@ -21,6 +22,8 @@ def evaluate(inputString, params=Parameters(), warnings=[]):
 
     if params.advanced == False:
         comboSequence = simplify(comboSequence)
+
+    logCombo("".join(comboSequence))
 
     for i in range(len(comboSequence) - 1):
         nextAction = [j for j in comboSequence[i+1:] if not j in ["j", "d", "l"]][0]
