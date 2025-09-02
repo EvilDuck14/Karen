@@ -8,11 +8,11 @@ from karen.parameters import Parameters
 
 def evaluate(inputString, params=Parameters(), warnings=[]):
 
-    state = State()
+    state = State(params)
     comboSequence = getComboSequence(inputString, warnings) + [""]
 
     # runs a second evaluation with maximum action ranges
-    maxTravelTimeState = State()
+    maxTravelTimeState = State(params)
     maxTravelTimeState.inferInitialState(comboSequence)
 
     # infer initial state being airborne/having overhead

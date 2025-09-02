@@ -1,4 +1,5 @@
 from karen.actions import *
+from karen.parameters import Parameters
 
 class Charge:
     MAX_CHARGES = 0
@@ -45,7 +46,7 @@ class State:
     damageMultiplier = 1
 
     # tracking metrics
-    damageDealt = 0
+    damageDealt = 0.0
     timeTaken = 0
     firstDamageTime = 0
     timeFromDamage = 0 # only computed when resolve() is called
@@ -54,7 +55,7 @@ class State:
     # sequence output
     sequence = ""
 
-    def __init__(self):
+    def __init__(self, params=Parameters()):
 
         self.charges = {
             "t" : Charge(
@@ -80,6 +81,10 @@ class State:
                 RECHARGE_TIME = 12 * 60
             )
         }
+
+        if params.season == 0:
+            self.damageMultiplier = 1.1
+
 
     def incrementTime(self, frames, warnings):
 
@@ -111,7 +116,7 @@ class State:
             if burnFrames + BURN_TRACER_BURN_TIME >= self.burnTracerActiveTimer:
                 burnFrames -= self.burnActiveTimer - BURN_TRACER_BURN_TIME
                 self.burnActiveTimer = BURN_TRACER_BURN_TIME
-                self.damageDealt += BURN_TRACER_DPS / 5
+                self.damageDealt += BURN_TRACER_DPS / 5 * self.damageMultiplier
             else:
                 self.burnActiveTimer -= burnFrames
                 burnFrames = 0
@@ -119,12 +124,12 @@ class State:
             burnFrames -= 12
             self.burnActiveTimer -= 12
             if self.burnActiveTimer != 0:
-                self.damageDealt += BURN_TRACER_DPS / 5
+                self.damageDealt += BURN_TRACER_DPS / 5 * self.damageMultiplier
         if burnFrames > self.burnActiveTimer:
             self.burnActiveTimer = 0
         elif burnFrames > 0:
             if (self.burnActiveTimer % 12) <= burnFrames and (self.burnActiveTimer % 12) != 0  and self.burnActiveTimer > 12:
-                self.damageDealt += BURN_TRACER_DPS / 5
+                self.damageDealt += BURN_TRACER_DPS / 5 * self.damageMultiplier
             self.burnActiveTimer -= burnFrames
 
         self.tracerActiveTimer = max(self.tracerActiveTimer - frames, 0)

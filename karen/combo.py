@@ -240,7 +240,7 @@ def addAction(state=State(), action="", nextAction="", params=Parameters(), warn
 
     # proccing tracers
     if ACTIONS[action].procsTracer and state.tracerActiveTimer >= ACTIONS[action].procTime or action in ["p+t", "k+t", "o+t"]:
-        state.damageDealt += TRACER_PROC_DAMAGE
+        state.damageDealt += TRACER_PROC_DAMAGE * state.damageMultiplier
         state.tracerActiveTimer = 0
     if ACTIONS[action].procsTracer and state.burnTracerActiveTimer >= ACTIONS[action].procTime:
         state.burnActiveTimer = BURN_TRACER_BURN_TIME + ACTIONS[action].procTime
@@ -253,7 +253,15 @@ def addAction(state=State(), action="", nextAction="", params=Parameters(), warn
     if action == "a":
         state.swingWaitTimer = ACTIONS["a"].cancelTimes["s"]
 
-    state.damageDealt += ACTIONS[action].damage
+    # seasonal damage changes
+    actionDamage = ACTIONS[action].damage
+    if params.season == 0:
+        if action in ["o", "u", "G"]:
+            actionDamage -= 5
+        if action == "b":
+            warnings += ["uses burn tracer in season zero evaluation (before the teamup existed)"]
+
+    state.damageDealt += actionDamage * state.damageMultiplier
     state.minTimeTaken = max(state.minTimeTaken, state.timeTaken + ACTIONS[action].damageTime + travelTime)
     state.incrementTime((ACTIONS[action].damageTime if nextAction == "" else ACTIONS[action].cancelTimes[nextAction]) + travelTime, warnings)
 

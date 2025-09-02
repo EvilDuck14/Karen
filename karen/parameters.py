@@ -2,11 +2,14 @@ PARAMETER_NAMES = {
     "" : "input", "input" : "input", "i" : "input",
     "a" : "advanced", "advanced" : "advanced",
     "n" : "noWarnings", "nowarnings" : "noWarnings", "nw" : "noWarnings", "nowarn" : "nowarnings",
+    "s0" : "s0", "s1" : "s0", "s1.0" : "s0", "s1.5" : "s0", "s2" : "s0", "s2.0" : "s0", "s2.5" : "s0",
+    "s3" : "s3", "s3.0" : "s3", "s3.5" : "s3",
 }
 
 class Parameters:
     advanced = False
     noWarnings = False
+    season = 3.5
 
 def splitParameters(inputString, warnings):
     while "---" in inputString:
@@ -34,6 +37,14 @@ def splitParameters(inputString, warnings):
 
         if PARAMETER_NAMES[parameter] == "noWarnings":
             params.noWarnings = True
+            sequence += value # this parameter takes no arguments - parse as regular input
+
+        if PARAMETER_NAMES[parameter] == "s0":
+            params.season = 0
+            sequence += value # this parameter takes no arguments - parse as regular input
+        
+        if PARAMETER_NAMES[parameter] == "s3":
+            params.season = 3
             sequence += value # this parameter takes no arguments - parse as regular input
 
     return sequence, params
