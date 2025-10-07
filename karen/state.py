@@ -90,6 +90,7 @@ class State:
 
 
     def incrementTime(self, frames, warnings):
+        frames = int(frames)
 
         if frames <= 0:
             return

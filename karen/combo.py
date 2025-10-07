@@ -280,7 +280,7 @@ def addAction(state=State(), action="", nextAction="", params=Parameters(), warn
     if state.breakdown[-1] != "\n":
         prevFrame = int(state.breakdown.split(" ")[-1])
         state.breakdown += f" (lasts {state.timeTaken - prevFrame} frames until cancelled)\n"
-    state.breakdown += f"{ACTION_NAMES[action]} starts at frame {state.timeTaken}"
+    state.breakdown += f"{ACTION_NAMES[action]} starts at frame {int(state.timeTaken)}"
 
     state.damageDealt += actionDamage * state.damageMultiplier
     state.minTimeTaken = max(state.minTimeTaken, state.timeTaken + ACTIONS[action].damageTime + travelTime)
