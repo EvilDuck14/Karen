@@ -55,6 +55,9 @@ class State:
     # sequence output
     sequence = ""
 
+    # to be output by the "breakdown" parameter
+    breakdown = ""
+
     def __init__(self, params=Parameters()):
 
         self.charges = {
@@ -149,6 +152,11 @@ class State:
         self.incrementTime(self.minTimeTaken - self.timeTaken, warnings)
         self.timeFromDamage = self.timeTaken - self.firstDamageTime
 
+        # breakdown logging
+        if self.breakdown[-1] != "\n":
+            prevFrame = int(self.breakdown.split(" ")[-1])
+            self.breakdown += f" (lasts {self.timeTaken - prevFrame} frames until final hit)\n"
+
     def endAction(self, action): # ends current action and takes away the associated cooldown charge
         self.charges[action].activeTimer = 0
         if action != "s" or self.removeSwingOnEnd:
@@ -213,6 +221,12 @@ class State:
             if a in "pkou":
                 self.maxPossibleRange = 5
                 break
+
+        # breakdown logging
+        self.breakdown += f"INITIAL STATE:\nAirborne: {bool(self.isAirborn)}\n"
+        if self.isAirborn:
+            self.breakdown += f"Has Double Jump: {bool(self.hasDoubleJump)}\nHas Swing Overhead: {bool(self.hasSwingOverhead)}\nHas Jump Overhead: {bool(self.hasJumpOverhead)}\n"
+        self.breakdown += "\nACTION TIMINGS:\n"
         
 
     def correctSequence(self, combo):

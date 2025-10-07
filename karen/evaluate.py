@@ -10,7 +10,7 @@ from karen.logger import logCombo
 def evaluate(inputString, params=Parameters(), warnings=[]):
 
     state = State(params)
-    comboSequence = getComboSequence(inputString, warnings) + [""]
+    comboSequence = inputStringToSequence(inputString, warnings) + [""]
 
     # runs a second evaluation with maximum action ranges
     maxTravelTimeState = State(params)
@@ -69,4 +69,6 @@ def evaluate(inputString, params=Parameters(), warnings=[]):
     if params.noWarnings:
         warnings = []
 
-    return Output(title=comboName, combo=state.sequence, description=description, warnings=warnings)
+    block = state.breakdown if params.breakdown else ""
+
+    return Output(title=comboName, combo=state.sequence, description=description, block=block, warnings=warnings)

@@ -1,8 +1,9 @@
 from karen.actions import *
 from karen.state import State
 from karen.parameters import Parameters
+from karen.classify import getComboSequence
 
-def getComboSequence(inputString="", warnings=[]):
+def inputStringToSequence(inputString="", warnings=[]):
 
     if not ("G+u" in ACTIONS):
         loadMoveStacks()
@@ -25,12 +26,26 @@ def getComboSequence(inputString="", warnings=[]):
     if ">" in sequence or len([x for x in sequence if not (x.lower() in ACTION_NAMES or x in ["", " "])]) > 0 or len([x for x in sequence.split(" ")]) > 1:
         words = [x for x in sequence.replace("+", " + ").replace(">", " > ").split(" ") if x != ""]
         sequence = []
+
         while len(words) > 0:
             while words[0] == ">":
                 words = words[1:]
             for j in range(0, len(words)):
                 if ">" in words[0 : len(words) - j]: # ">" forces separation of actions
                     continue
+                
+                # attempt to parse as a combo name
+                comboSequence = getComboSequence("".join(words[0 : len(words) - j]))
+                if comboSequence != "":
+                    for a in comboSequence:
+                        if len(sequence) > 0 and (a == "+" or sequence[-1][-1] == "+"):
+                            sequence[-1] += a
+                        else:
+                            sequence.append(a)
+                    words = words[len(words) - j:]
+                    break
+
+                # attempts to parse as an action name
                 if ("".join(words[0 : len(words) - j])).lower() in ACTION_NAMES or len(words) - j == 1:
                     sequence += ["".join(words[0 : len(words) - j])]
                     words = words[len(words) - j:]
@@ -260,6 +275,12 @@ def addAction(state=State(), action="", nextAction="", params=Parameters(), warn
             actionDamage -= 5
         if action == "b":
             warnings += ["uses burn tracer in season zero evaluation (before the teamup existed)"]
+
+    # breakdown logging
+    if state.breakdown[-1] != "\n":
+        prevFrame = int(state.breakdown.split(" ")[-1])
+        state.breakdown += f" (lasts {state.timeTaken - prevFrame} frames until cancelled)\n"
+    state.breakdown += f"{ACTION_NAMES[action]} starts at frame {state.timeTaken}"
 
     state.damageDealt += actionDamage * state.damageMultiplier
     state.minTimeTaken = max(state.minTimeTaken, state.timeTaken + ACTIONS[action].damageTime + travelTime)

@@ -96,7 +96,7 @@ ACTIONS = {
         cancelTimes = {
             "p" : 23,
             "k" : 23,
-            "o" : 23,
+            "o" : 11,
             "t" : 11,
             "s" : 11,
             "a" : 11,
@@ -118,7 +118,7 @@ ACTIONS = {
         cancelTimes = {
             "p" : 49,
             "k" : 49,
-            "o" : 49,
+            "o" : 22,
             "t" : 22,
             "s" : 22,
             "a" : 22,
@@ -549,9 +549,9 @@ def loadMoveStacks():
     kickReverseTriggerCancelTimes = ACTIONS["t"].cancelTimes.copy()
     overheadReverseTriggerCancelTimes = ACTIONS["t"].cancelTimes.copy()
     for action in punchReverseTriggerCancelTimes:
-        punchReverseTriggerCancelTimes[action] += ACTIONS["p"].damageTime - 1 - ACTIONS["t"].damageTime
-        kickReverseTriggerCancelTimes[action] += ACTIONS["k"].damageTime - 1 - ACTIONS["t"].damageTime
-        overheadReverseTriggerCancelTimes[action] += ACTIONS["o"].damageTime - 1 - ACTIONS["t"].damageTime
+        punchReverseTriggerCancelTimes[action] += ACTIONS["p"].cancelTimes["t"] - 1
+        kickReverseTriggerCancelTimes[action] += ACTIONS["k"].cancelTimes["t"]  - 1
+        overheadReverseTriggerCancelTimes[action] += ACTIONS["o"].cancelTimes["t"]  - 1
 
     ACTIONS["p+t"] = Action (
         name = "Punch Reverse Trigger",
@@ -562,10 +562,10 @@ def loadMoveStacks():
         firstDamageTime = ACTIONS["p"].damageTime - 1,
         cancelTimes = punchReverseTriggerCancelTimes,
         chargeActivations = {
-            "t" : ACTIONS["p"].damageTime - 1  - ACTIONS["t"].damageTime + ACTIONS["t"].chargeActivations["t"]
+            "t" : ACTIONS["p"].cancelTimes["t"] - 1 + ACTIONS["t"].chargeActivations["t"]
         },
         awaitCharges = { 
-            "t" :  ACTIONS["p"].damageTime - 1 - ACTIONS["t"].damageTime
+            "t" :  ACTIONS["p"].cancelTimes["t"] - 1
         }
     )
 
@@ -578,10 +578,10 @@ def loadMoveStacks():
         firstDamageTime = ACTIONS["k"].damageTime - 1,
         cancelTimes = kickReverseTriggerCancelTimes,
         chargeActivations = {
-            "t" : ACTIONS["k"].damageTime - 1  - ACTIONS["t"].damageTime + ACTIONS["t"].chargeActivations["t"]
+            "t" : ACTIONS["k"].cancelTimes["t"] - 1 + ACTIONS["t"].chargeActivations["t"]
         },
         awaitCharges = { 
-            "t" :  ACTIONS["k"].damageTime - 1 - ACTIONS["t"].damageTime
+            "t" :  ACTIONS["k"].cancelTimes["t"] - 1
         }
     )
 
@@ -590,14 +590,14 @@ def loadMoveStacks():
         damage = ACTIONS["o"].damage + ACTIONS["t"].damage,
         procsTracer = True,
         procTime = 0,
-        damageTime = ACTIONS["o"].damageTime,
+        damageTime = ACTIONS["o"].damageTime - 1,
         firstDamageTime = ACTIONS["o"].damageTime - 1,
         cancelTimes = overheadReverseTriggerCancelTimes,
         chargeActivations = {
-            "t" : ACTIONS["o"].damageTime - 1  - ACTIONS["t"].damageTime + ACTIONS["t"].chargeActivations["t"]
+            "t" : ACTIONS["o"].cancelTimes["t"] - 1 + ACTIONS["t"].chargeActivations["t"]
         },
         awaitCharges = { 
-            "t" :  ACTIONS["o"].damageTime - 1 - ACTIONS["t"].damageTime
+            "t" : ACTIONS["o"].cancelTimes["t"] - 1
         }
     )
 
