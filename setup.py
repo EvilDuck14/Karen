@@ -3,7 +3,7 @@ import pathlib
 
 setup (
     name = "karen",
-    version = "1.2.3",
+    version = "1.3.0",
     url = "https://github.com/EvilDuck14/Karen/",
     author = "EvilDuck",
     author_email = "theevilduck14@gmail.com",

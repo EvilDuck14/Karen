@@ -34,6 +34,8 @@ class Output:
         if self.title != "":        
             message += f"{self.title}{f"({self.link})" if self.link != "" else ""}\n\n"
 
+        if type(self.combo) is list:
+            self.combo = "\nvs\n".join(self.combo)
         if self.combo != "":
             message += f"{self.combo}\n\n"
 
@@ -63,6 +65,8 @@ class Output:
                 title = f"[{title}]({self.link})"
             message += f"### {title}\n"
 
+        if type(self.combo) is list:
+            self.combo = "\nvs\n> ".join(self.combo)
         if self.combo != "":
             message += f"> {self.combo}\n"
 

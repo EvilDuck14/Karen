@@ -47,7 +47,8 @@ ACTION_NAMES = {
     "longplink" : "wto", "plink" : "wto",
     "breadandbutter" : "tGu", "breadnbutter" : "tGu", "bnb" : "tGu",
     "uniquethreehit" : "wpp+o", "unique3hit" : "wpp+o", "u3h" : "wpp+o",
-    "slytech" : "suo", "sly" : "suo"
+    "slytech" : "suo", "sly" : "suo",
+    "doubleswing" : "wta", "doubleplink" : "wtao"
 }
 
 

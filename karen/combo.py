@@ -8,7 +8,7 @@ def inputStringToSequence(inputString="", warnings=[]):
     if not ("G+u" in ACTIONS):
         loadMoveStacks()
     
-    if inputString == "":
+    if inputString.replace(" ", "") == "":
         return []
 
     # removes anything in brackets from inputString string

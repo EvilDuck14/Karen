@@ -3,6 +3,7 @@ from discord.ext import commands
 
 from karen.evaluate import evaluate
 from karen.getCombo import *
+from karen.compare import compare
 from karen.output import Output
 from karen.parameters import *
 
@@ -73,6 +74,17 @@ async def combos(ctx, *arr):
     logCommand("!combos", ctx, inputString)
 
 @bot.command()
+async def comp(ctx, *arr):
+    if developmentFilter(ctx):
+        return
+    inputString = " ".join(str(x) for x in arr)
+    warnings = []
+    inputString, params = splitParameters(inputString, warnings)
+    output = compare(inputString, params, warnings)
+    await output.printToDiscord(ctx=ctx, color=0x8C7FFF)
+    logCommand("!compare", ctx, inputString)
+
+@bot.command()
 async def report(ctx, *arr):
     if developmentFilter(ctx):
         return
@@ -84,7 +96,7 @@ async def report(ctx, *arr):
     error = ""
 
     if reportMessage.replace(" ", "") == "":
-        error = "Please include a report description"
+        error = "Please include a report description."
 
     elif ctx.guild in COMMAND_LOG and ctx.channel in COMMAND_LOG[ctx.guild]:
         reportHeading = f"## Report from {str(ctx.author).replace("\\", "\\\\").replace("_", "\_").replace("*", "\*")}"
@@ -99,10 +111,10 @@ async def report(ctx, *arr):
             error = "Report failed to send. Try again later, or reach out via DM to the developer, @evilduck_"
 
     else:
-        error="No commands have been logged in this channel since Karen last rebooted"
+        error="No commands have been logged in this channel since Karen last rebooted, please send the report in the same channel as the error immediately after the error has occured."
     
     output = Output(title=title, description=description, block=block, error=error)
-    output.printToDiscord(ctx=ctx, color=0x77C6FF)
+    await output.printToDiscord(ctx=ctx, color=0x77C6FF)
 
 @bot.command()
 async def help(ctx, *arr):
@@ -125,6 +137,9 @@ async def help(ctx, *arr):
     elif command.lower() in ["combos", "!combos"]:
         description = "**!combos**\nThe *combos* command prints a list of all documented combos, as well as their short-form notations. These are the labels added when a known command is evaluated, and these names can be passed into the \"!combo\" command."
 
+    elif command.lower() in ["comp", "!comp"]:
+        description = "**!comp [combo 1 sequence], [combo 2 sequence], ... , [combo n sequence]**\nThe *comp* command allows you to compare any number of combos simultaneously, evaluating each one and comparing metrics.\n\nYou can compare only a subset of the metrics using the tags \"--t\" (time), \"--tfd\" (time from damage), \"--d\" (damage), and \"--dps\"."
+
     elif command.lower() in ["report", "!report"]:
         description = "**!report [report message]**\nThe *report* command sends a message to the bot developer (EvilDuck), along with last 5 commands issued in this channel. This is for reporting bugs/crashes, please don't spam it or use it before checking whether the unexpected output is caused by user error. Reports are not anonymous."
 
@@ -142,17 +157,14 @@ async def help(ctx, *arr):
         description += "**!eval [combo sequence]**\n"
         description += "Evaluates the time taken & damage dealt by a given combo.\n\n"
 
-        description += "**!evala [combo sequence]**\n"
-        description += "\"Advanced\" version of \"!eval\".\n\n"
-
-        description += "**!evaln [combo sequence]**\n"
-        description += "\"No warnings\" version of \"!evala\".\n\n"
-
         description += "**!combo [combo name]**\n"
         description += "Runs evaluation of a given combo.\n\n"
 
         description += "**!combos**\n"
         description += "Displays a list of all documented combos.\n\n"
+
+        description += "**!comp [combo 1 sequence], [combo 2 sequence], ... , [combo n sequence]**\n"
+        description += "Evaluates and compares a list of combos.\n\n"
 
         description += "**!report [report message]**\n"
         description += "Reports an issue to the bot developer.\n\n"

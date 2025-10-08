@@ -1,4 +1,5 @@
 from karen.evaluate import evaluate
+from karen.compare import compare
 from karen.getCombo import *
 from karen.parameters import *
 
@@ -27,6 +28,11 @@ while True:
         warnings = []
         inputString, params = splitParameters(rawInput[7:], warnings)
         listCombos(inputString, params, warnings).printToConsole()
+
+    elif len(rawInput) > 4 and rawInput[:5] == "comp ":
+        warnings = []
+        inputString, params = splitParameters(rawInput[5:], warnings)
+        compare(inputString, params, warnings).printToConsole()
 
     elif len(rawInput) > 4 and rawInput[:5] == "exit ":
         break

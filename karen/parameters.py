@@ -5,6 +5,11 @@ PARAMETER_NAMES = {
     "b" : "breakdown", "breakdown" : "breakdown",
     "s0" : "s0", "s1" : "s0", "s1.0" : "s0", "s1.5" : "s0", "s2" : "s0", "s2.0" : "s0", "s2.5" : "s0",
     "s3" : "s3", "s3.0" : "s3", "s3.5" : "s3",
+
+    "t" : "compareTime", "time" : "compareTime", "comparetime" : "compareTime",
+    "tfd" : "compareTimeFromDamage", "timefromdamage" : "compareTimeFromDamage", "comparetimefromdamage" : "compareTimeFromDamage",
+    "d" : "compareDamage", "damage" : "compareDamage", "comparedamage" : "compareDamage",
+    "dps" : "compareDPS", "comparedps" : "compareDPS"
 }
 
 class Parameters:
@@ -13,6 +18,11 @@ class Parameters:
     breakdown = False
     season = 3.5
 
+    compareTime = True
+    compareTimeFromDamage = True
+    compareDamage = True
+    compareDPS = True
+
 def splitParameters(inputString, warnings):
     while "---" in inputString:
         inputString = inputString.replace("---", "--")
@@ -20,6 +30,8 @@ def splitParameters(inputString, warnings):
 
     sequence = ""
     params = Parameters()
+
+    compareAll = True
 
     for parameterString in inputString.split("--"):
         parameter = parameterString.split(" ")[0].lower()
@@ -52,5 +64,24 @@ def splitParameters(inputString, warnings):
         if PARAMETER_NAMES[parameter] == "s3":
             params.season = 3
             sequence += value # this parameter takes no arguments - parse as regular input
+
+        if PARAMETER_NAMES[parameter] in ["compareTime", "compareTimeFromDamage", "compareDamage", "compareDPS"] and compareAll:
+            compareAll = False
+            params.compareTime = False
+            params.compareTimeFromDamage = False
+            params.compareDamage = False
+            params.compareDPS = False
+        
+        if PARAMETER_NAMES[parameter] == "compareTime":
+            params.compareTime = True
+
+        if PARAMETER_NAMES[parameter] == "compareTimeFromDamage":
+            params.compareTimeFromDamage = True
+
+        if PARAMETER_NAMES[parameter] == "compareDamage":
+            params.compareDamage = True
+        
+        if PARAMETER_NAMES[parameter] == "compareDPS":
+            params.compareDPS = True
 
     return sequence, params

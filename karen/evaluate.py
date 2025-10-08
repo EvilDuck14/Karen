@@ -60,11 +60,14 @@ def evaluate(inputString, params=Parameters(), warnings=[]):
     showDPSFromDamage = params.advanced and dpsFromDamageMax != "NaN"
     dpsFromDamage = "" if not showDPSFromDamage else f", {dpsFromDamageMin}{f"-{dpsFromDamageMax}" if dpsFromDamageMin != dpsFromDamageMax else ""}dps"
 
-    description = ( 
-    f"**Time:** {timeSeconds} seconds ({timeFrames} frames{dps})"
-    f"{f"\n**Time From Damage:** {timeFromDamageSeconds} seconds ({timeFromDamageFrames} frames{dpsFromDamage})" if state.damageDealt > 0 else ""}"
-    f"\n**Damage:** {int(state.damageDealt)} {burnTracerBonusDamage}" 
-    )
+    description = []
+    if params.compareTime:
+        description.append(f"**Time:** {timeSeconds} seconds ({timeFrames} frames{dps})")
+    if params.compareTimeFromDamage and state.damageDealt > 0:
+        description.append(f"**Time From Damage:** {timeFromDamageSeconds} seconds ({timeFromDamageFrames} frames{dpsFromDamage})")
+    if params.compareDamage:
+        description.append(f"**Damage:** {int(state.damageDealt)} {burnTracerBonusDamage}")
+    description = "\n".join(description)
 
     if params.noWarnings:
         warnings = []
