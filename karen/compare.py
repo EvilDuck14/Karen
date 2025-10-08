@@ -4,6 +4,8 @@ from karen.parameters import Parameters
 from copy import deepcopy
 
 def compare(inputString, params=Parameters(), warnings=[]):
+    inputString = inputString.replace(" vs ", " , ")
+
     if not "," in inputString:
         return Output(error="Comparison command must include at least one comma to separate combos")
     
@@ -29,7 +31,7 @@ def compare(inputString, params=Parameters(), warnings=[]):
     comboTimesFromDamage = [int(description[1].split(" ")[5][1:].split("-")[0]) for description in outputDescriptions]
     comboDamages = [float(description[2].split(" ")[1].split("-")[0]) for description in outputDescriptions]
     comboDamages = [int(x) if x - int(x) == 0 else x for x in comboDamages]
-    comboDPSs = [int(comboDamages[i] / max(1/60, comboTimesFromDamage[i]/60)) for i in range(len(comboDamages))]
+    comboDPSs = [int(comboDamages[i] / ((comboTimesFromDamage[i] if comboTimesFromDamage[i] != 0 else comboTimes[i])/60)) for i in range(len(comboDamages))]
 
     fastestTime = [i+1 for i in range(len(comboTimes)) if comboTimes[i] == min(comboTimes)]
     fastestTimeFromDamage = [i+1 for i in range(len(comboTimesFromDamage)) if comboTimesFromDamage[i] == min(comboTimesFromDamage)]
@@ -39,16 +41,16 @@ def compare(inputString, params=Parameters(), warnings=[]):
     description = []
 
     if params.compareTime:
-        description.append(f"\n**Time:** Combo{"s" if len(fastestTime) > 1 else ""} {" & ".join([str(x) for x in fastestTime])}\n`{" vs ".join([f"{"🟢" if i+1 in fastestTime else "🟥"} {comboTimes[i]}f" for i in range(len(comboTimes))])}`")
+        description.append(f"\n**Time:** Combo{"s" if len(fastestTime) > 1 else ""} {" & ".join([str(x) for x in fastestTime])}\n`{" vs ".join([f"{"🟢" if i+1 in fastestTime else "🟥"} {comboTimes[i]}f{"" if i+1 in fastestTime else f" (+{comboTimes[i]-comboTimes[fastestTime[0]-1]}f)"}" for i in range(len(comboTimes))])}`")
     
     if params.compareTimeFromDamage:
-        description.append(f"\n**Time From Damage:** Combo{"s" if len(fastestTimeFromDamage) > 1 else ""} {" & ".join([str(x) for x in fastestTimeFromDamage])}\n`{" vs ".join([f"{"🟢" if i+1 in fastestTimeFromDamage else "🟥"} {comboTimesFromDamage[i]}f" for i in range(len(comboTimesFromDamage))])}`")
+        description.append(f"\n**Time From Damage:** Combo{"s" if len(fastestTimeFromDamage) > 1 else ""} {" & ".join([str(x) for x in fastestTimeFromDamage])}\n`{" vs ".join([f"{"🟢" if i+1 in fastestTimeFromDamage else "🟥"} {comboTimesFromDamage[i]}f{"" if i+1 in fastestTimeFromDamage else f" (+{comboTimesFromDamage[i]-comboTimesFromDamage[fastestTimeFromDamage[0]-1]}f)"}" for i in range(len(comboTimesFromDamage))])}`")
     
     if params.compareDamage:
-        description.append(f"\n**Damage:** Combo{"s" if len(mostDamage) > 1 else ""} {" & ".join([str(x) for x in mostDamage])}\n`{" vs ".join([f"{"🟢" if i+1 in mostDamage else "🟥"} {comboDamages[i]}" for i in range(len(comboDamages))])}`")
+        description.append(f"\n**Damage:** Combo{"s" if len(mostDamage) > 1 else ""} {" & ".join([str(x) for x in mostDamage])}\n`{" vs ".join([f"{"🟢" if i+1 in mostDamage else "🟥"} {comboDamages[i]}{"" if i+1 in mostDamage else f" ({comboDamages[i]-comboDamages[mostDamage[0]-1]})"}" for i in range(len(comboDamages))])}`")
     
     if params.compareDPS:
-        description.append(f"\n**DPS:** Combo{"s" if len(mostDPS) > 1 else ""} {" & ".join([str(x) for x in mostDPS])}\n`{" vs ".join([f"{"🟢" if i+1 in mostDPS else "🟥"} {comboDPSs[i]}" for i in range(len(comboDPSs))])}`")
+        description.append(f"\n**DPS:** Combo{"s" if len(mostDPS) > 1 else ""} {" & ".join([str(x) for x in mostDPS])}\n`{" vs ".join([f"{"🟢" if i+1 in mostDPS else "🟥"} {comboDPSs[i]}{"" if i+1 in mostDPS else f" ({comboDPSs[i]-comboDPSs[mostDPS[0]-1]})"}" for i in range(len(comboDPSs))])}`")
 
     description = "\n".join(description)
 
