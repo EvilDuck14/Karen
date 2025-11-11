@@ -119,15 +119,16 @@ def addAction(state=State(), action="", nextAction="", params=Parameters(), warn
     if not ("G+u" in ACTIONS):
         loadMoveStacks()
 
+    # awaits tracer register for GOHT
+    if "G" in action:
+        print (state.gohtWaitTime)
+        state.incrementTime(state.gohtWaitTime - ACTIONS[action].awaitCharges["g"], warnings)
+
     # awaits required cooldowns
     for a in ACTIONS[action].awaitCharges:
         state.incrementTime(state.charges[a].activeTimer, warnings) 
         state.incrementTime(state.charges[a].cooldownTimer - ACTIONS[action].awaitCharges[a], warnings)
         state.incrementTime(state.charges[a].RECHARGE_TIME - state.charges[a].currentCharge - ACTIONS[action].awaitCharges[a], warnings)
-
-    # awaits tracer register for GOHT
-    if "g" in ACTIONS[action].awaitCharges:
-        state.incrementTime(state.gohtWaitTime - ACTIONS[action].awaitCharges["g"], warnings)
 
     # awaits kick expiration for punch
     if "p" in action and state.punchSequence == 2:
@@ -245,13 +246,13 @@ def addAction(state=State(), action="", nextAction="", params=Parameters(), warn
         
     # adding tracer tags
     if action == "t":
-        state.tracerActiveTimer = TRACER_ACTIVE_TIME + ACTIONS["t"].damageTime + travelTime
         if state.tracerActiveTimer == 0 and state.burnTracerActiveTimer == 0:
             state.gohtWaitTime = ACTIONS[action].damageTime + (0 if not maxTravelTimes else TRACER_MAX_TRAVEL_TIME)
+        state.tracerActiveTimer = TRACER_ACTIVE_TIME + ACTIONS["t"].damageTime + travelTime
     if action == "b":
-        state.burnTracerActiveTimer = BURN_TRACER_ACTIVE_TIME + ACTIONS["b"].damageTime + travelTime  
         if state.tracerActiveTimer == 0 and state.burnTracerActiveTimer == 0:
             state.gohtWaitTime = ACTIONS[action].damageTime + (0 if not maxTravelTimes else BURN_TRACER_MAX_TRAVEL_TIME)
+        state.tracerActiveTimer = TRACER_ACTIVE_TIME + ACTIONS["t"].damageTime + travelTime
 
     # proccing tracers
     if ACTIONS[action].procsTracer and state.tracerActiveTimer >= ACTIONS[action].procTime or action in ["p+t", "k+t", "o+t"]:
