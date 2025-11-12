@@ -231,9 +231,9 @@ ACTIONS = {
             "k" : 27,
             "o" : 27,
             "t" : 10,
-            "s" : 53,
+            "s" : 30,
             "a" : 25,
-            "w" : 53,
+            "w" : 30,
             "g" : 1,
             "G" : 1,
             "u" : 1,
@@ -297,7 +297,7 @@ ACTIONS = {
 
     "u" : Action (
         name = "Uppercut",
-        damage = 60, 
+        damage = 70, 
         procsTracer = True,
         
         damageTime = 23,

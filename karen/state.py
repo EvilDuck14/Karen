@@ -63,7 +63,7 @@ class State:
         self.charges = {
             "t" : Charge(
                 MAX_CHARGES = 5, 
-                RECHARGE_TIME = 2.5 * 60,
+                RECHARGE_TIME = 2 * 60,
                 COOLDOWN_TIME = 0.5 * 60
             ),
             "s" : Charge(
