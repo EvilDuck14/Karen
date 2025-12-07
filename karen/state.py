@@ -117,7 +117,7 @@ class State:
         # burn tracer damage ticks 5 times per second (12 frames)
         burnFrames = frames
         if self.burnActiveTimer > BURN_TRACER_BURN_TIME:
-            if burnFrames + BURN_TRACER_BURN_TIME >= self.burnTracerActiveTimer:
+            if burnFrames + BURN_TRACER_BURN_TIME >= self.burnActiveTimer:
                 burnFrames -= self.burnActiveTimer - BURN_TRACER_BURN_TIME
                 self.burnActiveTimer = BURN_TRACER_BURN_TIME
                 self.damageDealt += BURN_TRACER_DPS / 5 * self.damageMultiplier
