@@ -252,7 +252,7 @@ def addAction(state=State(), action="", nextAction="", params=Parameters(), warn
     if action == "b":
         if state.tracerActiveTimer == 0 and state.burnTracerActiveTimer == 0:
             state.gohtWaitTime = ACTIONS[action].damageTime + (0 if not maxTravelTimes else BURN_TRACER_MAX_TRAVEL_TIME)
-        state.burnTracerActiveTimer = TRACER_ACTIVE_TIME + ACTIONS["t"].damageTime + travelTime
+        state.burnTracerActiveTimer = BURN_TRACER_ACTIVE_TIME + ACTIONS["t"].damageTime + travelTime
 
     # proccing tracers
     if ACTIONS[action].procsTracer and state.tracerActiveTimer >= ACTIONS[action].procTime or action in ["p+t", "k+t", "o+t"]:
